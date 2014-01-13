@@ -354,6 +354,7 @@
         </XML>
       </value>
     </option>
+    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default (1)" />
   </component>
   <component name="ProjectDictionaryState">
     <dictionary name="Moops">
@@ -426,8 +427,6 @@
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../gleany" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../gleany/gleany/libs" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/assets" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/data" vcs="Git" />
   </component>
   <component name="libraryTable">
     <library name="libs">

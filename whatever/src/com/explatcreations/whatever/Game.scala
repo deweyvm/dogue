@@ -1,29 +1,23 @@
 package com.explatcreations.whatever
 
 import com.explatcreations.gleany.{Glean, GleanyInitializer, GleanyGame}
+object Game {
+  val Zoom = 4
+  val Width = 800
+  val Height = 800
+  val RenderWidth = Width/Zoom
+  val RenderHeight = Height/Zoom
+}
 
 class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
-  //private lazy val engine = new Engine()
-
-  private var paused = false
+  private lazy val engine = new Engine()
 
   override def update() {
-    /*if (Controls.Quit.justPressed) {
-      GleanyGame.exit()
-    }
-    if (Controls.Pause.justPressed) {
-      paused = !paused
-    }*/
-
-    if (!paused) {
-      //engine.update()
-    } else {
-      //Controls.update()
-    }
+    engine.update()
   }
 
   override def draw() {
-    //engine.draw()
+    engine.draw()
   }
 
   override def resize(width: Int, height: Int) {

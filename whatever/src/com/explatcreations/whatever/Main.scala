@@ -6,24 +6,7 @@ import com.explatcreations.gleany.files.PathResolver
 import com.explatcreations.gleany.saving.{Settings, SettingDefaults, ControlNameCollection, ControlName}
 import com.explatcreations.gleany.graphics.display.Display
 import com.explatcreations.gleany.data.Point2i
-
-class WhateverControl(descriptor: String) extends ControlName {
-  override def name: String = descriptor
-}
-
-object WhateverControls extends ControlNameCollection[WhateverControl] {
-  def fromString(string: String): Option[com.explatcreations.whatever.WhateverControl] = None
-  def makeJoypadDefault: Map[String,String] = Map()
-  def makeKeyboardDefault: Map[String,java.lang.Float] = Map()
-  def values: Seq[com.explatcreations.whatever.WhateverControl] = Seq()
-}
-
-object WhateverDefaultSettings extends SettingDefaults {
-  override val SfxVolume: Float = 0.05f
-  override val MusicVolume: Float = 0.05f
-  override val WindowSize: Point2i = new Point2i(600,600)
-  override val DisplayMode: Int = Display.Windowed.toInt
-}
+import com.explatcreations.whatever.input.WhateverControls
 
 
 object Main {
@@ -32,7 +15,7 @@ object Main {
     //val settings = new Settings(MissionControls, MissionDefaultSettings)
     val iconPath = "sprites/icon.gif"
     val settings = new Settings(WhateverControls, WhateverDefaultSettings)
-    val config = new GleanyConfig(settings, "Mission", Some(iconPath))
+    val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
     val pathResolver = new PathResolver(
       "fonts",
       "sprites",
