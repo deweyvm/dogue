@@ -1,6 +1,6 @@
-package com.explatcreations.whatever
+package com.deweyvm.whatever
 
-import com.explatcreations.gleany.{Glean, GleanyInitializer, GleanyGame}
+import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 object Game {
   val Zoom = 4
   val Width = 800

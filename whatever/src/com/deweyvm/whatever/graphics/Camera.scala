@@ -1,7 +1,7 @@
-package com.explatcreations.whatever.graphics
+package com.deweyvm.whatever.graphics
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.explatcreations.whatever.Game
+import com.deweyvm.whatever.Game
 
 class Camera {
   private val cam = {

@@ -1,8 +1,8 @@
-package com.explatcreations.whatever
+package com.deweyvm.whatever
 
-import com.explatcreations.gleany.saving.SettingDefaults
-import com.explatcreations.gleany.data.Point2i
-import com.explatcreations.gleany.graphics.display.Display
+import com.deweyvm.gleany.saving.SettingDefaults
+import com.deweyvm.gleany.data.Point2i
+import com.deweyvm.gleany.graphics.display.Display
 
 object WhateverDefaultSettings extends SettingDefaults {
   override val SfxVolume: Float = 0.05f

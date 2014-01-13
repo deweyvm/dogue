@@ -1,6 +1,6 @@
-package com.explatcreations.whatever.input
+package com.deweyvm.whatever.input
 
-import com.explatcreations.gleany.saving.ControlName
+import com.deweyvm.gleany.saving.ControlName
 
 class WhateverControl(descriptor: String) extends ControlName {
   override def name: String = descriptor

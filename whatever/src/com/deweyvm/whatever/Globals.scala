@@ -1,7 +1,7 @@
-package com.explatcreations.whatever
+package com.deweyvm.whatever
 
 import util.Random
-import com.explatcreations.gleany.Debug
+import com.deweyvm.gleany.Debug
 
 class Globals {
   Debug.load()

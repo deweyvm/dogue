@@ -1,6 +1,6 @@
-package com.explatcreations.whatever.input
+package com.deweyvm.whatever.input
 
-import com.explatcreations.gleany.saving.ControlNameCollection
+import com.deweyvm.gleany.saving.ControlNameCollection
 
 object WhateverControls extends ControlNameCollection[WhateverControl] {
   def fromString(string: String): Option[WhateverControl] = None

@@ -1,18 +1,17 @@
-package com.explatcreations.whatever
+package com.deweyvm.whatever
 
-import com.explatcreations.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
-import com.explatcreations.gleany.logging.Logger
-import com.explatcreations.gleany.files.PathResolver
-import com.explatcreations.gleany.saving.{Settings, SettingDefaults, ControlNameCollection, ControlName}
-import com.explatcreations.gleany.graphics.display.Display
-import com.explatcreations.gleany.data.Point2i
-import com.explatcreations.whatever.input.WhateverControls
+import com.deweyvm.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
+import com.deweyvm.gleany.logging.Logger
+import com.deweyvm.gleany.files.PathResolver
+import com.deweyvm.gleany.saving.{Settings, SettingDefaults, ControlNameCollection, ControlName}
+import com.deweyvm.gleany.graphics.display.Display
+import com.deweyvm.gleany.data.Point2i
+import com.deweyvm.whatever.input.WhateverControls
 
 
 object Main {
   def main(args: Array[String]) {
     handleArgs(args)
-    //val settings = new Settings(MissionControls, MissionDefaultSettings)
     val iconPath = "sprites/icon.gif"
     val settings = new Settings(WhateverControls, WhateverDefaultSettings)
     val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
