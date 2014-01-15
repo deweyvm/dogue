@@ -10,10 +10,10 @@ class GlyphFactory(val rows:Int, val cols:Int, val tileWidth:Int, val tileHeight
   private def makeSprite(index:Int, color:Color, texture:Texture) = {
     val x = index % rows
     val y = index / rows
-    val f = AssetLoader.makeTextureRegion(texture, Some(Recti(x * tileWidth, y * tileHeight, tileWidth, tileHeight)))
-    val s = new Sprite(f)
-    s.setColor(color.toLibgdxColor)
-    s
+    val region = AssetLoader.makeTextureRegion(texture, Some(Recti(x * tileWidth, y * tileHeight, tileWidth, tileHeight)))
+    val sprite = new Sprite(region)
+    sprite.setColor(color.toLibgdxColor)
+    sprite
   }
 
   def makeGlyph(index:Int, color:Color) = {

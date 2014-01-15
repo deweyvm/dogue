@@ -13,7 +13,7 @@ class Stage {
   val cols = Game.RenderWidth/16
   val rows = Game.RenderHeight/16
   val factory = new GlyphFactory(16, 16, 16, 16, Assets.characterMap)
-  val grid = new Grid(50, 50, factory)
+  val grid = new Grid(31, 16, 50, 50, factory)
   val rightPartition = 32
   val testText = new Text("this is a test", Color.Blue, Color.White, factory)
   val panels = ArrayBuffer[Panel]()
@@ -31,7 +31,7 @@ class Stage {
   }
 
   def draw() {
-    grid.draw(31, 16, rightPartition, 0)
+    grid.draw(rightPartition, 1)
     borders foreach { case (i, j, tile) =>
       tile.draw(i, j)
     }
