@@ -2,9 +2,10 @@ package com.deweyvm.whatever
 
 import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 object Game {
-  val Zoom = 4
-  val Width = 800
-  val Height = 800
+  val Zoom = 1
+  private val factor = 1
+  val Width = 32*32*factor
+  val Height = 32*9*factor
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom
 }

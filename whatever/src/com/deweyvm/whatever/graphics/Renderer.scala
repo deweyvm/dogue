@@ -1,6 +1,6 @@
 package com.deweyvm.whatever.graphics
 
-import com.badlogic.gdx.graphics.g2d.{BitmapFontCache, SpriteBatch}
+import com.badlogic.gdx.graphics.g2d.{Sprite, BitmapFontCache, SpriteBatch}
 import scala.collection.mutable.ArrayBuffer
 
 object Renderer {
@@ -10,6 +10,13 @@ object Renderer {
 
   def draw(f:BitmapFontCache) {
     draws += (() => f.draw(batch))
+  }
+
+  def draw(s:Sprite, x:Float, y:Float) {
+    draws += (() => {
+      s.setPosition(x, y)
+      s.draw(batch)
+    })
   }
 
   def render() {

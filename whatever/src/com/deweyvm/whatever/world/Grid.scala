@@ -1,37 +1,35 @@
 package com.deweyvm.whatever.world
 
-import com.deweyvm.whatever.Assets
 import com.deweyvm.gleany.graphics.Color
-import com.badlogic.gdx.graphics.g2d.BitmapFontCache
-import com.deweyvm.whatever.graphics.Renderer
+import com.deweyvm.whatever.graphics.GlyphFactory
+import com.deweyvm.whatever.entities.Tile
+import com.deweyvm.whatever.input.Controls
 
 
-object Tile {
-  val font = Assets.font
-}
-
-class Tile(color:Color, symbol:String, x:Float, y:Float) {
-  import Tile._
-  val sprite = {
-    val f = new BitmapFontCache(font)
-    f.setColor(color.toLibgdxColor.toFloatBits)
-    f.setText(symbol,0,0)
-    f
+class Grid(cols:Int, rows:Int, glyphs:GlyphFactory) {
+  var iOffset = 0
+  var jOffset = 0
+  val tiles:Array[Array[Tile]] = Array.tabulate(cols, rows) { case (i,j) =>
+    new Tile(Color.Orange, Color.White, (Math.random()*256).toInt, glyphs)
   }
 
-  def draw() {
-    Renderer.draw(sprite)
-  }
-}
-
-class Grid {
-  val tiles:Array[Array[Tile]] = Array.tabulate(10,10) { case (i,j) =>
-    new Tile(Color.White, "^", i*10, j*10)
+  def update() {
+    if (Controls.Up.justPressed) {
+      iOffset += 1
+    } else if (Controls.Down.justPressed) {
+      iOffset -= 1
+    }
   }
 
-  def draw() {
-    for (i <- 0 until 10; j <- 0 until 10) {
-      tiles(i)(j).draw()
+  def draw(width:Int, height:Int, iRoot:Int, jRoot:Int) {
+    //val imin = scala.math.max(iOffset, cols - width)
+    //val imax = scala.math.min()
+    for (i <- 0 until cols; j <- 0 until rows) {
+      val ii = iOffset + i
+      val jj = j
+      if (ii > 0 && jj > 0 && ii < cols && jj < rows) {
+        tiles(i)(j).draw(iRoot + ii, jRoot + jj)
+      }
     }
   }
 }

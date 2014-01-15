@@ -7,6 +7,7 @@ import com.deweyvm.gleany.saving.{Settings, SettingDefaults, ControlNameCollecti
 import com.deweyvm.gleany.graphics.display.Display
 import com.deweyvm.gleany.data.Point2i
 import com.deweyvm.whatever.input.WhateverControls
+import com.deweyvm.whatever.loading.WhateverDefaultSettings
 
 
 object Main {

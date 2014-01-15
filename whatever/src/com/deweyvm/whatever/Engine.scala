@@ -1,14 +1,19 @@
 package com.deweyvm.whatever
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.deweyvm.whatever.graphics.{Renderer, Camera}
-import com.deweyvm.whatever.world.Grid
+import com.deweyvm.whatever.graphics.Renderer
+import com.deweyvm.whatever.world.Stage
+import com.deweyvm.whatever.input.Controls
 
 class Engine {
-  val grid = new Grid
-  def update() {}
+  val stage = new Stage
+
+  def update() {
+    stage.update()
+    Controls.update()
+  }
+
   def draw() {
-    grid.draw()
+    stage.draw()
     Renderer.render()
   }
 }
