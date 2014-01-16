@@ -1,50 +1,49 @@
 package com.deweyvm.whatever.world
 
-import com.deweyvm.whatever.graphics.{GlyphFactory}
-import com.deweyvm.whatever.{Game, Assets}
+import com.deweyvm.whatever.graphics.GlyphFactory
+import com.deweyvm.whatever.Game
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.whatever.ui.Text
+import com.deweyvm.whatever.ui.{WorldPanel, TextPanel, Panel, Text}
 import com.deweyvm.whatever.entities.{Tile, Code}
-import scala.collection.mutable.ArrayBuffer
-import com.deweyvm.gleany.data.{Point2i, Recti}
+import com.deweyvm.whatever.data.Array2d
+import com.deweyvm.gleany.data.{Point2f, Point2i, Recti}
 
 
-class Stage {
-  val cols = Game.RenderWidth/16
-  val rows = Game.RenderHeight/16
-  val factory = new GlyphFactory(16, 16, 16, 16, Assets.characterMap)
-  val grid = new Grid(31, 16, 50, 50, factory)
+object Stage {
+  def create(factory:GlyphFactory):Stage = {
+    val cols = Game.RenderWidth/16
+    val rows = Game.RenderHeight/16
+    val messagePanel = TextPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, factory)
+                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
+                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
+                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
+                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
+    val worldPanel = WorldPanel.create(0, 0, cols/2, 1, cols/2 - 1, rows - 1 - 1, 50, 50, factory)
+    val controlPanel = new Panel(1, rows - 8 + 1, cols/2 - 1 - 1, 8 - 1 - 1)
+    new Stage(cols, rows, factory, Vector(messagePanel, worldPanel, controlPanel))
+  }
+}
+
+class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel]) {
+  val rect = Recti(0, 0, cols, rows)
+
   val rightPartition = 32
   val testText = new Text("this is a test", Color.Blue, Color.White, factory)
-  val panels = ArrayBuffer[Panel]()
-  val borders = ArrayBuffer[(Int, Int, Tile)]()
+  val borders = calculateBorders
 
-  def init() {
-    panels += new Panel(1, 1, cols/2 - 1 - 1, rows - 8 - 1)
-    panels += new Panel(cols/2, 1, cols/2 - 1, rows - 1 - 1)
-    panels += new Panel(1, rows - 8 + 1, cols/2 - 1 - 1, 8 - 1 - 1)
-    updateBorders()
-  }
-
-  def update() {
-    grid.update()
-  }
+  def update:Stage = new Stage(cols, rows, factory, panels map (_.update))
 
   def draw() {
-    grid.draw(rightPartition, 1)
+    panels foreach {_.draw()}
     borders foreach { case (i, j, tile) =>
-      tile.draw(i, j)
+      tile foreach { _.draw(i, j) }
     }
   }
 
-  def updateBorders() {
-    borders.clear()
-    for (i <- 0 until (Game.RenderWidth/16);  j <- 0 until (Game.RenderHeight/16)) {
-      def addBorder(code:Code): Unit = {
-        borders += ((i, j, code.makeTile(Color.Black, Color.White, factory)))
-      }
+  def calculateBorders:Array2d[Option[Tile]] = {
+    Array2d.tabulate(cols, rows) { case (i,j) =>
       if (isSolid(i, j)) {
-
+        None
       } else {
         val up = isSolid(i, j-1)
         val down = isSolid(i, j+1)
@@ -63,39 +62,17 @@ class Stage {
           case (false, true,  true,  false) => Code.╚
           case _                            => Code.?
         }
-        addBorder(code)
+        Some(code.makeTile(Color.Black, Color.White, factory))
       }
     }
   }
-
-
 
   def isSolid(i:Int, j:Int): Boolean = {
-    if (i < 0 || i > cols - 1 || j < 0 || j > rows - 1) {
-      true
-    } else {
-      panels exists { p =>
-        p.contains(i, j)
-      }
-    }
-
+    !rect.contains(Point2f(i,j)) || (panels exists { p =>
+      p.contains(i, j)
+    })
   }
 
-  init()
 }
 
 
-class Panel(val x:Int, val y:Int, val width:Int, val height:Int) {
-  def contains(i:Int, j:Int):Boolean = {
-    i >= x && i < x + width && j >= y && j < y + height
-  }
-
-  def drawText(text:Text, i:Int, j:Int) {
-    text.letters.zipWithIndex map { case (tile, k) =>
-      val ii = i + k
-      if (contains(ii, j)) {
-        tile.draw(i + k, j)
-      }
-    }
-  }
-}
