@@ -10,6 +10,13 @@ object Array2d {
     new Array2d(elts, cols, rows)
   }
 
+  /**
+   * the parameter t is evaluated once
+   */
+  def fill[T](cols:Int, rows:Int)(t:T):Array2d[T] = {
+    new Array2d(Vector.fill(cols*rows)(t), cols, rows)
+  }
+
   def indexToCoords(k:Int, cols:Int):(Int,Int) = (k % cols, k / cols)
   def coordsToIndex(i:Int, j:Int, cols:Int):Int = i + j*cols
 
@@ -48,6 +55,9 @@ class Array2d[+T](elements:Vector[T], cols:Int, rows:Int) {
       Some(elements(k))
     }
   }
+
+  def put[R >: T](i:Int, j:Int, t:R):Array2d[R] =
+    new Array2d(elements.updated(coordsToIndex(i, j, cols), t), cols, rows)
 
 
   def slice(x:Int, y:Int, width:Int, height:Int):Array2d[Option[T]] = {

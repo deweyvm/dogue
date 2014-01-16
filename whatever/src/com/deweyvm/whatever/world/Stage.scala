@@ -1,25 +1,32 @@
 package com.deweyvm.whatever.world
 
 import com.deweyvm.whatever.graphics.GlyphFactory
-import com.deweyvm.whatever.Game
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.whatever.ui.{WorldPanel, TextPanel, Panel, Text}
 import com.deweyvm.whatever.entities.{Tile, Code}
 import com.deweyvm.whatever.data.Array2d
-import com.deweyvm.gleany.data.{Point2f, Point2i, Recti}
+import com.deweyvm.gleany.data.{Point2f, Recti}
 
 
 object Stage {
-  def create(factory:GlyphFactory):Stage = {
-    val cols = Game.RenderWidth/16
-    val rows = Game.RenderHeight/16
+  def create(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
+    val controlsHeight = 8
     val messagePanel = TextPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, factory)
-                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
-                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
-                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
-                                .addText("this is a string of text which should be displayed on multiple lines", Color.White, Color.Black)
+                                .addText("line0", Color.White, Color.Black)
+                                .addText("line1 should stretch onto multiple lines", Color.White, Color.Black)
+                                .addText("line2", Color.White, Color.Black)
+                                .addText("line3", Color.White, Color.Black)
+                                .addText("line4", Color.White, Color.Black)
+                                .addText("line5", Color.White, Color.Black)
+                                .addText("line6", Color.White, Color.Black)
+                                .addText("line7", Color.White, Color.Black)
+                                .addText("line8", Color.White, Color.Black)
+                                .addText("line9", Color.White, Color.Black)
+                                .addText("line10", Color.White, Color.Black)
+                                .addText("line11", Color.White, Color.Black)
+                                .addText("line12", Color.White, Color.Black)
     val worldPanel = WorldPanel.create(0, 0, cols/2, 1, cols/2 - 1, rows - 1 - 1, 50, 50, factory)
-    val controlPanel = new Panel(1, rows - 8 + 1, cols/2 - 1 - 1, 8 - 1 - 1)
+    val controlPanel = new Panel(1, rows - controlsHeight + 1, cols/2 - 1 - 1, controlsHeight - 1 - 1)
     new Stage(cols, rows, factory, Vector(messagePanel, worldPanel, controlPanel))
   }
 }

@@ -22,6 +22,7 @@ class WorldPanel(x:Int, y:Int, width:Int, height:Int, grid:Grid, view:GridView)
   }
 
   override def draw() {
+    super.draw()
     view.draw(grid, x, y)
   }
 }

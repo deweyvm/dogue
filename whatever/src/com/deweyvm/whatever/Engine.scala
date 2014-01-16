@@ -5,8 +5,10 @@ import com.deweyvm.whatever.world.Stage
 import com.deweyvm.whatever.input.Controls
 
 class Engine {
-  val glyphs = new GlyphFactory(16, 16, 16, 16, Assets.characterMap)
-  var stage = Stage.create(glyphs)
+  val codePage = Assets.page437_16x16
+  val cols = Game.RenderWidth/codePage.tileWidth
+  val rows = Game.RenderHeight/codePage.tileHeight
+  var stage = Stage.create(codePage, cols, rows)
 
   def update() {
     stage = stage.update

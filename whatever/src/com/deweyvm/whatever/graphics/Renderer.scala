@@ -2,6 +2,7 @@ package com.deweyvm.whatever.graphics
 
 import com.badlogic.gdx.graphics.g2d.{Sprite, BitmapFontCache, SpriteBatch}
 import scala.collection.mutable.ArrayBuffer
+import com.badlogic.gdx.Gdx
 
 object Renderer {
   private val batch = new SpriteBatch
