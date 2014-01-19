@@ -5,6 +5,14 @@ import com.deweyvm.whatever.entities.{Tile, Code}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.whatever.Assets
 
+/*
+ * have continuous scrollbar
+ * iterate over each discrete half square.
+ * if the scroll bar is at the start, fill in the topmost half-square
+ * if the scroll bar is at the end, fill in the bottommost half-square
+ * for each remaining half square: if it collides with the continuous scrollbar, add it to the queue, otherwise continue
+ * when done, merge all overlapping half squares to full squares
+ */
 class ScrollBar(factory:GlyphFactory) {
   private def makeTile(code:Code):Tile =
     new Tile(Color.Black, Color.White, code.index, Assets.page437_16x16)

@@ -8,6 +8,7 @@ object Game {
   val Height = 32*9*factor
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom
+  val globals = new Globals
 }
 
 class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {

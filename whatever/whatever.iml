@@ -22,16 +22,18 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="gleany" />
     <orderEntry type="library" name="libs" level="project" />
+    <orderEntry type="library" name="scala-compiler" level="application" />
+    <orderEntry type="library" name="scala-library" level="application" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://C:/Program Files (x86)/scala/lib/scala-library.jar!/" />
+          <root url="file://$MODULE_DIR$/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="scala-compiler" level="application" />
   </component>
 </module>
 

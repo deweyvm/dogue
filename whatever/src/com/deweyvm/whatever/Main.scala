@@ -3,9 +3,7 @@ package com.deweyvm.whatever
 import com.deweyvm.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
 import com.deweyvm.gleany.logging.Logger
 import com.deweyvm.gleany.files.PathResolver
-import com.deweyvm.gleany.saving.{Settings, SettingDefaults, ControlNameCollection, ControlName}
-import com.deweyvm.gleany.graphics.display.Display
-import com.deweyvm.gleany.data.Point2i
+import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.whatever.input.WhateverControls
 import com.deweyvm.whatever.loading.WhateverDefaultSettings
 
@@ -31,6 +29,9 @@ object Main {
   def handleArgs(args: Seq[String]) {
     val isDebug = args.contains("--debug")
     val showVersion = args.contains("--version")
+    val remote = args.contains("--remote")
+    Game.globals.IsDebugMode = isDebug
+    Game.globals.IsRemote = remote
     if (showVersion) {
       println("unknown")
       sys.exit(0)

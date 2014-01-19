@@ -2,16 +2,21 @@ package com.deweyvm.whatever.world
 
 import com.deweyvm.whatever.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.whatever.ui.{WorldPanel, TextPanel, Panel, Text}
+import com.deweyvm.whatever.ui._
 import com.deweyvm.whatever.entities.{Tile, Code}
 import com.deweyvm.whatever.data.Array2d
 import com.deweyvm.gleany.data.{Point2f, Recti}
+import scala.Some
 
 
 object Stage {
-  def create(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
+  def createTitle(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
+    val titlePanel = new TitlePanel(1, 1, cols - 2, rows - 2, factory)
+    new Stage(cols, rows, factory, Vector(titlePanel))
+  }
+  def createWorld(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
     val controlsHeight = 8
-    val messagePanel = TextPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, factory)
+    val messagePanel = InfoPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, factory)
                                 .addText("line0", Color.White, Color.Black)
                                 .addText("line1 should stretch onto multiple lines", Color.White, Color.Black)
                                 .addText("line2", Color.White, Color.Black)
@@ -32,6 +37,7 @@ object Stage {
 }
 
 class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel]) {
+
   val rect = Recti(0, 0, cols, rows)
 
   val rightPartition = 32
