@@ -7,7 +7,7 @@ class Globals {
   Debug.load()
   private var drawDebug = false
   var IsDebugMode = true
-  var IsRemote = false
+  var RemoteIp:Option[String] = None
   var Version = "0.X.X"
   //def isDebugging = true
 

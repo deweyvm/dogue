@@ -36,7 +36,7 @@ object Reader {
   }
 }
 
-class Reader(socket:Socket, parent:Server) extends Runnable {
+class Reader(socket:Socket, parent:Server) extends Task {
   import Reader._
   var running = true
   val out = socket.getOutputStream
@@ -53,7 +53,7 @@ class Reader(socket:Socket, parent:Server) extends Runnable {
   }
 
 
-  override def run() {
+  override def execute() {
     while(running && socket.isConnected) {
       val available = in.available()
       if (available > 0) {

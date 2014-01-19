@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx
 import com.deweyvm.gleany.data.Encoding
 
 class Engine {
-  val address = if (Game.globals.IsRemote) "74.243.160.86" else "localhost"
+  val address = Game.globals.RemoteIp.getOrElse("localhost")
   val sock = new Socket(address, 4815)
   sock.getOutputStream.write(Encoding.toBytes("this is a test\0"))
   val codePage = Assets.page437_16x16

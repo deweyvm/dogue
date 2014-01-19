@@ -26,12 +26,15 @@ object Main {
     GleanyGame.runGame(config, new Game(initializer))
   }
 
-  def handleArgs(args: Seq[String]) {
+  def handleArgs(args: Array[String]) {
     val isDebug = args.contains("--debug")
     val showVersion = args.contains("--version")
-    val remote = args.contains("--remote")
+    val remoteIndex = args.indexOf("--remote")
+    if (remoteIndex != -1) {
+      val ip = args(remoteIndex + 1)
+      Game.globals.RemoteIp = Some(ip)
+    }
     Game.globals.IsDebugMode = isDebug
-    Game.globals.IsRemote = remote
     if (showVersion) {
       println("unknown")
       sys.exit(0)
