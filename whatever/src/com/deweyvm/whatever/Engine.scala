@@ -5,7 +5,7 @@ import com.deweyvm.whatever.world.Stage
 import com.deweyvm.whatever.input.Controls
 import java.net.{InetAddress, Socket}
 import com.badlogic.gdx.Gdx
-import com.deweyvm.whatever.data.Encoding
+import com.deweyvm.gleany.data.Encoding
 
 class Engine {
   val address = if (Game.globals.IsRemote) "74.243.160.86" else "localhost"

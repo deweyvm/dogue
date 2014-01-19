@@ -2,7 +2,7 @@ package com.deweyvm.whatever.server
 
 import java.net.Socket
 import scala.collection.mutable.ArrayBuffer
-import com.deweyvm.whatever.data.Encoding
+import com.deweyvm.gleany.data.Encoding
 
 object Reader {
   //todo -- write tests for this method
