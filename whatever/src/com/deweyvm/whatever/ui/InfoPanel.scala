@@ -2,10 +2,12 @@ package com.deweyvm.whatever.ui
 
 import com.deweyvm.whatever.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
+import com.deweyvm.gleany.GleanyMath
+import com.deweyvm.whatever.input.Controls
 
 object InfoPanel {
   def makeNew(x:Int, y:Int, width:Int, height:Int, factory:GlyphFactory):InfoPanel = {
-    new InfoPanel(x, y, width, height, factory, "", Vector(), TextView.create(factory))
+    new InfoPanel(x, y, width, height, factory, "", Vector(), new ScrollBar(factory), 0)
   }
 
   def splitText(string:String, textWidth:Int):Vector[String] = {
@@ -27,7 +29,12 @@ case class InfoPanel(override val x:Int,
                      override val y:Int,
                      override val width:Int,
                      override val height:Int,
-                     factory:GlyphFactory, text:String, lines:Vector[Text], view:TextView, ctr:Int=0)
+                     factory:GlyphFactory,
+                     text:String,
+                     lines:Vector[Text],
+                     scrollBar:ScrollBar,
+                     jView:Int,
+                     ctr:Int=0)
   extends Panel(x, y, width, height) {
   private val leftMargin = 0
   private val rightMargin = 1
@@ -42,14 +49,10 @@ case class InfoPanel(override val x:Int,
               lines = lines ++ addedLines)
   }
 
-  def drawText(text:Text, i:Int, j:Int) {
-    text.filterDraw(i, j, contains)
-    /*text.letters.zipWithIndex map { case (tile, k) =>
-      val ii = i + k
-      if (contains(ii, j)) {
-        tile.draw(i + k, j)
-      }
-    }*/
+  private def updateView:InfoPanel = {
+    val jMax = lines.length - 1
+    val jMin = height - 1
+    this.copy(jView = GleanyMath.clamp(-Controls.AxisY.justPressed + jView, jMin, jMax))
   }
 
   override def update():InfoPanel = {
@@ -59,17 +62,33 @@ case class InfoPanel(override val x:Int,
       } else {
         (false, ctr + 1)
       }
-    val next = this.copy(view = view.update(lines.length - height), ctr = newCtr)
-    if (addLine) {
-      next.addText("this is an added line", Color.White, Color.Black)
+
+    val next = if (addLine) {
+      this.addText("this is an added line", Color.White, Color.Black)
     } else {
-      next
+      this
     }
+    next.copy(ctr = newCtr).updateView
   }
 
   override def draw() {
     super.draw()
-    view.draw(lines, width, height, leftMargin + x, topMargin + y)
+    drawLines(lines, width, height, leftMargin + x, topMargin + y)
+  }
+
+  def drawText(text:Text, i:Int, j:Int) {
+    text.filterDraw(i, j, contains)
+  }
+
+  private def drawLines(lines:Vector[Text], width:Int, height:Int, iRoot:Int, jRoot:Int) {
+    scrollBar.draw(lines.length, lines.length - jView - 1, width, height, iRoot, jRoot)
+    for (k <- 0 until height) {
+      val jj = (k + (lines.length - jView - 1))
+      if (jj >= 0 && jj < lines.length) {
+        val line = lines(jj)
+        line.draw(iRoot, jRoot + k)
+      }
+    }
   }
 }
 

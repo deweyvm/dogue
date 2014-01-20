@@ -431,6 +431,15 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
+  <component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="Client + Local Server" type="Multirun" factoryName="Multirun" singleton="true" separateTabs="true" startOneByOne="true" markFailedProcess="true" hideSuccessProcess="false">
+      <runConfiguration name="Local Server" type="Application" />
+      <runConfiguration name="Client" type="Application" />
+      <RunnerSettings RunnerId="multirun" />
+      <ConfigurationWrapper RunnerId="multirun" />
+      <method />
+    </configuration>
+  </component>
   <component name="ScalacSettings">
     <option name="COMPILER_LIBRARY_NAME" value="scala-compiler" />
     <option name="COMPILER_LIBRARY_LEVEL" value="Global" />
