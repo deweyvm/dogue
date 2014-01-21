@@ -8,10 +8,10 @@ class TitlePanel(override val x:Int,
                  override val width:Int,
                  override val height:Int,
                  factory:GlyphFactory) extends Panel(x, y, width, height) {
-  val title = new Text("Whorl", Color.Black, Color.White, factory)
+  val title = new Text("Dogue", Color.Black, Color.White, factory)
   override def draw() {
     super.draw()
-
+    title.draw(width/2 - title.width/2, height/2)
   }
 
 }

@@ -45,14 +45,6 @@ class Reader(socket:Socket, parent:Server) extends Task {
   var current = ""
   val buff = new Array[Byte](4096)
 
-  def close() {
-    println("Shutting down")
-    socket.close()
-    running = false
-    parent.running = false
-  }
-
-
   override def execute() {
     while(running && socket.isConnected) {
       val available = in.available()
@@ -71,7 +63,7 @@ class Reader(socket:Socket, parent:Server) extends Task {
           current = last
 
           for (s <- inBuffer) {
-            new Thread(new Worker(s, close)).start()
+            new Thread(new Worker(s)).start()
           }
           inBuffer.clear()
         }

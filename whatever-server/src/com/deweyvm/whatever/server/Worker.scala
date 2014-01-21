@@ -1,9 +1,11 @@
 package com.deweyvm.whatever.server
 
-class Worker(command:String, close:() => Unit) extends Runnable {
+import com.deweyvm.gleany.Debug
+
+class Worker(command:String) extends Runnable {
   override def run() {
     if (command == "/quit") {
-      close()
+      Debug.debug("don't know how to quit :(")
     }
   }
 }

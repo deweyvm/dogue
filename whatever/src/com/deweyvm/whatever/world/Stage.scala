@@ -12,8 +12,10 @@ import scala.Some
 object Stage {
   def createTitle(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
     val titlePanel = new TitlePanel(1, 1, cols - 2, rows - 2, factory)
-    new Stage(cols, rows, factory, Vector(titlePanel))
+    val input = TextInput.create(Color.White, Color.Black, factory)
+    Stage(cols, rows, factory, Vector(titlePanel), input)
   }
+
   def createWorld(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
     val controlsHeight = 8
     val messagePanel = InfoPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, factory)
@@ -32,11 +34,12 @@ object Stage {
                                 .addText("line12", Color.White, Color.Black)
     val worldPanel = WorldPanel.create(0, 0, cols/2, 1, cols/2 - 1, rows - 1 - 1, 50, 50, factory)
     val controlPanel = new Panel(1, rows - controlsHeight + 1, cols/2 - 1 - 1, controlsHeight - 1 - 1)
-    new Stage(cols, rows, factory, Vector(messagePanel, worldPanel, controlPanel))
+    val input = TextInput.create(Color.White, Color.Black, factory)
+    Stage(cols, rows, factory, Vector(messagePanel, worldPanel, controlPanel), input)
   }
 }
 
-class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel]) {
+case class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel], textInput:TextInput) {
 
   val rect = Recti(0, 0, cols, rows)
 
@@ -44,13 +47,13 @@ class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel]) {
   val testText = new Text("this is a test", Color.Blue, Color.White, factory)
   val borders = calculateBorders
 
-  def update:Stage = new Stage(cols, rows, factory, panels map (_.update))
-
+  def update:Stage = this.copy(panels = panels map (_.update), textInput = textInput.update)
   def draw() {
     panels foreach {_.draw()}
     borders foreach { case (i, j, tile) =>
       tile foreach { _.draw(i, j) }
     }
+    textInput.draw(0,0)
   }
 
   def calculateBorders:Array2d[Option[Tile]] = {
