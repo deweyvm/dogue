@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+procname=java
+num=`pgrep $procname | wc -l`
+if [[ $num -gt 1 ]] ; then
+    echo Found more than one process to kill:
+    pgrep $procname
+    echo Cannot disambiguate. Aborting.
+    exit 1
+fi
+killall $procname &> /dev/null
+/sbin/start-stop-daemon -b -S --user doge --name dogue-server --chuid doge --exec /usr/bin/java -- -jar /home/doge/whatever/whatever_server_jar/whatever-server.jar
