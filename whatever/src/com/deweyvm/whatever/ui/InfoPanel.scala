@@ -6,8 +6,8 @@ import com.deweyvm.gleany.GleanyMath
 import com.deweyvm.whatever.input.Controls
 
 object InfoPanel {
-  def makeNew(x:Int, y:Int, width:Int, height:Int, factory:GlyphFactory):InfoPanel = {
-    new InfoPanel(x, y, width, height, factory, "", Vector(), new ScrollBar(factory), 0)
+  def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color, factory:GlyphFactory):InfoPanel = {
+    new InfoPanel(x, y, width, height, bgColor, factory, "", Vector(), new ScrollBar(factory), 0)
   }
 
   def splitText(string:String, textWidth:Int):Vector[String] = {
@@ -29,13 +29,13 @@ case class InfoPanel(override val x:Int,
                      override val y:Int,
                      override val width:Int,
                      override val height:Int,
+                     bgColor:Color,
                      factory:GlyphFactory,
                      text:String,
                      lines:Vector[Text],
                      scrollBar:ScrollBar,
-                     jView:Int,
-                     ctr:Int=0)
-  extends Panel(x, y, width, height) {
+                     jView:Int)
+  extends Panel(x, y, width, height, bgColor) {
   private val leftMargin = 0
   private val rightMargin = 1
   private val topMargin = 0
@@ -56,19 +56,7 @@ case class InfoPanel(override val x:Int,
   }
 
   override def update():InfoPanel = {
-    val (addLine, newCtr) =
-      if (ctr >= 180) {
-        (true, 0)
-      } else {
-        (false, ctr + 1)
-      }
-
-    val next = if (addLine) {
-      this.addText("this is an added line", Color.White, Color.Black)
-    } else {
-      this
-    }
-    next.copy(ctr = newCtr).updateView
+    this.updateView
   }
 
   override def draw() {
@@ -83,7 +71,7 @@ case class InfoPanel(override val x:Int,
   private def drawLines(lines:Vector[Text], width:Int, height:Int, iRoot:Int, jRoot:Int) {
     scrollBar.draw(lines.length, lines.length - jView - 1, width, height, iRoot, jRoot)
     for (k <- 0 until height) {
-      val jj = (k + (lines.length - jView - 1))
+      val jj = k + (lines.length - jView - 1)
       if (jj >= 0 && jj < lines.length) {
         val line = lines(jj)
         line.draw(iRoot, jRoot + k)

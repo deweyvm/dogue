@@ -27,7 +27,7 @@ class Text(text:String, bgColor:Color, fgColor:Color, factory:GlyphFactory) {
     new Text(text + s, bgColor, fgColor, factory)
   }
 
-  def replace(s:String):Text = {
+  def setString(s:String):Text = {
     new Text(s, bgColor, fgColor, factory)
   }
 

@@ -4,11 +4,13 @@ import com.badlogic.gdx.{InputAdapter, Gdx}
 import com.deweyvm.whatever.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
 import scala.collection.mutable.ArrayBuffer
+import com.deweyvm.whatever.Game
 
 object TextInput {
   var count = 0
-  def create(bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
-    val result = new TextInput(count, Text.create(bgColor, fgColor, factory))
+
+  def create(width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
+    val result = new TextInput(count, width, height, bgColor, fgColor, "", factory)
     count += 1
     result
   }
@@ -24,7 +26,7 @@ object TextInput {
           } else if (code == 13) {
             commandQueue(id) += strings(id)
             strings(id) = ""
-          } else {
+          } else if (code > 31){
             strings(id) += char
             println("here <%s>".format(char.toInt.toString))
           }
@@ -45,14 +47,31 @@ object TextInput {
   var active:Option[Int] = None
 }
 
-case class TextInput(id:Int, text:Text) {
+case class TextInput(id:Int, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
   TextInput.inputs(id) = this
+
+  private def makeText(s:String) = {
+    new Text(s, bgColor, fgColor, factory)
+  }
+
+  //todo -- code clones with info panel: put this in a more sensible place
+  val text = InfoPanel.splitText(string, width) map makeText
+  val cursor = Vector(makeText("_"), makeText(" "))
+  val flashRate = 30 //flash cursor alternatively for flashRate frames
+
   def update:TextInput = {
     TextInput.active = Some(id)
-    this.copy(text = text.replace(TextInput.take(id)))
+    this.copy(string = TextInput.take(id))
   }
 
   def draw(iRoot:Int, jRoot:Int) {
-    text.draw(iRoot, jRoot)
+    val iStart = scala.math.max(0, text.length - height)
+    val end = scala.math.min(text.length, height)
+    for (i <- 0 until end) {
+      text(i + iStart).draw(iRoot, jRoot + i)
+    }
+    if (text.length >= 0 && text(0).width > 0)  {
+      cursor(Game.getFrame/flashRate % 2).draw(iRoot+text(text.length - 1).width, jRoot + end - 1)
+    }
   }
 }

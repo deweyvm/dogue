@@ -7,53 +7,43 @@ import com.deweyvm.whatever.entities.{Tile, Code}
 import com.deweyvm.whatever.data.Array2d
 import com.deweyvm.gleany.data.{Point2f, Recti}
 import scala.Some
-
+import com.deweyvm.whatever.Game
+import com.deweyvm.whatever.input.Controls
 
 object Stage {
-  def createTitle(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
-    val titlePanel = new TitlePanel(1, 1, cols - 2, rows - 2, factory)
-    val input = TextInput.create(Color.White, Color.Black, factory)
-    Stage(cols, rows, factory, Vector(titlePanel), input)
+  case object Title extends StageType {
+    override def next = Chat
   }
-
-  def createWorld(factory:GlyphFactory, cols:Int, rows:Int):Stage = {
-    val controlsHeight = 8
-    val messagePanel = InfoPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, factory)
-                                .addText("line0", Color.White, Color.Black)
-                                .addText("line1 should stretch onto multiple lines", Color.White, Color.Black)
-                                .addText("line2", Color.White, Color.Black)
-                                .addText("line3", Color.White, Color.Black)
-                                .addText("line4", Color.White, Color.Black)
-                                .addText("line5", Color.White, Color.Black)
-                                .addText("line6", Color.White, Color.Black)
-                                .addText("line7", Color.White, Color.Black)
-                                .addText("line8", Color.White, Color.Black)
-                                .addText("line9", Color.White, Color.Black)
-                                .addText("line10", Color.White, Color.Black)
-                                .addText("line11", Color.White, Color.Black)
-                                .addText("line12", Color.White, Color.Black)
-    val worldPanel = WorldPanel.create(0, 0, cols/2, 1, cols/2 - 1, rows - 1 - 1, 50, 50, factory)
-    val controlPanel = new Panel(1, rows - controlsHeight + 1, cols/2 - 1 - 1, controlsHeight - 1 - 1)
-    val input = TextInput.create(Color.White, Color.Black, factory)
-    Stage(cols, rows, factory, Vector(messagePanel, worldPanel, controlPanel), input)
+  case object Chat extends StageType {
+    override def next = World
+  }
+  case object World extends StageType {
+    override def next = Title
   }
 }
 
-case class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel], textInput:TextInput) {
-
+case class Stage(t:StageType, cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel], serverStatus:Text) {
   val rect = Recti(0, 0, cols, rows)
 
   val rightPartition = 32
   val testText = new Text("this is a test", Color.Blue, Color.White, factory)
   val borders = calculateBorders
 
-  def update:Stage = this.copy(panels = panels map (_.update), textInput = textInput.update)
+  def update(stageFactory:StageFactory):Stage = {
+    if (Controls.Tab.justPressed) {
+      stageFactory.create(t.next)
+    } else {
+      this.copy(panels = panels map (_.update),
+        serverStatus = serverStatus.setString(Game.client.getString))
+    }
+  }
+
   def draw() {
-    panels foreach {_.draw()}
+    panels foreach { _.draw() }
     borders foreach { case (i, j, tile) =>
       tile foreach { _.draw(i, j) }
     }
-    textInput.draw(0,0)
+    serverStatus.draw(cols - serverStatus.width, rows - 1)
   }
 
   def calculateBorders:Array2d[Option[Tile]] = {

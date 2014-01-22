@@ -7,7 +7,8 @@ class TitlePanel(override val x:Int,
                  override val y:Int,
                  override val width:Int,
                  override val height:Int,
-                 factory:GlyphFactory) extends Panel(x, y, width, height) {
+                 bgColor:Color,
+                 factory:GlyphFactory) extends Panel(x, y, width, height, bgColor) {
   val title = new Text("Dogue", Color.Black, Color.White, factory)
   override def draw() {
     super.draw()

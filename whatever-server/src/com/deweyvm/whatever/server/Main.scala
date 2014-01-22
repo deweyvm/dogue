@@ -5,6 +5,6 @@ object Main {
     if (args.contains("--pass")) {
       System.exit(0)
     }
-    new Server().run()
+    new Server().start()
   }
 }

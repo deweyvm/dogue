@@ -51,7 +51,7 @@
   </component>
   <component name="CopyrightManager" default="">
     <copyright>
-      <option name="notice" value="Copyright 2013, moopslc&#10;&#10;This file is part of Gleany.&#10;&#10;Gleany is free software: you can redistribute it and/or modify it under &#10;the terms of the GNU General Public License as published by the Free &#10;Software Foundation, either version 3 of the License, or (at your option) &#10;any later version.&#10;&#10;Gleany is distributed in the hope that it will be useful, but WITHOUT ANY &#10;WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS &#10;FOR A PARTICULAR PURPOSE. See the GNU General Public License for more &#10;details.&#10;&#10;You should have received a copy of the GNU General Public License along &#10;with Gleany.&#10;&#10;If not, see &lt;http://www.gnu.org/licenses/&gt;." />
+      <option name="notice" value="Copyright 2013, deweyvm&#10;&#10;This file is part of Gleany.&#10;&#10;Gleany is free software: you can redistribute it and/or modify it under &#10;the terms of the GNU General Public License as published by the Free &#10;Software Foundation, either version 3 of the License, or (at your option) &#10;any later version.&#10;&#10;Gleany is distributed in the hope that it will be useful, but WITHOUT ANY &#10;WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS &#10;FOR A PARTICULAR PURPOSE. See the GNU General Public License for more &#10;details.&#10;&#10;You should have received a copy of the GNU General Public License along &#10;with Gleany.&#10;&#10;If not, see &lt;http://www.gnu.org/licenses/&gt;." />
       <option name="keyword" value="Copyright" />
       <option name="allowReplaceKeyword" value="" />
       <option name="myName" value="gpl3" />
@@ -430,15 +430,6 @@
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
-  </component>
-  <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="Client + Local Server" type="Multirun" factoryName="Multirun" singleton="true" separateTabs="true" startOneByOne="true" markFailedProcess="true" hideSuccessProcess="false">
-      <runConfiguration name="Local Server" type="Application" />
-      <runConfiguration name="Client" type="Application" />
-      <RunnerSettings RunnerId="multirun" />
-      <ConfigurationWrapper RunnerId="multirun" />
-      <method />
-    </configuration>
   </component>
   <component name="ScalacSettings">
     <option name="COMPILER_LIBRARY_NAME" value="scala-compiler" />

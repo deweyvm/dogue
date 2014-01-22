@@ -12,12 +12,14 @@ object Controls {
   val Left = makeControl(Input.Keys.LEFT)
   val Enter = makeControl(Input.Keys.ENTER)
 
+  val Tab = makeControl(Input.Keys.TAB)
+
   val Escape = makeControl(Input.Keys.ESCAPE)
 
   val AxisX = new AxisControl(Left, Right)
   val AxisY = new AxisControl(Up, Down)
 
-  val All = Vector(Up, Down, Right, Left, Escape)
+  val All = Vector(Up, Down, Right, Left, Tab, Escape)
 
   def makeControl(key:Int) = {
     new TriggerAggregate(Seq(new KeyboardTrigger(key)))
