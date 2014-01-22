@@ -9,7 +9,7 @@ class EnrichedSocket(sock:Socket) {
    * requires: same requirements as sock.getInputStream and stream.write
    * does not catch any exceptions
    */
-  def send(string:String) {
+  def esend(string:String) {
     sock.getOutputStream.write(Encoding.toBytes(string + "\0"))
   }
 
@@ -18,7 +18,7 @@ class EnrichedSocket(sock:Socket) {
    * @return Some(string) where string has been read from the socket or None if no data was available
    *
    */
-  def read():Option[String] = {
+  def eread():Option[String] = {
     val buff = new Array[Byte](4096) //this cant be shared or it wouldnt be thread safe
     val in = sock.getInputStream
     val available = in.available()
