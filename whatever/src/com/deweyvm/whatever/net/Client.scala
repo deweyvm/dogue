@@ -77,16 +77,12 @@ class Client extends Task {
         case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here
         case ConnectionFailure(msg) => "Failed to connect (r)" //todo -- put control widget here
       }
-
     }
-
-
-
   }
 
   override def execute() {
     while (running) {
-      if (!client.isDefined && (state == Client.State.Connecting || state == Client.State.Disconnected)) {
+      if (!client.isDefined && (state == Client.State.Connecting/* || state == Client.State.Disconnected*/)) {
         tryConnect()
       } else {
         read()
