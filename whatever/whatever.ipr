@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ArtifactManager">
-    <artifact name="whatever:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/whatever_jar</output-path>
-      <root id="root">
-        <element id="archive" name="whatever.jar">
-          <element id="directory" name="META-INF">
-            <element id="file-copy" path="$PROJECT_DIR$/../gleany/gleany/src/META-INF/MANIFEST.MF" />
-          </element>
-          <element id="module-output" name="whatever" />
-          <element id="module-output" name="gleany" />
-        </element>
-        <element id="library" level="project" name="libs" />
-        <element id="library" level="application" name="scala-compiler" />
-        <element id="library" level="application" name="scala-library" />
-        <element id="file-copy" path="C:/Program Files (x86)/scala/lib/scala-library.jar" />
-      </root>
-    </artifact>
     <artifact name="whatever-server:jar">
       <output-path>$PROJECT_DIR$/out/artifacts/whatever_server_jar</output-path>
       <root id="root">
         <element id="archive" name="whatever-server.jar">
           <element id="module-output" name="whatever-server" />
           <element id="module-output" name="gleany" />
+          <element id="module-output" name="whatever-common" />
         </element>
         <element id="library" level="application" name="scala-library" />
         <element id="library" level="project" name="libs" />
-        <element id="file-copy" path="C:/Program Files (x86)/scala/lib/scala-library.jar" />
+      </root>
+    </artifact>
+    <artifact name="whatever:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/whatever_jar</output-path>
+      <root id="root">
+        <element id="archive" name="whatever.jar">
+          <element id="module-output" name="whatever" />
+          <element id="module-output" name="gleany" />
+          <element id="module-output" name="whatever-common" />
+        </element>
+        <element id="library" level="application" name="scala-library" />
+        <element id="library" level="application" name="scala-compiler" />
+        <element id="library" level="project" name="libs" />
+      </root>
+    </artifact>
+    <artifact name="whatever-common:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/whatever_common_jar</output-path>
+      <root id="root">
+        <element id="archive" name="whatever-common.jar">
+          <element id="module-output" name="whatever-common" />
+        </element>
+        <element id="library" level="application" name="scala-library" />
       </root>
     </artifact>
   </component>
@@ -81,6 +87,7 @@
   </component>
   <component name="HighlightingAdvisor">
     <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false" />
+    <option name="TYPE_AWARE_HIGHLIGHTING_ENABLED" value="true" />
   </component>
   <component name="InspectionProjectProfileManager">
     <profiles>
@@ -425,6 +432,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../gleany/gleany.iml" filepath="$PROJECT_DIR$/../gleany/gleany.iml" />
       <module fileurl="file://$PROJECT_DIR$/whatever.iml" filepath="$PROJECT_DIR$/whatever.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../whatever-common/whatever-common.iml" filepath="$PROJECT_DIR$/../whatever-common/whatever-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/../whatever-server/whatever-server.iml" filepath="$PROJECT_DIR$/../whatever-server/whatever-server.iml" />
     </modules>
   </component>

@@ -23,10 +23,10 @@ class StageFactory(cols:Int, rows:Int, factory:GlyphFactory) {
         val titlePanel = new TitlePanel(1, 1, cols - 2, rows - 2, bgColor, factory)
         makeStage(t, Vector(titlePanel))
       case Chat =>
-        val inputHeight = 4
-        val chatPanel = new Panel(1, 1, cols - 2, rows - 2, bgColor)
-        val textInput = TextInput.create(6, 2, Color.Black, Color.White, factory)
-        val inputPanel = new InputPanel(1, rows - 2 - inputHeight, cols - 2, inputHeight, bgColor, factory, textInput)
+        val inputHeight = 2
+        val textInput = TextInput.create("such text: ", cols - 2, inputHeight, Color.Black, Color.White, factory)
+        val chatPanel = new Panel(1, 1, cols - 2, rows - 2 - inputHeight - 1, bgColor)
+        val inputPanel = new InputPanel(1, rows - 1 - inputHeight, cols - 2, inputHeight, bgColor, factory, textInput)
         makeStage(t, Vector(chatPanel, inputPanel))
       case World =>
         val controlsHeight = 8

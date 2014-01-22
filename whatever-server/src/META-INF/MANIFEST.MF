@@ -4,7 +4,6 @@ Class-Path: scala-actors.jar scala-library.jar scala-swing.jar gdx.jar
   gdx-backend-lwjgl.jar gdx-freetype-natives.jar gdx-freetype-sources.
  jar gdx-controllers-desktop.jar gdx-controllers-sources.jar gdx-backe
  nd-lwjgl-natives.jar gdx-backend-lwjgl-sources.jar gdx-controllers-de
- sktop-natives.jar gdx-controllers-desktop-sources.jar scala-library.j
- ar
+ sktop-natives.jar gdx-controllers-desktop-sources.jar
 Main-Class: com.deweyvm.whatever.server.Main
 

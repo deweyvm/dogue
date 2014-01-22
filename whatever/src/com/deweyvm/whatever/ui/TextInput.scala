@@ -9,8 +9,8 @@ import com.deweyvm.whatever.Game
 object TextInput {
   var count = 0
 
-  def create(width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
-    val result = new TextInput(count, width, height, bgColor, fgColor, "", factory)
+  def create(prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
+    val result = new TextInput(count, prompt, width, height, bgColor, fgColor, "", factory)
     count += 1
     result
   }
@@ -47,7 +47,7 @@ object TextInput {
   var active:Option[Int] = None
 }
 
-case class TextInput(id:Int, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
+case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
   TextInput.inputs(id) = this
 
   private def makeText(s:String) = {
@@ -55,9 +55,9 @@ case class TextInput(id:Int, width:Int, height:Int, bgColor:Color, fgColor:Color
   }
 
   //todo -- code clones with info panel: put this in a more sensible place
-  val text = InfoPanel.splitText(string, width) map makeText
+  val text = InfoPanel.splitText(prompt + string, width) map makeText
   val cursor = Vector(makeText("_"), makeText(" "))
-  val flashRate = 30 //flash cursor alternatively for flashRate frames
+  val flashRate = 30 //cursor flashes on/off for `flashRate` frames
 
   def update:TextInput = {
     TextInput.active = Some(id)

@@ -2,11 +2,11 @@ package com.deweyvm.whatever.server
 
 import java.net.Socket
 import scala.collection.mutable.ArrayBuffer
-import com.deweyvm.gleany.data.Encoding
 import com.deweyvm.gleany.net.Task
 import java.io.InputStream
 import com.deweyvm.gleany.Implicits._
 import com.deweyvm.gleany.Debug
+import com.deweyvm.whatever.common.Encoding
 
 
 class Reader(socket:Socket, parent:Server) extends Task {
@@ -40,7 +40,7 @@ class Reader(socket:Socket, parent:Server) extends Task {
           current = last
 
           for (s <- inBuffer) {
-            new Worker(s).start()
+            new Worker(s, socket/*fixme should probably be another socket?*/).start()
           }
           inBuffer.clear()
         }

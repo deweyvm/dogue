@@ -13,7 +13,7 @@ class Engine {
   val cols = Game.RenderWidth/codePage.tileWidth
   val rows = Game.RenderHeight/codePage.tileHeight
   val factory = new StageFactory(cols, rows, codePage)
-  var stage = factory.create(Stage.Title)
+  var stage = factory.create(Stage.Chat)
 
   def update() {
     stage = stage.update(factory)
