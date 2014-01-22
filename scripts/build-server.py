@@ -8,11 +8,11 @@ import time
 
 
 def say(s):
-    logfile = "/var/log/doge/error.log"
+    logfile = "/var/log/dogue-build/error.log"
     msg = "Server: " + s
     print(msg)
     with open(logfile, "a") as f:
-        f.write(msg)
+        f.write(msg + "\n")
 
 
 def send(client, s):
@@ -71,10 +71,13 @@ def update_server(client):
 
 
 def run_server():
+    server_log = "/var/log/dogue-game-server/error.log"
     say("Starting server")
-    code = subprocess.call(['/home/doge/whatever/dogue-server-run'], shell=True)
+    code = subprocess.call(['/etc/init.d/dogue-game-server restart'], shell=True)
     if (code != 0):
-        say("Warning: server failed to start for some reason")
+        with open(server_log) as f:
+            for line in f.readlines():
+                say(line)
 
 
 def do_command(client, desc, f):

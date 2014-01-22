@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
+
 procname="python"
 chuid="doge:doge"
 exe="/bin/bash"
-args=-c "python /home/doge/whatever/build-server.py" > /var/log/doge/error.log 2>&1
+args="-c \"python /home/doge/whatever/build-server.py\" > /var/log/doge/error.log 2>&1"
 num=`pgrep $procname | wc -l`
 if [[ $num -gt 1 ]] ; then
     echo "Found more than one process to kill:"
