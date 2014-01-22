@@ -1,4 +1,4 @@
-package com.deweyvm.whatever.common
+package com.deweyvm.whatever.common.data
 
 object Encoding {
   private val charset = "CP437"

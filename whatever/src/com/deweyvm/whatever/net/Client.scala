@@ -4,11 +4,11 @@ import com.deweyvm.gleany.net.Task
 import java.net.{UnknownHostException, Socket}
 import com.deweyvm.whatever.Game
 import java.io.IOException
-import com.deweyvm.gleany.Implicits._
+import com.deweyvm.whatever.common.Implicits._
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.gleany.Debug
 import com.deweyvm.whatever.entities.Code
-import com.deweyvm.whatever.common.Encoding
+import com.deweyvm.whatever.common.data.Encoding
 
 trait ClientState
 class ClientError(error:String) {

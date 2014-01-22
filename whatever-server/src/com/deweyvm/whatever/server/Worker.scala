@@ -2,10 +2,10 @@ package com.deweyvm.whatever.server
 
 import com.deweyvm.gleany.Debug
 import com.deweyvm.gleany.net.Task
-import com.deweyvm.gleany.Implicits._
-import com.deweyvm.gleany.Functions._
+import com.deweyvm.whatever.common.Implicits._
+import com.deweyvm.whatever.common.Functions._
 import java.net.Socket
-import com.deweyvm.whatever.common.Encoding
+import com.deweyvm.whatever.common.data.Encoding
 
 class Worker(string:String, socket:Socket) extends Task {
   override def execute() {

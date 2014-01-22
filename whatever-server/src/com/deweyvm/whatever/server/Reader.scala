@@ -4,9 +4,9 @@ import java.net.Socket
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.gleany.net.Task
 import java.io.InputStream
-import com.deweyvm.gleany.Implicits._
+import com.deweyvm.whatever.common.Implicits._
 import com.deweyvm.gleany.Debug
-import com.deweyvm.whatever.common.Encoding
+import com.deweyvm.whatever.common.data.Encoding
 
 
 class Reader(socket:Socket, parent:Server) extends Task {

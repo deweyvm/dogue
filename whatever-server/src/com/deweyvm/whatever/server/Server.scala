@@ -3,7 +3,8 @@ package com.deweyvm.whatever.server
 import java.net.{SocketTimeoutException, ServerSocket}
 import com.deweyvm.gleany.Debug
 import com.deweyvm.gleany.net.Task
-import com.deweyvm.gleany.Implicits._
+import com.deweyvm.whatever.common.Implicits._
+
 
 class Server extends Task {
   val port = 4815
