@@ -1,0 +1,36 @@
+build-server.py
+    About:
+        Runs on the remote server for detecting when a new version has been uploaded. When a new version is detected, the game server is restarted.
+    Usage:
+        remote $ cd $PROJROOT && git pull
+        remote $ sudo /etc/init.d/dogue-build
+
+copy-files.sh
+    About:
+        Copies the latest build to the remote server as well as a timestamp file to indicate when the last copy was made.
+    Usage:
+        local $ sh copy-files.sh
+
+doge-build
+    About:
+        init.d script for starting the build server daemon
+    Usage:
+        remote $ sudo cp $SCRIPTROOT/doge-build /etc/init.d/
+        remote $ sudo /etc/init.d/doge-build {start,restart,stop}
+
+doge-game-server
+    About:
+        init.d script for starting the game server daemon
+    Usage:
+        remote $ sudo cp $SCRIPTROOT/doge-game-server /etc/init.d/
+        remote $ sudo /etc/init.d/doge-game-server {start,restart,stop}
+
+MANIFEST
+    About:
+        Information about each script in the ./scripts subdirectory. The info is centralized for more easily seeing the relationships between the scripts, and for verifying that all files are accounted for.
+
+server-remote.py
+    About:
+        Communicates with the remote dogue game server without the need to log in to the remote server.
+    Usage:
+        local $ python server-remote.py <commands>
