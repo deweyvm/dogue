@@ -40,6 +40,6 @@ object Main {
       println("unknown")
       sys.exit(0)
     }
-    Log.setDirectory("log")
+    Log.setDirectory("logs")
   }
 }
