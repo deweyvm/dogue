@@ -2,6 +2,7 @@ package com.deweyvm.whatever.ui
 
 import com.badlogic.gdx.{InputAdapter, Gdx}
 import com.deweyvm.whatever.graphics.GlyphFactory
+import com.deweyvm.whatever.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.whatever.Game
@@ -54,8 +55,7 @@ case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color
     new Text(s, bgColor, fgColor, factory)
   }
 
-  //todo -- code clones with info panel: put this in a more sensible place
-  val text = InfoPanel.splitText(prompt + string, width) map makeText
+  val text = (prompt + string).toLines(width) map makeText
   val cursor = Vector(makeText("_"), makeText(" "))
   val flashRate = 30 //cursor flashes on/off for `flashRate` frames
 

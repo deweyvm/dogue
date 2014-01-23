@@ -2,13 +2,14 @@ package com.deweyvm.whatever
 
 import java.net.Socket
 import scala.language.implicitConversions
-import com.deweyvm.whatever.common.data.{EnrichedFunction2, EnrichedString, EnrichedOption}
+import com.deweyvm.whatever.common.data.{EnrichedNumber, EnrichedFunction2, EnrichedString, EnrichedOption}
 import com.deweyvm.whatever.common.io.{EnrichedInputStream, EnrichedOutputStream, EnrichedSocket}
 import java.io.{OutputStream, InputStream}
 
 package object common {
   object Implicits {
     implicit def any2Option[A](x: A):EnrichedOption[A] = new EnrichedOption(x)
+    implicit def number2EnrichedNumber[T](rep:T)(implicit n:Numeric[T]) = new EnrichedNumber(rep)
     implicit def string2EnrichedString(x:String):EnrichedString = new EnrichedString(x)
     implicit def socket2EnrichedSocket(sock:Socket):EnrichedSocket = new EnrichedSocket(sock)
     implicit def outputStream2EnrichedOutputStream(out:OutputStream):EnrichedOutputStream =

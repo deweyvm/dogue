@@ -2,27 +2,14 @@ package com.deweyvm.whatever.ui
 
 import com.deweyvm.whatever.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.gleany.GleanyMath
 import com.deweyvm.whatever.input.Controls
-
+import com.deweyvm.whatever.common.Implicits._
 object InfoPanel {
   def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color, factory:GlyphFactory):InfoPanel = {
     new InfoPanel(x, y, width, height, bgColor, factory, "", Vector(), new ScrollBar(factory), 0)
   }
 
-  def splitText(string:String, textWidth:Int):Vector[String] = {
-    val (last, lines) = string.foldLeft(("", Vector[String]())){
-      case ((currentLine, lines), c) =>
-        val added = currentLine + c
-        if (added.length == textWidth - 1) {
-          val hyphen = if (c == ' ') "" else  "-"
-          ("", lines ++ Vector(added + hyphen))
-        } else {
-          (added, lines)
-        }
-    }
-    lines ++ Vector(last)
-  }
+
 }
 
 case class InfoPanel(override val x:Int,
@@ -42,7 +29,7 @@ case class InfoPanel(override val x:Int,
   private val textWidth = width - leftMargin - rightMargin
 
   def addText(string:String, bgColor:Color, fgColor:Color):InfoPanel = {
-    val addedLines = InfoPanel.splitText(string, textWidth) map { s =>
+    val addedLines = string.toLines(textWidth) map { s =>
       new Text(s, bgColor, fgColor, factory)
     }
     this.copy(text = text + string,
@@ -52,10 +39,10 @@ case class InfoPanel(override val x:Int,
   private def updateView:InfoPanel = {
     val jMax = lines.length - 1
     val jMin = height - 1
-    this.copy(jView = GleanyMath.clamp(-Controls.AxisY.justPressed + jView, jMin, jMax))
+    this.copy(jView = (-Controls.AxisY.justPressed + jView).clamp(jMin, jMax))
   }
 
-  override def update():InfoPanel = {
+  override def update:InfoPanel = {
     this.updateView
   }
 

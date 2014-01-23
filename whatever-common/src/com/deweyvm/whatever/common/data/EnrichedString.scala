@@ -62,5 +62,20 @@ class EnrichedString(rep:String) {
     lines ++ Vector(last)
   }
 
+  def toLines(width:Int):Vector[String] =  {
+    val (last, lines) = rep.foldLeft(("", Vector[String]())){
+      case ((currentLine, lines), c) =>
+        val added = currentLine + c
+        if (added.length == width - 1) {
+          val hyphen = if (c == ' ') "" else  "-"
+          ("", lines ++ Vector(added + hyphen))
+        } else {
+          (added, lines)
+        }
+    }
+    lines ++ Vector(last)
+
+  }
+
 
 }
