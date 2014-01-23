@@ -72,6 +72,6 @@ class Log(dir:String) {
     val className = callStack(stackOffset).getClassName.split("""[.]""").last.replace("$", "")
     val s = "(%s) [%s] %s: %s".format(Time.getString, logLevel.marker, className, string)
     println(s)
-    file foreach {_.write(Encoding.toBytes(s + "\n"))}
+    file foreach {_.write((s + "\n").getBytes("UTF-8"))}
   }
 }

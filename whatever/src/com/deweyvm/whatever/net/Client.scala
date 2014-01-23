@@ -98,7 +98,7 @@ class Client extends Task {
 
   def send(message:String):T = {
     tryDo { sock =>
-      sock.getOutputStream.write(Encoding.toBytes(message + "\0"))
+      sock.transmit(message)
     }
   }
 
@@ -112,18 +112,10 @@ class Client extends Task {
 
   private def read():T = {
     tryDo { sock:Socket =>
-      //todo -- make this a separate function
-      val in = sock.getInputStream
+      val read = sock.receive()
       val commands = ArrayBuffer[String]()
 
-      val available = in.available()
-      if (available <= 0) {
-        return ()
-      }
-      val bytesRead = in.read(buff, 0, available)
-
-      if (bytesRead > 0) {
-        val next = Encoding.fromBytes(buff, bytesRead)
+      read foreach { next =>
         val lines = next.esplit('\0')
         val last = lines(lines.length - 1)
         val first = lines.dropRight(1)
@@ -137,9 +129,6 @@ class Client extends Task {
 
         current = last
       }
-
-
-
     }
 
   }

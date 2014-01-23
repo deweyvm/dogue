@@ -21,7 +21,7 @@ class Worker(string:String, socket:Socket) extends Task {
       Log.info("don't know how to quit :(")
     } else if (command == "/say") {
       Log.info("saying \"%s\" to the server" format rest)
-      socket.getOutputStream.write(Encoding.toBytes(rest + "\0"))
+      socket.transmit(rest)
     }
   }
 

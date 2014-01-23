@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.AssetLoader
 import com.deweyvm.gleany.data.Recti
 
-//todo: makeText function?
 class GlyphFactory(val rows:Int, val cols:Int, val tileWidth:Int, val tileHeight:Int, sheet:Texture) {
   private def makeSprite(index:Int, color:Color, texture:Texture) = {
     val x = index % rows
