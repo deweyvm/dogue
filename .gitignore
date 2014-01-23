@@ -5,6 +5,7 @@
 out/
 lines.txt
 graph.py
+log_*
 
 # sbt specific
 dist/*
