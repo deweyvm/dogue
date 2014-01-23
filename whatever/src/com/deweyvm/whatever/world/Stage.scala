@@ -9,6 +9,7 @@ import com.deweyvm.gleany.data.{Point2f, Recti}
 import scala.Some
 import com.deweyvm.whatever.Game
 import com.deweyvm.whatever.input.Controls
+import com.deweyvm.whatever.net.Client
 
 object Stage {
   case object Title extends StageType {
@@ -34,7 +35,7 @@ case class Stage(t:StageType, cols:Int, rows:Int, factory:GlyphFactory, panels:V
       stageFactory.create(t.next)
     } else {
       this.copy(panels = panels map (_.update),
-        serverStatus = serverStatus.setString(Game.client.getString))
+        serverStatus = serverStatus.setString(Client.instance.getString))
     }
   }
 

@@ -12,7 +12,6 @@ object Game {
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom
   val globals = new Globals
-  val client = ThreadManager.spawn(new Client())
 
   private var frame = 0
   def getFrame = frame

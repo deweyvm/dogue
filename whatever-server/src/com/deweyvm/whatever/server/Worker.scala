@@ -6,6 +6,7 @@ import com.deweyvm.whatever.common.Implicits._
 import com.deweyvm.whatever.common.Functions._
 import java.net.Socket
 import com.deweyvm.whatever.common.data.Encoding
+import com.deweyvm.whatever.common.logging.Log
 
 class Worker(string:String, socket:Socket) extends Task {
   override def execute() {
@@ -17,9 +18,9 @@ class Worker(string:String, socket:Socket) extends Task {
     val command = parts(0)
     val rest = parts.drop(0).mkString(" ")
     if (command == "/quit") {
-      Debug.debug("don't know how to quit :(")
+      Log.info("don't know how to quit :(")
     } else if (command == "/say") {
-      Debug.debug("saying \"%s\" to the server" format rest)
+      Log.info("saying \"%s\" to the server" format rest)
       socket.getOutputStream.write(Encoding.toBytes(rest + "\0"))
     }
   }

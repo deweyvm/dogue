@@ -6,6 +6,7 @@ import com.deweyvm.gleany.files.PathResolver
 import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.whatever.input.WhateverControls
 import com.deweyvm.whatever.loading.WhateverDefaultSettings
+import com.deweyvm.whatever.common.logging.Log
 
 
 object Main {
@@ -39,6 +40,6 @@ object Main {
       println("unknown")
       sys.exit(0)
     }
-    Logger.attachCrasher(isDebug)
+    Log.setDirectory("log")
   }
 }

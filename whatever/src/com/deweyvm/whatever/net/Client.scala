@@ -1,6 +1,6 @@
 package com.deweyvm.whatever.net
 
-import com.deweyvm.gleany.net.Task
+import com.deweyvm.gleany.net.{ThreadManager, Task}
 import java.net.{UnknownHostException, Socket}
 import com.deweyvm.whatever.Game
 import java.io.IOException
@@ -9,6 +9,7 @@ import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.gleany.Debug
 import com.deweyvm.whatever.entities.Code
 import com.deweyvm.whatever.common.data.Encoding
+import com.deweyvm.whatever.common.logging.Log
 
 trait ClientState
 class ClientError(error:String) {
@@ -27,6 +28,9 @@ object Client {
     case class HostUnreachable(error:String) extends ClientError(error)
     case class ConnectionFailure(error:String) extends ClientError(error)
   }
+
+
+  val instance = ThreadManager.spawn(new Client())
 }
 
 class Client extends Task {
@@ -43,18 +47,18 @@ class Client extends Task {
   private def tryConnect() {
     def fail(exc:Exception, error:String => ClientError) {
       val stackTrace = exc.getStackTraceString
-      Debug.debug("Failure:\n" + stackTrace)
+      Log.warn("Failure:\n" + stackTrace)
       state = error(stackTrace).toState
       client = None
     }
     try {
-      Debug.debug("Attempting to establish a connection to %s" format address)
+      Log.info("Attempting to establish a connection to %s" format address)
       client = new Socket(address, 4815).some
       state = Client.State.Connected
       client foreach { sock =>
         sock.setSoTimeout(1000)
       }
-      Debug.debug("Success")
+      Log.info("Success")
       Thread.sleep(5000)
     } catch {
       case ioe:IOException =>
@@ -141,7 +145,7 @@ class Client extends Task {
   }
 
   def process(command:String) {
-    Debug.debug(command)
+    Log.info("Processing: " + command)
   }
 
   def getState:ClientState = Client.State.Connecting

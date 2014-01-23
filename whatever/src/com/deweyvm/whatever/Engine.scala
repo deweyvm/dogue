@@ -5,6 +5,7 @@ import com.deweyvm.whatever.world.{StageFactory, Stage}
 import com.deweyvm.whatever.input.Controls
 import com.badlogic.gdx.Gdx
 import com.deweyvm.whatever.ui.TextInput
+import com.deweyvm.whatever.net.Client
 
 
 class Engine {
@@ -20,7 +21,7 @@ class Engine {
     Controls.update()
     if (Controls.Escape.justPressed) {
       //Game.client.send("/quit") //uncomment to shut down server
-      Game.client.disconnect()
+      Client.instance.disconnect()
       Gdx.app.exit()
     }
   }

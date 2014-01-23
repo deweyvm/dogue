@@ -7,6 +7,7 @@ import java.io.InputStream
 import com.deweyvm.whatever.common.Implicits._
 import com.deweyvm.gleany.Debug
 import com.deweyvm.whatever.common.data.Encoding
+import com.deweyvm.whatever.common.logging.Log
 
 
 class Reader(socket:Socket, parent:Server) extends Task {
@@ -49,7 +50,7 @@ class Reader(socket:Socket, parent:Server) extends Task {
       }
     }
     running = false
-    Debug.debug("Killed")
+    Log.info("Killed")
   }
 
 
