@@ -5,10 +5,10 @@ import subprocess
 import os
 import time
 
-
+timestr = time.strftime("%Y-%m-%d--%H-%M-%S")
+logfile = "/var/log/dogue-build/error%s.log" % timestr
 
 def say(s):
-    logfile = "/var/log/dogue-build/error.log"
     msg = "Server: " + s
     print(msg)
     with open(logfile, "a") as f:
@@ -40,11 +40,8 @@ def get_last_modified(path):
 
 def kill_server():
     say("Killing server")
-    proc = subprocess.Popen(['pgrep', 'java'], stdout=subprocess.PIPE)
-    out, err = proc.communicate()
-    for line in out.splitlines():
-        pid = int(line)
-        os.kill(pid, 9)
+    proc = subprocess.call(['/var/init.d/doge-game-server', 'stop'], stdout=subprocess.PIPE)
+
 
 def update_log(run_log, time_modified):
     with open(run_log, "w") as f:
@@ -53,7 +50,7 @@ def update_log(run_log, time_modified):
 def update_server(client):
     send(client, "Awaiting updated executable")
     run_log = "/home/doge/whatever/last"
-    file_to_check = "/home/doge/whatever/whatever_server_jar/jar.tar.gz"
+    file_to_check = "/home/doge/whatever/whatever_server_jar/timestamp"
     last_modified = get_last_modified(file_to_check)
     def inner(iters):
         last_run = get_last_run(run_log)
@@ -90,6 +87,10 @@ def do_command(client, desc, f):
     client.close()
 
 def main():
+    try:
+        os.remove(logfile)
+    except OSError:
+        pass
     restart_server(None)
     host = ''
     port = 27181
