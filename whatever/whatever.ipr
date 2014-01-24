@@ -23,15 +23,15 @@
         <element id="library" level="application" name="scala-library" />
       </root>
     </artifact>
-    <artifact name="whatever-server:jar">
+    <artifact name="starfire:jar">
       <output-path>$PROJECT_DIR$/out/artifacts/whatever_server_jar</output-path>
       <root id="root">
-        <element id="archive" name="whatever-server.jar">
-          <element id="module-output" name="whatever-server" />
+        <element id="archive" name="starfire.jar">
+          <element id="module-output" name="starfire" />
           <element id="module-output" name="gleany" />
           <element id="module-output" name="dogue-common" />
         </element>
-        <element id="file-copy" path="$PROJECT_DIR$/../whatever-server/libs/postgresql-9.3-1100.jdbc41.jar" />
+        <element id="file-copy" path="$PROJECT_DIR$/../starfire/libs/postgresql-9.3-1100.jdbc41.jar" />
         <element id="library" level="project" name="libs" />
         <element id="library" level="application" name="scala-library" />
       </root>
@@ -433,8 +433,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../dogue-common/dogue-common.iml" filepath="$PROJECT_DIR$/../dogue-common/dogue-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/../gleany/gleany.iml" filepath="$PROJECT_DIR$/../gleany/gleany.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../starfire/starfire.iml" filepath="$PROJECT_DIR$/../starfire/starfire.iml" />
       <module fileurl="file://$PROJECT_DIR$/whatever.iml" filepath="$PROJECT_DIR$/whatever.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../whatever-server/whatever-server.iml" filepath="$PROJECT_DIR$/../whatever-server/whatever-server.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
@@ -442,7 +442,7 @@
   </component>
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Local Server" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.server.Main" />
+      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.starfire.Main" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="--log ../../" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -451,21 +451,21 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="whatever-server" />
+      <module name="starfire" />
       <envs />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
         <option name="BuildArtifacts" enabled="true">
           <artifact name="dogue-common:jar" />
-          <artifact name="whatever-server:jar" />
+          <artifact name="starfire:jar" />
           <artifact name="whatever:jar" />
         </option>
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration default="false" name="Remote Server" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.server.Main" />
+      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.starfire.Main" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="--log /var/log/starfire" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -474,7 +474,7 @@
       <option name="ENABLE_SWING_INSPECTOR" value="false" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="whatever-server" />
+      <module name="starfire" />
       <envs />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="" />
@@ -487,7 +487,7 @@
       <method>
         <option name="BuildArtifacts" enabled="true">
           <artifact name="dogue-common:jar" />
-          <artifact name="whatever-server:jar" />
+          <artifact name="starfire:jar" />
           <artifact name="whatever:jar" />
         </option>
         <option name="Make" enabled="true" />
