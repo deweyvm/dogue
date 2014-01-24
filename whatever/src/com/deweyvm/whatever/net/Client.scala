@@ -47,10 +47,12 @@ class Client extends Task {
   private def tryConnect() {
     def fail(exc:Exception, error:String => ClientError) {
       val stackTrace = exc.getStackTraceString
-      Log.warn("Failure:\n" + stackTrace)
+      Log.warn("Failure:\nException in thread " + Thread.currentThread.getName + "\n")
+      Log.warn(exc.toString)
+      Log.warn(stackTrace)
       state = error(stackTrace).toState
       client = None
-    }
+      }
     try {
       Log.info("Attempting to establish a connection to %s" format address)
       client = new Socket(address, 4815).some

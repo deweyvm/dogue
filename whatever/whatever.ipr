@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ArtifactManager">
-    <artifact name="whatever-server:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/whatever_server_jar</output-path>
-      <root id="root">
-        <element id="archive" name="whatever-server.jar">
-          <element id="module-output" name="whatever-server" />
-          <element id="module-output" name="gleany" />
-          <element id="module-output" name="whatever-common" />
-        </element>
-        <element id="library" level="application" name="scala-library" />
-        <element id="library" level="project" name="libs" />
-      </root>
-    </artifact>
     <artifact name="whatever:jar">
       <output-path>$PROJECT_DIR$/out/artifacts/whatever_jar</output-path>
       <root id="root">
@@ -32,6 +20,19 @@
         <element id="archive" name="whatever-common.jar">
           <element id="module-output" name="whatever-common" />
         </element>
+        <element id="library" level="application" name="scala-library" />
+      </root>
+    </artifact>
+    <artifact name="whatever-server:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/whatever_server_jar</output-path>
+      <root id="root">
+        <element id="archive" name="whatever-server.jar">
+          <element id="module-output" name="whatever-server" />
+          <element id="module-output" name="gleany" />
+          <element id="module-output" name="whatever-common" />
+        </element>
+        <element id="file-copy" path="$PROJECT_DIR$/../whatever-server/libs/postgresql-9.3-1100.jdbc41.jar" />
+        <element id="library" level="project" name="libs" />
         <element id="library" level="application" name="scala-library" />
       </root>
     </artifact>

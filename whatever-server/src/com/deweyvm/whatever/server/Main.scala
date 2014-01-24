@@ -3,6 +3,7 @@ package com.deweyvm.whatever.server
 import com.deweyvm.gleany.logging.Logger
 import com.deweyvm.whatever.common.Implicits._
 import com.deweyvm.whatever.common.logging.Log
+import com.deweyvm.whatever.server.db.DbConnection
 
 object Main {
   def main(args:Array[String]) {
@@ -17,7 +18,7 @@ object Main {
         "."
       }
     Log.setDirectory(logDir)
-
+    new DbConnection
     new Server().start()
   }
 }
