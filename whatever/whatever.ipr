@@ -7,18 +7,18 @@
         <element id="archive" name="whatever.jar">
           <element id="module-output" name="whatever" />
           <element id="module-output" name="gleany" />
-          <element id="module-output" name="whatever-common" />
+          <element id="module-output" name="dogue-common" />
         </element>
         <element id="library" level="application" name="scala-library" />
         <element id="library" level="application" name="scala-compiler" />
         <element id="library" level="project" name="libs" />
       </root>
     </artifact>
-    <artifact name="whatever-common:jar">
+    <artifact name="dogue-common:jar">
       <output-path>$PROJECT_DIR$/out/artifacts/whatever_common_jar</output-path>
       <root id="root">
-        <element id="archive" name="whatever-common.jar">
-          <element id="module-output" name="whatever-common" />
+        <element id="archive" name="dogue-common.jar">
+          <element id="module-output" name="dogue-common" />
         </element>
         <element id="library" level="application" name="scala-library" />
       </root>
@@ -29,7 +29,7 @@
         <element id="archive" name="whatever-server.jar">
           <element id="module-output" name="whatever-server" />
           <element id="module-output" name="gleany" />
-          <element id="module-output" name="whatever-common" />
+          <element id="module-output" name="dogue-common" />
         </element>
         <element id="file-copy" path="$PROJECT_DIR$/../whatever-server/libs/postgresql-9.3-1100.jdbc41.jar" />
         <element id="library" level="project" name="libs" />
@@ -431,9 +431,9 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../dogue-common/dogue-common.iml" filepath="$PROJECT_DIR$/../dogue-common/dogue-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/../gleany/gleany.iml" filepath="$PROJECT_DIR$/../gleany/gleany.iml" />
       <module fileurl="file://$PROJECT_DIR$/whatever.iml" filepath="$PROJECT_DIR$/whatever.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../whatever-common/whatever-common.iml" filepath="$PROJECT_DIR$/../whatever-common/whatever-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/../whatever-server/whatever-server.iml" filepath="$PROJECT_DIR$/../whatever-server/whatever-server.iml" />
     </modules>
   </component>
@@ -442,7 +442,7 @@
   </component>
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Local Server" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.deweyvm.whatever.server.Main" />
+      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.server.Main" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="--log ../../" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -457,7 +457,7 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method>
         <option name="BuildArtifacts" enabled="true">
-          <artifact name="whatever-common:jar" />
+          <artifact name="dogue-common:jar" />
           <artifact name="whatever-server:jar" />
           <artifact name="whatever:jar" />
         </option>
@@ -465,7 +465,7 @@
       </method>
     </configuration>
     <configuration default="false" name="Remote Server" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.deweyvm.whatever.server.Main" />
+      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.server.Main" />
       <option name="VM_PARAMETERS" value="" />
       <option name="PROGRAM_PARAMETERS" value="--log /var/log/starfire" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -486,7 +486,7 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method>
         <option name="BuildArtifacts" enabled="true">
-          <artifact name="whatever-common:jar" />
+          <artifact name="dogue-common:jar" />
           <artifact name="whatever-server:jar" />
           <artifact name="whatever:jar" />
         </option>

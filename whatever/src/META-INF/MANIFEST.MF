@@ -6,5 +6,5 @@ Class-Path: scala-actors.jar scala-library.jar scala-swing.jar scala-c
  llers-desktop.jar gdx-controllers-sources.jar gdx-backend-lwjgl-nativ
  es.jar gdx-backend-lwjgl-sources.jar gdx-controllers-desktop-natives.
  jar gdx-controllers-desktop-sources.jar
-Main-Class: com.deweyvm.whatever.Main
+Main-Class: com.deweyvm.dogue.Main
 

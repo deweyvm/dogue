@@ -21,7 +21,7 @@
     <orderEntry type="jdk" jdkName="1.7" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="gleany" />
-    <orderEntry type="module" module-name="whatever-common" />
+    <orderEntry type="module" module-name="dogue-common" />
     <orderEntry type="library" name="libs" level="project" />
     <orderEntry type="library" name="scala-compiler" level="application" />
     <orderEntry type="library" name="scala-library" level="application" />
