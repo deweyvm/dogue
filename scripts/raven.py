@@ -9,7 +9,7 @@ timestr = time.strftime("%Y-%m-%d--%H-%M-%S")
 logfile = "/var/log/raven/error%s.log" % timestr
 
 def say(s):
-    msg = "Server: " + s
+    msg = "Server: " + str(s)
     print(msg)
     with open(logfile, "a") as f:
         f.write(msg + "\n")

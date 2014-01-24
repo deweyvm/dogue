@@ -14,7 +14,7 @@
 DAEMON_PATH="/home/doge/whatever/scripts/"
 
 DAEMON=python
-DAEMONOPTS="raven.py"
+DAEMONOPTS="$DAEMON_PATH/raven.py"
 
 NAME=raven
 MUSER=$NAME
@@ -26,7 +26,6 @@ case "$1" in
 start)
     printf "%-50s" "Starting $NAME..."
     cd $DAEMON_PATH
-    ls
     TIME=`date +%s`
     PID=`su -l $MUSER -c "$DAEMON $DAEMONOPTS" > /var/log/raven/daemon-fail-$TIME.log 2>&1 & echo $!`
     #echo "Saving PID" $PID " to " $PIDFILE

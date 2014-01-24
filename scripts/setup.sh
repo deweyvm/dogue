@@ -37,6 +37,12 @@ local-bin)
     popd
 ;;
 
+local-exe)
+    pushd $LOCAL_HOME/whatever/out/artifacts/whatever_server_jar/ &&\
+    scp whatever-server.jar dogue:whatever_bin/ &&\
+    popd
+;;
+
 local-setup)
     pushd $LOCAL_HOME/scripts && \
     scp setup.sh doge@dogue:. && \
@@ -90,6 +96,7 @@ remote-db)
     sudo -u postgres createuser --password --createdb --no-createrole --no-superuser starfire && \
     sudo -u postgres createdb testdb -O starfire
 ;;
+
 remote-repo)
     if [[ $EUID -eq 0 ]]; then
         echo "This script must not be run as root"
@@ -99,7 +106,7 @@ remote-repo)
     git clone https://github.com/deweyvm/whatever.git whatever
 ;;
 
-remote-stuff)
+daemon-setup)
     if [[ $EUID -ne 0 ]]; then
         echo "This script must be run as root"
         exit 1
