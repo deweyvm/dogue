@@ -19,15 +19,24 @@ def send(client, s):
     client.send("Server: " + s + '\0')
 
 def update_server(client):
-    kill_server()
     update_server(client)
-    run_server()
+    restart_server()
 
 def restart_server(client):
     if client is not None:
         send(client, "Creating fresh instance")
-    kill_server()
-    run_server()
+    say("Restarting server")
+    proc = subprocess.Popen(['/etc/init.d/dogue-game-server', 'restart'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    err, out = proc.communicate()
+    errlines = err.splitlines()
+    isFatal = len(errlines) > 0
+    for line in errlines:
+        say(line)
+    for line in (out.splitlines()):
+        say(line)
+    if len(errlines) > 0:
+        say("not quitting")
+        #exit(0)
 
 def get_last_run(file):
     if (os.path.exists(file)):
@@ -38,10 +47,6 @@ def get_last_run(file):
 def get_last_modified(path):
     return str(time.ctime(os.path.getmtime(path)))
 
-def kill_server():
-    say("Killing server")
-    proc = subprocess.call(['/var/init.d/doge-game-server', 'stop'], stdout=subprocess.PIPE)
-
 
 def update_log(run_log, time_modified):
     with open(run_log, "w") as f:
@@ -50,7 +55,7 @@ def update_log(run_log, time_modified):
 def update_server(client):
     send(client, "Awaiting updated executable")
     run_log = "/home/doge/whatever/last"
-    file_to_check = "/home/doge/whatever/whatever_server_jar/timestamp"
+    file_to_check = "/home/doge/whatever_bin/timestamp"
     last_modified = get_last_modified(file_to_check)
     def inner(iters):
         last_run = get_last_run(run_log)
@@ -65,16 +70,6 @@ def update_server(client):
         else:
             send("Error: timeout. Server not updated.")
     inner(10)
-
-
-def run_server():
-    server_log = "/var/log/dogue-game-server/error.log"
-    say("Starting server")
-    code = subprocess.call(['/etc/init.d/dogue-game-server restart'], shell=True)
-    if (code != 0):
-        with open(server_log) as f:
-            for line in f.readlines():
-                say(line)
 
 
 def do_command(client, desc, f):
@@ -122,4 +117,7 @@ def main():
             exit(0)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except:
+        say(traceback.format_exc())
