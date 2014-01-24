@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ArtifactManager">
-    <artifact name="whatever:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/whatever_jar</output-path>
+    <artifact name="dogue:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/dogue_jar</output-path>
       <root id="root">
-        <element id="archive" name="whatever.jar">
-          <element id="module-output" name="whatever" />
+        <element id="archive" name="dogue.jar">
+          <element id="module-output" name="dogue" />
           <element id="module-output" name="gleany" />
           <element id="module-output" name="dogue-common" />
         </element>
@@ -15,7 +15,7 @@
       </root>
     </artifact>
     <artifact name="dogue-common:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/whatever_common_jar</output-path>
+      <output-path>$PROJECT_DIR$/out/artifacts/dogue_common_jar</output-path>
       <root id="root">
         <element id="archive" name="dogue-common.jar">
           <element id="module-output" name="dogue-common" />
@@ -81,10 +81,6 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
-  </component>
-  <component name="ExportToHTMLSettings">
-    <option name="printScope" value="1" />
-    <option name="OUTPUT_DIRECTORY" value="C:\Users\M\Desktop\whatever\whatever\exportToHTML" />
   </component>
   <component name="HighlightingAdvisor">
     <option name="SUGGEST_TYPE_AWARE_HIGHLIGHTING" value="false" />
@@ -431,10 +427,10 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/dogue.iml" filepath="$PROJECT_DIR$/dogue.iml" />
       <module fileurl="file://$PROJECT_DIR$/../dogue-common/dogue-common.iml" filepath="$PROJECT_DIR$/../dogue-common/dogue-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/../gleany/gleany.iml" filepath="$PROJECT_DIR$/../gleany/gleany.iml" />
       <module fileurl="file://$PROJECT_DIR$/../starfire/starfire.iml" filepath="$PROJECT_DIR$/../starfire/starfire.iml" />
-      <module fileurl="file://$PROJECT_DIR$/whatever.iml" filepath="$PROJECT_DIR$/whatever.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
@@ -459,7 +455,7 @@
         <option name="BuildArtifacts" enabled="true">
           <artifact name="dogue-common:jar" />
           <artifact name="starfire:jar" />
-          <artifact name="whatever:jar" />
+          <artifact name="dogue:jar" />
         </option>
         <option name="Make" enabled="true" />
       </method>
@@ -488,7 +484,7 @@
         <option name="BuildArtifacts" enabled="true">
           <artifact name="dogue-common:jar" />
           <artifact name="starfire:jar" />
-          <artifact name="whatever:jar" />
+          <artifact name="dogue:jar" />
         </option>
         <option name="Make" enabled="true" />
         <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_upload-server" />
