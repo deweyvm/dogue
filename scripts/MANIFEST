@@ -1,9 +1,8 @@
-build-server.py
+raven.py
     About:
         Runs on the remote server for detecting when a new version has been uploaded. When a new version is detected, the game server is restarted.
     Usage:
-        remote $ cd $PROJROOT && git pull
-        remote $ sudo /etc/init.d/dogue-build
+        remote $ sudo /etc/init.d/raven start
 
 copy-files.sh
     About:
@@ -11,19 +10,17 @@ copy-files.sh
     Usage:
         local $ sh copy-files.sh
 
-doge-build
+raven
     About:
-        init.d script for starting the build server daemon
+        init.d script for starting the raven build server daemon
     Usage:
-        remote $ sudo cp $SCRIPTROOT/doge-build /etc/init.d/
-        remote $ sudo /etc/init.d/doge-build {start,restart,stop}
+        remote $ sudo /etc/init.d/raven {start,restart,stop}
 
-doge-game-server
+starfire
     About:
-        init.d script for starting the game server daemon
+        init.d script for starting the starfire game server daemon
     Usage:
-        remote $ sudo cp $SCRIPTROOT/doge-game-server /etc/init.d/
-        remote $ sudo /etc/init.d/doge-game-server {start,restart,stop}
+        remote $ sudo /etc/init.d/starfire {start,restart,stop}
 
 MANIFEST
     About:
@@ -34,3 +31,9 @@ server-remote.py
         Communicates with the remote dogue game server without the need to log in to the remote server.
     Usage:
         local $ python server-remote.py <commands>
+
+setup.sh
+    About:
+        Script for setting up the vps for when it has been wiped
+    Usage:
+        see file for usage

@@ -1,23 +1,24 @@
 #!/bin/bash
 
 ### BEGIN INIT INFO
-# Provides:          dogue-game-server
+# Provides:          raven
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Game server for dogue
-# Description: Game server for dogue
+# Short-Description: Build server for dogue
+# Description: Build server for dogue
 ### END INIT INFO
 
 
-DAEMON_PATH="/usr/bin/"
+DAEMON_PATH="/home/doge/whatever/scripts/"
 
-DAEMON=java
-DAEMONOPTS="-jar /home/doge/whatever_bin/whatever-server.jar"
+DAEMON=python
+DAEMONOPTS="raven.py"
 
-NAME=dogue-game-server
-DESC="Game server for dogue"
+NAME=raven
+MUSER=$NAME
+DESC="Build server for dogue"
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
 
@@ -25,7 +26,9 @@ case "$1" in
 start)
     printf "%-50s" "Starting $NAME..."
     cd $DAEMON_PATH
-    PID=`$DAEMON $DAEMONOPTS > /var/log/dogue-game-server/daemon-fail.log 2>&1 & echo $!`
+    ls
+    TIME=`date +%s`
+    PID=`su -l $MUSER -c "$DAEMON $DAEMONOPTS" > /var/log/raven/daemon-fail-$TIME.log 2>&1 & echo $!`
     #echo "Saving PID" $PID " to " $PIDFILE
         if [ -z $PID ]; then
             printf "%s\n" "Fail"

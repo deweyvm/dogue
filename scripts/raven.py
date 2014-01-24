@@ -6,7 +6,7 @@ import os
 import time
 
 timestr = time.strftime("%Y-%m-%d--%H-%M-%S")
-logfile = "/var/log/dogue-build/error%s.log" % timestr
+logfile = "/var/log/raven/error%s.log" % timestr
 
 def say(s):
     msg = "Server: " + s
@@ -26,7 +26,7 @@ def restart_server(client):
     if client is not None:
         send(client, "Creating fresh instance")
     say("Restarting server")
-    proc = subprocess.Popen(['/etc/init.d/dogue-game-server', 'restart'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(['/etc/init.d/starfire', 'restart'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     err, out = proc.communicate()
     errlines = err.splitlines()
     isFatal = len(errlines) > 0
