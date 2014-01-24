@@ -1,4 +1,10 @@
+#!/usr/bin/env python
 
+# Communicates with the remote starfire instance without the need to log in
+# to the remote server
+#
+# Usage:
+#     local $ python server-remote.py <commands>
 import socket
 import time
 import sys

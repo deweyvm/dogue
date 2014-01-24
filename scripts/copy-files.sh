@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
+
+# Copies the latest build to the remote server as well as a timestamp file to
+# indicate when the last copy was made.
+#
+# Usage:
+#     local $ sh copy-files.sh
+
 host="doge@dogue.in"
-jarloc=/cygdrive/c/Users/M/Desktop/whatever/whatever/out/artifacts
-lib=$jarloc/whatever_common_jar/whatever-common.jar
-exe=$jarloc/whatever_server_jar/whatever-server.jar
-dest=whatever_bin
+jarloc=/cygdrive/c/Users/M/Desktop/dogue/dogue/out/artifacts
+lib=$jarloc/dogue_common_jar/dogue-common.jar
+exe=$jarloc/starfire_jar/starfire-server.jar
+dest=starfire_bin
 stamp=timestamp
 cmd="scp -C $exe $lib $host:$dest"
 echo Copying jars

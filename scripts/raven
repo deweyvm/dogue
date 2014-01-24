@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 
-DAEMON_PATH="/home/doge/whatever/scripts/"
+DAEMON_PATH="/home/doge/doge/scripts/"
 
 DAEMON=python
 DAEMONOPTS="$DAEMON_PATH/raven.py"

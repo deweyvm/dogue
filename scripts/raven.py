@@ -1,4 +1,11 @@
 #!/usr/bin/env python
+
+# Runs on the remote server for detecting when a new version has been uploaded.
+# When a new version is detected, the game server is restarted.
+#
+# Usage:
+#     remote $ sudo /etc/init.d/raven start
+
 import socket
 import traceback
 import subprocess
@@ -54,8 +61,8 @@ def update_log(run_log, time_modified):
 
 def update_server(client):
     send(client, "Awaiting updated executable")
-    run_log = "/home/doge/whatever/last"
-    file_to_check = "/home/doge/whatever_bin/timestamp"
+    run_log = "/home/doge/starfire_bin/last"
+    file_to_check = "/home/doge/starfire_bin/timestamp"
     last_modified = get_last_modified(file_to_check)
     def inner(iters):
         last_run = get_last_run(run_log)

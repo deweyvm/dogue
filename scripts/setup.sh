@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-LOCAL_HOME=/cygdrive/c/Users/M/Desktop/whatever/
+# Helper function for reconfiguring the remote server after a reformat
+
+
+LOCAL_HOME=/cygdrive/c/Users/M/Desktop/dogue/
 REMOTE_HOME=/home/doge/
 BUILD_NAME=raven
 GAME_NAME=starfire
@@ -31,15 +34,15 @@ register_daemon() {
 
 case $1 in
 local-bin)
-    pushd $LOCAL_HOME/whatever/out/artifacts/whatever_server_jar/ &&\
-    ssh dogue mkdir -p whatever_bin &&\
-    scp * dogue:whatever_bin/ &&\
+    pushd $LOCAL_HOME/dogue/out/artifacts/starfire_jar/ &&\
+    ssh dogue mkdir -p starfire_bin &&\
+    scp * dogue:starfire_bin/ &&\
     popd
 ;;
 
 local-exe)
-    pushd $LOCAL_HOME/whatever/out/artifacts/whatever_server_jar/ &&\
-    scp whatever-server.jar dogue:whatever_bin/ &&\
+    pushd $LOCAL_HOME/starfire/out/artifacts/starfire_jar/ &&\
+    scp starfire.jar dogue:starfire_bin/ &&\
     popd
 ;;
 
@@ -51,7 +54,7 @@ local-setup)
 
 local-scripts)
     pushd $LOCAL_HOME/scripts && \
-    scp * doge@dogue:whatever/scripts && \
+    scp * doge@dogue:dogue/scripts && \
     popd
 ;;
 
@@ -102,8 +105,8 @@ remote-repo)
         echo "This script must not be run as root"
         exit 1
     fi && \
-    rm -rf whatever && \
-    git clone https://github.com/deweyvm/whatever.git whatever
+    rm -rf dogue && \
+    git clone https://github.com/deweyvm/dogue.git dogue
 ;;
 
 daemon-setup)
@@ -111,7 +114,7 @@ daemon-setup)
         echo "This script must be run as root"
         exit 1
     fi && \
-    pushd $REMOTE_HOME/whatever/ && \
+    pushd $REMOTE_HOME/dogue/ && \
     register_daemon starfire && \
     register_daemon raven && \
     popd
