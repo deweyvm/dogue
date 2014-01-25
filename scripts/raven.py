@@ -14,6 +14,7 @@ import time
 
 timestr = time.strftime("%Y-%m-%d--%H-%M-%S")
 logfile = "/var/log/raven/error%s.log" % timestr
+crashfile = "/var/log/raven/crash%s.log" % timestr
 
 def say(s):
     if isinstance(s, bytes):
@@ -40,7 +41,8 @@ def restart_server(client):
     errlines = err.splitlines()
     isFatal = len(errlines) > 0
     for line in errlines:
-        say(line)
+        if "No such process" not in str(line):
+            say(line)
     for line in (out.splitlines()):
         say(line)
         #exit(0)
@@ -89,10 +91,12 @@ def do_command(client, desc, f):
     client.close()
 
 def main():
-    try:
-        os.remove(logfile)
-    except OSError:
-        pass
+    def unhandled(*excinfo):
+        text = "".join(traceback.format_exception(*exc_info))
+        with open(crashfile, "w") as f:
+            f.write("Unhandled exception: %s", text)
+    sys.excepthook = unhandled
+
     restart_server(None)
     host = ''
     port = 27181
@@ -107,12 +111,11 @@ def main():
         client, address = sock.accept()
         #todo, accept data until client closes
         data = ""
-        next = client.recv(size)
+        next = client.recv(size).decode("CP437")
         while '\0' not in next:
             data += next
-            next = client.recv(size)
+            next = client.recv(size).decode("CP437")
         data += next
-        data = data.s.decode("CP437")
         say("Command received: " + data)
         data.replace('\0', '')
         if ("restart" in data):
