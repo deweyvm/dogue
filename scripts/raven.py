@@ -108,6 +108,10 @@ def main():
     sock.listen(acceptBacklog)
 
     while True:
+        def decode(s):
+            s.decode("CP437")
+        def read(client):
+            decode(client.recv(size))
         client, address = sock.accept()
         #todo, accept data until client closes
         data = ""

@@ -9,10 +9,11 @@
 host="doge@dogue.in"
 jarloc=/cygdrive/c/Users/M/Desktop/dogue/dogue/out/artifacts
 lib=$jarloc/dogue_common_jar/dogue-common.jar
-exe=$jarloc/starfire_jar/starfire.jar
-dest=starfire_bin
+starfire=$jarloc/starfire_jar/starfire.jar
+raven=$jarloc/raven_jar/raven.jar
+dest=dogue_bin
 stamp=timestamp
-cmd="scp -C $exe $lib $host:$dest"
+cmd="scp -C $starfire $raven $lib $host:$dest"
 echo Copying jars
 echo $cmd
 $cmd && \

@@ -7,6 +7,7 @@ import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.dogue.input.WhateverControls
 import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
+import com.badlogic.gdx.Gdx
 
 
 object Main {
@@ -15,6 +16,7 @@ object Main {
     val iconPath = "sprites/icon.gif"
     val settings = new Settings(WhateverControls, WhateverDefaultSettings)
     val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
+    Gdx.input.getX
     val pathResolver = new PathResolver(
       "fonts",
       "sprites",

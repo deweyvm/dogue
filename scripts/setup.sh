@@ -34,15 +34,16 @@ register_daemon() {
 
 case $1 in
 local-bin)
-    pushd $LOCAL_HOME/dogue/out/artifacts/starfire_jar/ &&\
-    ssh dogue mkdir -p starfire_bin &&\
-    scp * dogue:starfire_bin/ &&\
+    pushd $LOCAL_HOME/dogue/out/artifacts/starfire_jar/ && \
+    ssh dogue mkdir -p dogue_bin && \
+    scp * dogue:dogue_bin/ && \
     popd
 ;;
 
 local-exe)
-    pushd $LOCAL_HOME/starfire/out/artifacts/starfire_jar/ &&\
-    scp starfire.jar dogue:starfire_bin/ &&\
+    pushd $LOCAL_HOME/dogue/out/artifacts/ && \
+    scp raven_jar/raven.jar dogue:dogue_bin && \
+    scp starfire_jar/starfire.jar dogue:dogue_bin/ && \
     popd
 ;;
 
@@ -122,6 +123,10 @@ daemon-setup)
 
 *)
     echo "Unknown option $1"
+    echo "Options:"
+    for i in local-bin local-exe local-setup local-scripts remote-ps remote-packages remote-emacs remote-db remote-repo daemon-setup ; do
+        echo "    $i"
+    done
     exit 1
 ;;
 esac

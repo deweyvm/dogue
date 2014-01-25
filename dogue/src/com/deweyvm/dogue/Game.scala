@@ -2,7 +2,7 @@ package com.deweyvm.dogue
 
 import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 import com.deweyvm.dogue.net.Client
-import com.deweyvm.gleany.net.ThreadManager
+import com.deweyvm.dogue.common.threading.ThreadManager
 
 object Game {
   val Zoom = 1

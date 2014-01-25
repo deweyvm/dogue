@@ -9,28 +9,37 @@
 # Short-Description: Game server for dogue
 # Description: Game server for dogue
 ### END INIT INFO
-
+TIME=`date +%Y-%M-%d_%H-%M-%S`
 
 DAEMON_PATH="/usr/bin/"
-
 DAEMON=java
 DAEMONOPTS="-jar /home/doge/starfire_bin/starfire.jar --log /var/log/starfire"
-
+DAEMONLOG="/var/log/starfire/daemon-fail_$TIME.log"
 NAME=starfire
 MUSER=$NAME
 DESC="Game server for dogue"
+
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-
+if [ "$2" -eq "--debug-launch" ] ; then
+    OUTPUT="$DAEMONLOG"
+    HASLOG=true
+else
+    OUTPUT="/dev/null"
+    HASLOG=false
+fi
 case "$1" in
 start)
     printf "%-50s" "Starting $NAME..."
     cd $DAEMON_PATH
-    TIME=`date +%s`
-    PID=`su -l $MUSER -c "$DAEMON $DAEMONOPTS" > /var/log/starfire/daemon-fail-$TIME.log 2>&1 & echo $!`
+
+    PID=`su -l $MUSER -c "$DAEMON $DAEMONOPTS" > $OUTPUT 2>&1 & echo $!`
     #echo "Saving PID" $PID " to " $PIDFILE
         if [ -z $PID ]; then
             printf "%s\n" "Fail"
+            if $HASLOG ; then
+                cat $OUTPUT
+            fi
         else
             echo $PID > $PIDFILE
             printf "%s\n" "Ok"

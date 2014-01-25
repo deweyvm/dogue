@@ -9,27 +9,37 @@
 # Short-Description: Build server for dogue
 # Description: Build server for dogue
 ### END INIT INFO
+TIME=`date +%Y-%M-%d_%H-%M-%S`
 
-
-DAEMON_PATH="/home/doge/dogue/scripts/"
-
-DAEMON=python
-DAEMONOPTS="$DAEMON_PATH/raven.py"
-
+DAEMON_PATH="/home/doge/dogue/dogue_bin/"
+DAEMON=java
+DAEMONOPTS="-jar $DAEMON_PATH/raven.jar --log /var/log/raven --timestamp $DAEMON_PATH/timestamp --lastRunFile $DAEMON_PATH/dogue_bin/last --command /var/init.d/starfire restart"
+DAEMONLOG="/var/log/starfire/daemon-fail_$TIME.log"
 NAME=raven
+MUSER=root
 DESC="Build server for dogue"
+
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-
+if [ "$2" -eq "--debug-launch" ] ; then
+    OUTPUT="$DAEMONLOG"
+    HASLOG=true
+else
+    OUTPUT="/dev/null"
+    HASLOG=false
+fi
 case "$1" in
 start)
     printf "%-50s" "Starting $NAME..."
     cd $DAEMON_PATH
-    TIME=`date +%s`
-    PID=`$DAEMON $DAEMONOPTS > /var/log/raven/daemon-fail-$TIME.log 2>&1 & echo $!`
+
+    PID=`su -l $MUSER -c "$DAEMON $DAEMONOPTS" > $OUTPUT 2>&1 & echo $!`
     #echo "Saving PID" $PID " to " $PIDFILE
         if [ -z $PID ]; then
             printf "%s\n" "Fail"
+            if $HASLOG ; then
+                cat $OUTPUT
+            fi
         else
             echo $PID > $PIDFILE
             printf "%s\n" "Ok"

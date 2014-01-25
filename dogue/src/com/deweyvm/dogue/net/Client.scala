@@ -1,6 +1,5 @@
 package com.deweyvm.dogue.net
 
-import com.deweyvm.gleany.net.{ThreadManager, Task}
 import java.net.{UnknownHostException, Socket}
 import com.deweyvm.dogue.Game
 import java.io.IOException
@@ -10,6 +9,7 @@ import com.deweyvm.gleany.Debug
 import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.data.Encoding
 import com.deweyvm.dogue.common.logging.Log
+import com.deweyvm.dogue.common.threading.{ThreadManager, Task}
 
 trait ClientState
 class ClientError(error:String) {
@@ -47,9 +47,7 @@ class Client extends Task {
   private def tryConnect() {
     def fail(exc:Exception, error:String => ClientError) {
       val stackTrace = exc.getStackTraceString
-      Log.warn("Failure:\nException in thread " + Thread.currentThread.getName + "\n")
-      Log.warn(exc.toString)
-      Log.warn(stackTrace)
+      Log.warn(Log.formatStackTrace(exc))
       state = error(stackTrace).toState
       client = None
       }
