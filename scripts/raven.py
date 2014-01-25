@@ -16,7 +16,9 @@ timestr = time.strftime("%Y-%m-%d--%H-%M-%S")
 logfile = "/var/log/raven/error%s.log" % timestr
 
 def say(s):
-    msg = "Server: " + str(s)
+    if isinstance(s, bytes):
+        s = s.decode("CP437")
+    msg = "Server: " + s
     print(msg)
     with open(logfile, "a") as f:
         f.write(msg + "\n")
@@ -41,8 +43,6 @@ def restart_server(client):
         say(line)
     for line in (out.splitlines()):
         say(line)
-    if len(errlines) > 0:
-        say("not quitting")
         #exit(0)
 
 def get_last_run(file):
@@ -112,6 +112,7 @@ def main():
             data += next
             next = client.recv(size)
         data += next
+        data = data.s.decode("CP437")
         say("Command received: " + data)
         data.replace('\0', '')
         if ("restart" in data):

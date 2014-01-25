@@ -9,7 +9,7 @@
 host="doge@dogue.in"
 jarloc=/cygdrive/c/Users/M/Desktop/dogue/dogue/out/artifacts
 lib=$jarloc/dogue_common_jar/dogue-common.jar
-exe=$jarloc/starfire_jar/starfire-server.jar
+exe=$jarloc/starfire_jar/starfire.jar
 dest=starfire_bin
 stamp=timestamp
 cmd="scp -C $exe $lib $host:$dest"

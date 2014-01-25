@@ -14,7 +14,7 @@
 DAEMON_PATH="/usr/bin/"
 
 DAEMON=java
-DAEMONOPTS="-jar /home/doge/dogue_bin/starfire.jar --log /var/log/starfire"
+DAEMONOPTS="-jar /home/doge/starfire_bin/starfire.jar --log /var/log/starfire"
 
 NAME=starfire
 MUSER=$NAME

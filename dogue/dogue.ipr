@@ -24,7 +24,7 @@
       </root>
     </artifact>
     <artifact name="starfire:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/whatever_server_jar</output-path>
+      <output-path>$PROJECT_DIR$/out/artifacts/starfire_jar</output-path>
       <root id="root">
         <element id="archive" name="starfire.jar">
           <element id="module-output" name="starfire" />
@@ -454,8 +454,8 @@
       <method>
         <option name="BuildArtifacts" enabled="true">
           <artifact name="dogue-common:jar" />
-          <artifact name="starfire:jar" />
           <artifact name="dogue:jar" />
+          <artifact name="starfire:jar" />
         </option>
         <option name="Make" enabled="true" />
       </method>
@@ -483,8 +483,8 @@
       <method>
         <option name="BuildArtifacts" enabled="true">
           <artifact name="dogue-common:jar" />
-          <artifact name="starfire:jar" />
           <artifact name="dogue:jar" />
+          <artifact name="starfire:jar" />
         </option>
         <option name="Make" enabled="true" />
         <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_upload-server" />
