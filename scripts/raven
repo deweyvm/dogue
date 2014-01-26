@@ -9,7 +9,7 @@
 # Short-Description: Build server for dogue
 # Description: Build server for dogue
 ### END INIT INFO
-TIME=`date +%Y-%m-%d_%H-%M-%S`
+TIME=`date +%s`
 RAVEN_PATH="/home/doge/dogue_bin"
 
 DAEMON_PATH="$RAVEN_PATH/"

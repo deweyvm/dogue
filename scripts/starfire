@@ -9,7 +9,7 @@
 # Short-Description: Game server for dogue
 # Description: Game server for dogue
 ### END INIT INFO
-TIME=`date +%Y-%m-%d_%H-%M-%S`
+TIME=`date +%s`
 
 DAEMON_PATH="/home/doge/dogue_bin/"
 DAEMON=/usr/bin/starfire
