@@ -9,19 +9,19 @@
 # Short-Description: Game server for dogue
 # Description: Game server for dogue
 ### END INIT INFO
-TIME=`date +%Y-%M-%d_%H-%M-%S`
+TIME=`date +%Y-%m-%d_%H-%M-%S`
 
-DAEMON_PATH="/usr/bin/"
-DAEMON=java
-DAEMONOPTS="-jar /home/doge/starfire_bin/starfire.jar --log /var/log/starfire"
-DAEMONLOG="/var/log/starfire/daemon-fail_$TIME.log"
+DAEMON_PATH="/home/doge/dogue_bin/"
+DAEMON=/usr/bin/java
+DAEMONOPTS="-jar $DAEMON_PATH/starfire.jar --log /var/log/starfire"
+DAEMONLOG="/var/log/starfire/daemon-start_$TIME.log"
 NAME=starfire
-MUSER=$NAME
-DESC="Game server for dogue"
+DAEMON_USER=root
 
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-if [ "$2" -eq "--debug-launch" ] ; then
+if [[ "$2" = "--debug" ]] ; then
+    echo "Debugging mode"
     OUTPUT="$DAEMONLOG"
     HASLOG=true
 else
@@ -30,45 +30,44 @@ else
 fi
 case "$1" in
 start)
-    printf "%-50s" "Starting $NAME..."
+    printf "%-50s\n" "Starting $NAME..."
     cd $DAEMON_PATH
 
-    PID=`su -l $MUSER -c "$DAEMON $DAEMONOPTS" > $OUTPUT 2>&1 & echo $!`
-    #echo "Saving PID" $PID " to " $PIDFILE
-        if [ -z $PID ]; then
-            printf "%s\n" "Fail"
-            if $HASLOG ; then
-                cat $OUTPUT
-            fi
-        else
-            echo $PID > $PIDFILE
-            printf "%s\n" "Ok"
+    PID=`$DAEMON $DAEMONOPTS > $OUTPUT 2>&1 & echo $!`
+    if [ -z $PID ]; then
+        printf "%s\n" "Daemon failed to start"
+        if $HASLOG ; then
+            cat $OUTPUT
         fi
+    else
+        echo $PID > $PIDFILE
+        printf "%s\n" "Ok"
+    fi
 ;;
 status)
-        printf "%-50s" "Checking $NAME..."
-        if [ -f $PIDFILE ]; then
-            PID=`cat $PIDFILE`
-            if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
-                printf "%s\n" "Process dead but pidfile ($PIDFILE) exists"
-            else
-                echo "Running"
-            fi
+    printf "%-50s\n" "Checking $NAME..."
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+            printf "%s\n" "Process dead but pidfile ($PIDFILE) exists"
         else
-            printf "%s\n" "Service not running"
+            echo "The service is running"
         fi
+    else
+        printf "%s\n" "Service not running"
+    fi
 ;;
 stop)
-        printf "%-50s" "Stopping $NAME"
-            PID=`cat $PIDFILE`
-            cd $DAEMON_PATH
-        if [ -f $PIDFILE ]; then
-            kill -HUP $PID
-            printf "%s\n" "Ok"
-            rm -f $PIDFILE
-        else
-            printf "%s\n" "pidfile not found"
-        fi
+    printf "%-50s\n" "Stopping $PID"
+    NAME=`cat $PIDFILE`
+    PIDFILE $DAEMON_PATH
+    if [ -f $PIDFILE ]; then
+        kill -HUP $PID
+        printf "%s\n" "Ok"
+        rm -f $PIDFILE
+    else
+        printf "%s\n" "pidfile not found"
+    fi
 ;;
 force-reload)
     $0 restart

@@ -33,20 +33,23 @@ register_daemon() {
 }
 
 case $1 in
-local-bin)
-    pushd $LOCAL_HOME/dogue/out/artifacts/starfire_jar/ && \
-    ssh dogue mkdir -p dogue_bin && \
-    scp * dogue:dogue_bin/ && \
-    popd
-;;
 
 local-exe)
     pushd $LOCAL_HOME/dogue/out/artifacts/ && \
-    scp raven_jar/raven.jar dogue:dogue_bin && \
-    scp starfire_jar/starfire.jar dogue:dogue_bin/ && \
+    scp raven_jar/raven.jar \
+        starfire_jar/starfire.jar \
+        doge@dogue:dogue_bin
+;;
+local-bin)
+    FILE=bin.zip
+    pushd $LOCAL_HOME/dogue/out/artifacts/ && \
+    zip -9 -j $FILE raven_jar/raven.jar starfire_jar/* && \
+    scp $FILE doge@dogue:. && \
+    rm $FILE && \
+    ssh dogue "rm -rf dogue_bin && mkdir -p dogue_bin" && \
+    ssh dogue "unzip $FILE -d dogue_bin && rm $FILE && cd dogue_bin && chmod a+r *"
     popd
 ;;
-
 local-setup)
     pushd $LOCAL_HOME/scripts && \
     scp setup.sh doge@dogue:. && \
@@ -75,7 +78,7 @@ remote-packages)
         echo "This script must be run as root"
         exit 1
     fi && \
-    yes Y | apt-get install emacs git openjdk-7-jre openjdk-7-jdk python3 postgresql && \
+    yes Y | apt-get install emacs git openjdk-7-jre openjdk-7-jdk python3 postgresql zip && \
     sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 ;;
 
@@ -124,7 +127,15 @@ daemon-setup)
 *)
     echo "Unknown option $1"
     echo "Options:"
-    for i in local-bin local-exe local-setup local-scripts remote-ps remote-packages remote-emacs remote-db remote-repo daemon-setup ; do
+    for i in local-bin \
+             local-setup \
+             local-scripts \
+             remote-ps \
+             remote-packages \
+             remote-emacs \
+             remote-db \
+             remote-repo \
+             daemon-setup ; do
         echo "    $i"
     done
     exit 1
