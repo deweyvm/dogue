@@ -480,37 +480,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="false" name="Remote Server" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.starfire.Main" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="--log /var/log/starfire" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="starfire" />
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="BuildArtifacts" enabled="true">
-          <artifact name="dogue-common:jar" />
-          <artifact name="dogue:jar" />
-          <artifact name="starfire:jar" />
-        </option>
-        <option name="Make" enabled="true" />
-        <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_upload-server" />
-        <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_python" />
-      </method>
-    </configuration>
   </component>
   <component name="ScalacSettings">
     <option name="COMPILER_LIBRARY_NAME" value="scala-compiler" />
