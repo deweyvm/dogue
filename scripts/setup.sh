@@ -79,7 +79,9 @@ remote-packages)
         exit 1
     fi && \
     yes Y | apt-get install emacs git openjdk-7-jre openjdk-7-jdk python3 postgresql zip && \
-    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
+    update-alternatives --install /usr/bin/python python /usr/bin/python3 10 && \
+    ln /usr/bin/java /usr/bin/starfire && \
+    ln /usr/bin/java /usr/bin/raven
 ;;
 
 remote-emacs)

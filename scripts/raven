@@ -13,7 +13,7 @@ TIME=`date +%Y-%m-%d_%H-%M-%S`
 RAVEN_PATH="/home/doge/dogue_bin"
 
 DAEMON_PATH="$RAVEN_PATH/"
-DAEMON=/usr/bin/java
+DAEMON=/usr/bin/raven
 DAEMONOPTS="-jar $RAVEN_PATH/raven.jar --log /var/log/raven --timestamp $RAVEN_PATH/timestamp --lastRunFile $RAVEN_PATH/last"
 DAEMONLOG="/var/log/raven/daemon-start_$TIME.log"
 NAME=raven
@@ -30,42 +30,34 @@ else
 fi
 case "$1" in
 start)
-    printf "%-50s\n" "Starting $NAME..."
+    echo "Starting $NAME"
     cd $DAEMON_PATH
-    PID=`$DAEMON $DAEMONOPTS --command '/etc/init.d/starfire restart' > $OUTPUT 2>&1 & echo $!`
-    if [ -z $PID ]; then
-        printf "%s\n" "Daemon failed to start"
+    $DAEMON $DAEMONOPTS --command '/etc/init.d/starfire restart' > $OUTPUT 2>&1
+    if [[ $? -eq 0 ]] ; then
+        echo "Service started successfully"
+    else
+        echo "Service failed to start"
         if $HASLOG ; then
             cat $OUTPUT
         fi
-    else
-        echo $PID > $PIDFILE
-        printf "%s\n" "Ok"
     fi
 ;;
 status)
-    printf "%-50s\n" "Checking $NAME..."
-    if [ -f $PIDFILE ]; then
-        PID=`cat $PIDFILE`
-        if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
-            printf "%s\n" "Process dead but pidfile ($PIDFILE) exists"
-        else
-            echo "The service is running"
-        fi
+    echo "Status of $NAME:"
+    pgrep $NAME &> /dev/null
+    if [[ $? -eq 0 ]] ; then
+        echo "Service is running"
     else
-        printf "%s\n" "Service not running"
+        echo "Service not running"
     fi
 ;;
 stop)
-    printf "%-50s\n" "Stopping $NAME"
-        PID=`cat $PIDFILE`
-        cd $DAEMON_PATH
-    if [ -f $PIDFILE ]; then
-        kill -HUP $PID
-        printf "%s\n" "Ok"
-        rm -f $PIDFILE
+    echo "Stopping $NAME"
+    pgrep $NAME &> /dev/null
+    if [[ $? -eq 0 ]]; then
+        pkill -HUP $NAME && echo "Stopped"
     else
-        printf "%s\n" "pidfile not found"
+        echo "Already dead"
     fi
 ;;
 force-reload)
@@ -77,6 +69,12 @@ restart)
 ;;
 
 *)
-        echo "Usage: $0 {status|start|stop|restart}"
-        exit 1
+    echo "Invalid argument: $0"
+    echo Options:
+    for i in start\
+             stop\
+             restart\
+             status\
+             force-reload\
+    exit 1
 esac
