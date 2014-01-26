@@ -33,7 +33,7 @@ start)
     printf "%-50s\n" "Starting $NAME..."
     cd $DAEMON_PATH
     echo "$DAEMON $DAEMONOPTS > $OUTPUT 2>&1 & echo $!"
-    PID=`$DAEMON $DAEMONOPTS --command '/var/init.d/starfire restart' > $OUTPUT 2>&1 & echo $!`
+    PID=`$DAEMON $DAEMONOPTS --command '/etc/init.d/starfire restart' > $OUTPUT 2>&1 & echo $!`
     echo "PID: $PID"
     if [ -z $PID ]; then
         printf "%s\n" "Daemon failed to start"
