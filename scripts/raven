@@ -32,7 +32,7 @@ case "$1" in
 start)
     echo "Starting $NAME"
     cd $DAEMON_PATH
-    $DAEMON $DAEMONOPTS --command '/etc/init.d/starfire restart' > $OUTPUT 2>&1
+    $DAEMON $DAEMONOPTS --command '/etc/init.d/starfire restart' > $OUTPUT 2>&1 &
     if [[ $? -eq 0 ]] ; then
         echo "Service started successfully"
     else
@@ -44,6 +44,7 @@ start)
 ;;
 status)
     echo "Status of $NAME:"
+    echo "pgrep $NAME &> /dev/null"
     pgrep $NAME &> /dev/null
     if [[ $? -eq 0 ]] ; then
         echo "Service is running"
@@ -54,8 +55,10 @@ status)
 stop)
     echo "Stopping $NAME"
     pgrep $NAME &> /dev/null
+    echo "ss"
     if [[ $? -eq 0 ]]; then
-        pkill -HUP $NAME && echo "Stopped"
+        pkill -9 --full --echo --exact $NAME
+        echo "Stopped"
     else
         echo "Already dead"
     fi
@@ -70,11 +73,13 @@ restart)
 
 *)
     echo "Invalid argument: $0"
-    echo Options:
+    echo "Options:"
     for i in start\
              stop\
              restart\
              status\
-             force-reload\
+             force-reload ; do
+        echo "    $i"
+    done
     exit 1
 esac
