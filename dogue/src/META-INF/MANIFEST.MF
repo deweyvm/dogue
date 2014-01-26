@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
-Class-Path: scala-compiler.jar scala-library.jar scala-reflect.jar sca
- la-actors.jar scala-library.jar scala-swing.jar gdx.jar gdx-natives.j
- ar gdx-sources.jar gdx-freetype.jar gdx-controllers.jar gdx-backend-l
- wjgl.jar gdx-freetype-natives.jar gdx-freetype-sources.jar gdx-contro
- llers-desktop.jar gdx-controllers-sources.jar gdx-backend-lwjgl-nativ
- es.jar gdx-backend-lwjgl-sources.jar gdx-controllers-desktop-natives.
- jar gdx-controllers-desktop-sources.jar
-Main-Class: 
+Class-Path: scala-compiler.jar scala-library.jar scala-reflect.jar sco
+ pt_2.10-3.2.0.jar gdx.jar gdx-natives.jar gdx-sources.jar gdx-freetyp
+ e.jar gdx-controllers.jar gdx-backend-lwjgl.jar gdx-freetype-natives.
+ jar gdx-freetype-sources.jar gdx-controllers-desktop.jar gdx-controll
+ ers-sources.jar gdx-backend-lwjgl-natives.jar gdx-backend-lwjgl-sourc
+ es.jar gdx-controllers-desktop-natives.jar gdx-controllers-desktop-so
+ urces.jar scala-actors.jar scala-library.jar scala-swing.jar
+Main-Class: com.deweyvm.dogue.Main
 
