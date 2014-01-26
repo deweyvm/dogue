@@ -16,7 +16,6 @@ object Main {
     val iconPath = "sprites/icon.gif"
     val settings = new Settings(WhateverControls, WhateverDefaultSettings)
     val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
-    Gdx.input.getX
     val pathResolver = new PathResolver(
       "fonts",
       "sprites",
