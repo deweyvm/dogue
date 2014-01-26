@@ -24,11 +24,11 @@ def main():
         data = sock.recv(size).decode(encoding)
         if (data == ""):
             break
-        s = data.split('\0')
-        last = s.pop(len(s) - 1)
-        for line in s:
-            print(line)
-        data = last
+        #s = data.split('\0')
+        #last = s.pop(len(s) - 1)
+        #for line in s:
+        #    print(line)
+        #data = last
     sock.close()
 
 
