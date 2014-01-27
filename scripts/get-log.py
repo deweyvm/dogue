@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 #
-# Gets the most recent log
+# Gets the most recent log file in the /var/log directory for a given
+# subdirectory.
+#
+# Usage:
+#     python get-log.py <name>
 #
 import sys
 import time
