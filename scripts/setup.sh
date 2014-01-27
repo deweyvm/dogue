@@ -34,13 +34,13 @@ register_daemon() {
 
 case $1 in
 
-local-exe)
+exe)
     pushd $LOCAL_HOME/dogue/out/artifacts/ && \
     scp raven_jar/raven.jar \
         starfire_jar/starfire.jar \
         doge@dogue:dogue_bin
 ;;
-local-bin)
+bin)
     FILE=bin.zip
     pushd $LOCAL_HOME/dogue/out/artifacts/ && \
     zip -9 -j $FILE raven_jar/raven.jar starfire_jar/* && \
@@ -50,19 +50,19 @@ local-bin)
     ssh dogue "unzip $FILE -d dogue_bin && rm $FILE && cd dogue_bin && chmod a+r *"
     popd
 ;;
-local-setup)
+setup)
     pushd $LOCAL_HOME/scripts && \
     scp setup.sh doge@dogue:. && \
     popd
 ;;
 
-local-scripts)
+scripts|s)
     pushd $LOCAL_HOME/scripts && \
     scp * doge@dogue:dogue/scripts && \
     popd
 ;;
 
-remote-ps)
+ps)
     if [[ $EUID -eq 0 ]]; then
         echo "This script must not be run as root"
         exit 1
@@ -73,7 +73,7 @@ remote-ps)
     popd
 ;;
 
-remote-packages)
+packages)
     if [[ $EUID -ne 0 ]]; then
         echo "This script must be run as root"
         exit 1
@@ -84,7 +84,7 @@ remote-packages)
     ln /usr/bin/java /usr/bin/raven
 ;;
 
-remote-emacs)
+emacs)
     if [[ $EUID -eq 0 ]]; then
         echo "This script must not be run as root"
         exit 1
@@ -96,7 +96,7 @@ remote-emacs)
     rm -rf emacs
 ;;
 
-remote-db)
+db)
     if [[ $EUID -ne 0 ]]; then
         echo "This script must be run as root"
         exit 1
@@ -106,7 +106,7 @@ remote-db)
     sudo -u postgres createdb testdb -O starfire
 ;;
 
-remote-repo)
+repo)
     if [[ $EUID -eq 0 ]]; then
         echo "This script must not be run as root"
         exit 1
@@ -115,7 +115,7 @@ remote-repo)
     git clone https://github.com/deweyvm/dogue.git dogue
 ;;
 
-daemon-setup)
+daemon|d)
     if [[ $EUID -ne 0 ]]; then
         echo "This script must be run as root"
         exit 1
@@ -129,15 +129,16 @@ daemon-setup)
 *)
     echo "Unknown option $1"
     echo "Options:"
-    for i in local-bin \
-             local-setup \
-             local-scripts \
-             remote-ps \
-             remote-packages \
-             remote-emacs \
-             remote-db \
-             remote-repo \
-             daemon-setup ; do
+    for i in exe \
+             bin \
+             setup \
+             "scripts|s" \
+             ps \
+             packages \
+             emacs \
+             db \
+             repo \
+             "daemon|d" ; do
         echo "    $i"
     done
     exit 1
