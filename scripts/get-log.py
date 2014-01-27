@@ -10,6 +10,7 @@ import sys
 import time
 import os
 import traceback
+
 DEBUG=False
 
 def main():
@@ -29,12 +30,12 @@ def main():
         if abs(now - int(date)) < distance:
             all_matching.append((prefix, date))
     if len(all_matching) == 0:
+        print("no log found")
         sys.exit(1)
     else:
         prefix, date = max(all_matching, key=lambda p: p[1])
         path = os.path.join(loc, prefix + "_" + date)
-        print(path)
-        sys.exit(0)
+        os.execl("/usr/bin/tail", "/usr/bin/tail", "-f", path)
 
 def get_date(s):
     pair = s.split("_")
