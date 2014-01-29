@@ -104,29 +104,31 @@ class Client extends Task with Transmitter {
     }
   }
 
-  private val inQueue = new LockedQueue[String]
-  private val outQueue = new LockedQueue[String]
+  private val readQueue = new LockedQueue[String] // read from the server
+  private val writeQueue = new LockedQueue[String] //to be written to the server
+  //push commands to the server
   override def enqueue(s:String) {
     Log.info("got command: " + s)
-    Log.info("Count before: " + inQueue.length)
-    inQueue.enqueue(s)
-    Log.info("Cound after: " + inQueue.length)
+    Log.info("Count before: " + writeQueue.length)
+
+    writeQueue.enqueue(s)
+    Log.info("Count after: " + writeQueue.length)
   }
 
+  //
   override def dequeue:Vector[String] = {
-    outQueue.dequeueAll()
-
+    readQueue.dequeueAll()
   }
 
   //write all queued messages
   private def write() {
-    val toWrite = inQueue.dequeueAll()
+    val toWrite = writeQueue.dequeueAll()
     tryDo { sock =>
       toWrite foreach { s =>
         Log.info("Transmitting: \"%s\"" format s)
         sock.transmit(s)
       }
-      outQueue enqueueAll toWrite
+      //outQueue enqueueAll toWrite
     }
   }
 
@@ -165,7 +167,7 @@ class Client extends Task with Transmitter {
 
   def processServerCommand(command:String) {
     Log.info("Processing: " + command)
-    outQueue.enqueue(command)
+    readQueue.enqueue(command)
   }
 
   def getState:ClientState = Client.State.Connecting
