@@ -53,12 +53,11 @@ status)
 ;;
 stop)
     echo "Stopping $NAME"
-    pkill -9 --full /usr/bin/starfire
+    pkill -9 --full $DEMON
     if [[ $? -eq 0 ]] ; then
         echo "Stopped"
     else
         echo "Did not stop/Already dead"
-        pgrep $NAME
         exit 1
     fi
 ;;

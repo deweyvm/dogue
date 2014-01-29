@@ -58,7 +58,6 @@ stop)
         echo "Stopped"
     else
         echo "Did not stop/Already dead"
-        pgrep $NAME
         exit 1
     fi
 ;;
