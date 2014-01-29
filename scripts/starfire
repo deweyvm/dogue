@@ -53,12 +53,13 @@ status)
 ;;
 stop)
     echo "Stopping $NAME"
-    pgrep --exact $NAME &> /dev/null
-    if [[ $? -eq 0 ]]; then
-        pkill -9 --echo --exact $NAME
+    pkill -9 --full /usr/bin/starfire
+    if [[ $? -eq 0 ]] ; then
         echo "Stopped"
     else
-        echo "Already dead"
+        echo "Did not stop/Already dead"
+        pgrep $NAME
+        exit 1
     fi
 ;;
 force-reload)
