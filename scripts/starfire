@@ -55,7 +55,7 @@ stop)
     echo "Stopping $NAME"
     pgrep --exact $NAME &> /dev/null
     if [[ $? -eq 0 ]]; then
-        pkill -9 --echo --exact --full $NAME
+        pkill -9 --echo --exact $NAME
         echo "Stopped"
     else
         echo "Already dead"
