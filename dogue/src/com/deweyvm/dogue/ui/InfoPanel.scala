@@ -4,6 +4,8 @@ import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.dogue.common.logging.Log
+
 object InfoPanel {
   def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color, factory:GlyphFactory):InfoPanel = {
     new InfoPanel(x, y, width, height, bgColor, factory, "", Vector(), new ScrollBar(factory), 0)
@@ -37,8 +39,13 @@ case class InfoPanel(override val x:Int,
   }
 
   private def updateView:InfoPanel = {
-    val jMax = lines.length - 1
-    val jMin = height - 1
+    val (jMin, jMax) = {
+      if (lines.length < height) {
+        (lines.length - 1, height - 1)
+      } else {
+        (height - 1, lines.length - 1)
+      }
+    }
     this.copy(jView = (-Controls.AxisY.justPressed + jView).clamp(jMin, jMax))
   }
 
@@ -48,6 +55,10 @@ case class InfoPanel(override val x:Int,
 
   override def draw() {
     super.draw()
+    drawText()
+  }
+
+  def drawText() {
     drawLines(lines, width, height, leftMargin + x, topMargin + y)
   }
 

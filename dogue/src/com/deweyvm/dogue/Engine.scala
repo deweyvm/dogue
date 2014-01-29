@@ -6,6 +6,7 @@ import com.deweyvm.dogue.input.Controls
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.net.Client
+import com.deweyvm.dogue.common.logging.Log
 
 
 class Engine {
@@ -15,7 +16,7 @@ class Engine {
   val rows = Game.RenderHeight/codePage.tileHeight
   val factory = new StageFactory(cols, rows, codePage)
   var stage = factory.create(Stage.Chat)
-
+  Log.info(Client.instance.getName)
   def update() {
     stage = stage.update(factory)
     Controls.update()

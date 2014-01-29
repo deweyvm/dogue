@@ -1,13 +1,13 @@
 package com.deweyvm.dogue.net
 
-import java.net.{UnknownHostException, Socket}
+import java.net.{InetAddress, NetworkInterface, UnknownHostException, Socket}
 import com.deweyvm.dogue.Game
 import java.io.IOException
 import com.deweyvm.dogue.common.Implicits._
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.gleany.Debug
 import com.deweyvm.dogue.entities.Code
-import com.deweyvm.dogue.common.data.Encoding
+import com.deweyvm.dogue.common.data.{LockedQueue, Encoding}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.{ThreadManager, Task}
 
@@ -33,9 +33,10 @@ object Client {
   val instance = ThreadManager.spawn(new Client())
 }
 
-class Client extends Task {
+class Client extends Task with Transmitter {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
+  val name = createName
   val port = 4815
   val address = Game.globals.RemoteIp.getOrElse("localhost")
   var running = true
@@ -43,6 +44,12 @@ class Client extends Task {
   var state:ClientState = Client.State.Connecting
   val buff = new Array[Byte](4096)
   private var client:Option[Socket] = None
+
+  def getName = name
+
+  private def createName = {
+    Game.globals.makeMiniGuid
+  }
 
   private def tryConnect() {
     def fail(exc:Exception, error:String => ClientError) {
@@ -53,7 +60,7 @@ class Client extends Task {
       }
     try {
       Log.info("Attempting to establish a connection to %s" format address)
-      client = new Socket(address, 4815).some
+      client = new Socket(address, port).some
       state = Client.State.Connected
       client foreach { sock =>
         sock.setSoTimeout(1000)
@@ -90,15 +97,36 @@ class Client extends Task {
         tryConnect()
       } else {
         read()
+        write()
         val waitMillis = 250
         Thread.sleep(waitMillis)
       }
     }
   }
 
-  def send(message:String):T = {
+  private val inQueue = new LockedQueue[String]
+  private val outQueue = new LockedQueue[String]
+  override def enqueue(s:String) {
+    Log.info("got command: " + s)
+    Log.info("Count before: " + inQueue.length)
+    inQueue.enqueue(s)
+    Log.info("Cound after: " + inQueue.length)
+  }
+
+  override def dequeue:Vector[String] = {
+    outQueue.dequeueAll()
+
+  }
+
+  //write all queued messages
+  private def write() {
+    val toWrite = inQueue.dequeueAll()
     tryDo { sock =>
-      sock.transmit(message)
+      toWrite foreach { s =>
+        Log.info("Transmitting: \"%s\"" format s)
+        sock.transmit(s)
+      }
+      outQueue enqueueAll toWrite
     }
   }
 
@@ -121,11 +149,13 @@ class Client extends Task {
         val first = lines.dropRight(1)
         for (s <- first) {
           current += s
+
           commands += current
+          Log.warn(current)
           current = ""
         }
 
-        commands foreach process
+        commands foreach processServerCommand
 
         current = last
       }
@@ -133,8 +163,9 @@ class Client extends Task {
 
   }
 
-  def process(command:String) {
+  def processServerCommand(command:String) {
     Log.info("Processing: " + command)
+    outQueue.enqueue(command)
   }
 
   def getState:ClientState = Client.State.Connecting

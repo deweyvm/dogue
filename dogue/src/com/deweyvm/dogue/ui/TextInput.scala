@@ -4,12 +4,14 @@ import com.badlogic.gdx.{InputAdapter, Gdx}
 import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
-import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.Game
+import scala.concurrent.Lock
+import com.deweyvm.dogue.common.logging.Log
+
 
 object TextInput {
-  var count = 0
-
+  private var count = 0
+  private val lock = new Lock
   def create(prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
     val result = new TextInput(count, prompt, width, height, bgColor, fgColor, "", factory)
     count += 1
@@ -24,12 +26,13 @@ object TextInput {
         active foreach { id =>
           if (code == 8) {
             strings(id) = strings(id).dropRight(1)
-          } else if (code == 13) {
-            commandQueue(id) += strings(id)
+          } else if (code == 13 && strings(id).length > 0) {
+            putCommand(id, strings(id))
+
             strings(id) = ""
           } else if (code > 31){
             strings(id) += char
-            println("here <%s>".format(char.toInt.toString))
+            //println("here <%s>".format(char.toInt.toString))
           }
         }
         false
@@ -37,6 +40,7 @@ object TextInput {
     })
   }
 
+  //pure reads do not need a lock as long as all writes are locked
   def take(id:Int):String = {
     val added = strings(id)
     added
@@ -44,8 +48,26 @@ object TextInput {
 
   val strings = scala.collection.mutable.Map[Int, String]().withDefaultValue("")
   val inputs = scala.collection.mutable.Map[Int, TextInput]()
-  val commandQueue = scala.collection.mutable.Map[Int, ArrayBuffer[String]]().withDefaultValue(ArrayBuffer[String]())
+  val commandQueue = scala.collection.mutable.Map[Int, Vector[String]]().withDefaultValue(Vector())
+
+  def putCommand(id:Int, string:String) {
+    lock.acquire()
+    val newVect:Vector[String] = commandQueue(id) :+ string
+    commandQueue(id) = newVect
+    lock.release()
+  }
+
+  def getCommands(id:Int):Vector[String] = {
+    lock.acquire()
+    val result = commandQueue(id).toVector
+    commandQueue(id) = Vector()
+    lock.release()
+    result
+  }
+
+
   var active:Option[Int] = None
+
 }
 
 case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
@@ -55,13 +77,14 @@ case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color
     new Text(s, bgColor, fgColor, factory)
   }
 
+
   val text = (prompt + string).toLines(width) map makeText
   val cursor = Vector(makeText("_"), makeText(" "))
   val flashRate = 30 //cursor flashes on/off for `flashRate` frames
 
-  def update:TextInput = {
+  def update:(TextInput, Vector[String]) = {
     TextInput.active = Some(id)
-    this.copy(string = TextInput.take(id))
+    (this.copy(string = TextInput.take(id)), TextInput.getCommands(id))
   }
 
   def draw(iRoot:Int, jRoot:Int) {

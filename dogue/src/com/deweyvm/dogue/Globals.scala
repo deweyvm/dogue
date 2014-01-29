@@ -13,6 +13,8 @@ class Globals {
 
   def makeGuid: String = "%08x%08x%08x%08x" format (Random.nextInt(),Random.nextInt(),Random.nextInt(),Random.nextInt())
 
+  def makeMiniGuid: String = "%08x%08x" format (Random.nextInt(),Random.nextInt())
+
   def shouldDrawDebug: Boolean = drawDebug
 
   def toggleDrawDebug() {
