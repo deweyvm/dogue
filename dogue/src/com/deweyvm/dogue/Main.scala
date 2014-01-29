@@ -41,6 +41,6 @@ object Main {
       println("unknown")
       sys.exit(0)
     }
-    Log.setDirectory("logs")
+    Log.initLog("logs", Log.Verbose)
   }
 }

@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.net
 
-import java.net.{InetAddress, NetworkInterface, UnknownHostException, Socket}
+import java.net._
 import com.deweyvm.dogue.Game
 import java.io.IOException
 import com.deweyvm.dogue.common.Implicits._
@@ -27,6 +27,7 @@ object Client {
   object Error {
     case class HostUnreachable(error:String) extends ClientError(error)
     case class ConnectionFailure(error:String) extends ClientError(error)
+    case class Timeout(error:String) extends ClientError(error)
   }
 
 
@@ -43,9 +44,16 @@ class Client extends Task with Transmitter {
   var current = ""
   var state:ClientState = Client.State.Connecting
   val buff = new Array[Byte](4096)
+  var pinger:Option[Pinger] = None
   private var client:Option[Socket] = None
 
   def getName = name
+
+  private def makePinger():Option[Pinger] = {
+    val p = new Pinger(this)
+    p.start()
+    p.some
+  }
 
   private def createName = {
     Game.globals.makeMiniGuid
@@ -55,9 +63,8 @@ class Client extends Task with Transmitter {
     def fail(exc:Exception, error:String => ClientError) {
       val stackTrace = exc.getStackTraceString
       Log.warn(Log.formatStackTrace(exc))
-      state = error(stackTrace).toState
-      client = None
-      }
+      delete(error(stackTrace).toState)
+    }
     try {
       Log.info("Attempting to establish a connection to %s" format address)
       client = new Socket(address, port).some
@@ -65,6 +72,7 @@ class Client extends Task with Transmitter {
       client foreach { sock =>
         sock.setSoTimeout(1000)
       }
+      pinger = makePinger()
       Log.info("Success")
       Thread.sleep(5000)
     } catch {
@@ -75,25 +83,21 @@ class Client extends Task with Transmitter {
     }
   }
 
-  def getString:String = {
-    import Client.State._
-    import Client.Error._
-    state match {
-      case Offline => "Offline mode"
-      case Connected => Code.☼.rawString
-      case Connecting =>
-        val codes = Vector(Code./, Code.─, Code.\, Code.│)
-        "Connecting " + codes((Game.getFrame/10) % codes.length).rawString
-      case Disconnected(e) => e match {
-        case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here
-        case ConnectionFailure(msg) => "Failed to connect (r)" //todo -- put control widget here
-      }
+  private def delete(s:ClientState) {
+    try {
+      client foreach {_.close()}
+      client = None
+      pinger foreach {_.kill()}
+      pinger = None
+      state = s
+    } catch {
+      case t:Throwable => ()
     }
   }
 
   override def execute() {
     while (running) {
-      if (!client.isDefined && (state == Client.State.Connecting/* || state == Client.State.Disconnected*/)) {
+      if (!client.isDefined) {
         tryConnect()
       } else {
         read()
@@ -104,13 +108,18 @@ class Client extends Task with Transmitter {
     }
   }
 
+  def sendPing() {
+    tryDo { sock =>
+      sock.transmit("/ping")
+    }
+  }
+
   private val readQueue = new LockedQueue[String] // read from the server
   private val writeQueue = new LockedQueue[String] //to be written to the server
   //push commands to the server
   override def enqueue(s:String) {
     Log.info("got command: " + s)
     Log.info("Count before: " + writeQueue.length)
-
     writeQueue.enqueue(s)
     Log.info("Count after: " + writeQueue.length)
   }
@@ -128,7 +137,6 @@ class Client extends Task with Transmitter {
         Log.info("Transmitting: \"%s\"" format s)
         sock.transmit(s)
       }
-      //outQueue enqueueAll toWrite
     }
   }
 
@@ -136,6 +144,11 @@ class Client extends Task with Transmitter {
     tryDo { sock =>
       sock.close()
     }
+  }
+
+  def doTimeout() {
+    Log.warn("ping timeout")
+    disconnect()
   }
 
   def isConnected:Boolean = client exists {_.isConnected}
@@ -154,6 +167,7 @@ class Client extends Task with Transmitter {
 
           commands += current
           Log.warn(current)
+
           current = ""
         }
 
@@ -167,18 +181,47 @@ class Client extends Task with Transmitter {
 
   def processServerCommand(command:String) {
     Log.info("Processing: " + command)
-    readQueue.enqueue(command)
+    if (current == "/pong") {
+      pinger foreach {_.pong}
+    } else { //fixme -- pong doesnt get queue'd?
+      readQueue.enqueue(command)
+    }
   }
 
   def getState:ClientState = Client.State.Connecting
 
   private def tryDo[A](f:Socket => A/*,r: A => T*/):T = {
-    client foreach f
+    import Client._
+    import Error._
+    import State._
+    try {
+      client foreach f
+    } catch {
+      case e:SocketException =>
+        delete(ConnectionFailure(e.getMessage).toState)
+    }
   }
 
 
   //returns buffered output if any exists
   def getOutput:Vector[String] = {
     Vector()
+  }
+
+
+  def getString:String = {
+    import Client.State._
+    import Client.Error._
+    state match {
+      case Offline => "Offline mode"
+      case Connected => Code.☼.rawString
+      case Connecting =>
+        val codes = Vector(Code./, Code.─, Code.\, Code.│)
+        "Connecting " + codes((Game.getFrame/10) % codes.length).rawString
+      case Disconnected(e) => e match {
+        case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here
+        case ConnectionFailure(msg) => "Failed to connect (r)" //todo -- put control widget here
+      }
+    }
   }
 }
