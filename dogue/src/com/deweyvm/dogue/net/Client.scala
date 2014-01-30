@@ -32,7 +32,7 @@ object Client {
   }
 
 
-  val instance = ThreadManager.spawn(new ClientManager())
+  val instance = ThreadManager.spawn(new ClientManager(4815, Game.globals.RemoteIp.getOrElse("localhost")))
 }
 
 class Client(address:String, port:Int, manager:ClientManager) extends Transmitter {

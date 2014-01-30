@@ -8,13 +8,11 @@ import java.net.{SocketException, UnknownHostException}
 import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.Implicits._
 
-class ClientManager extends Task with Transmitter {
+class ClientManager(port:Int, address:String) extends Task with Transmitter {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
   private val name = createName
-  private var running = true
-  private val port = 4815
-  private val address = Game.globals.RemoteIp.getOrElse("localhost")
+
   def getName = name
 
   private var state:ClientState = Client.State.Connecting
@@ -56,13 +54,15 @@ class ClientManager extends Task with Transmitter {
     }
   }
 
-  override def execute() {
-    while (running) {
-      if (!client.isDefined) {
-        tryConnect()
-      }
-      tryMap { _.run() }
+  override def doWork() {
+    if (!client.isDefined) {
+      tryConnect()
     }
+    tryMap { _.run() }
+  }
+
+  override def cleanup() {
+    Log.info("ClientManager died")
   }
 
 

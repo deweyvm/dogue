@@ -8,39 +8,66 @@ import com.deweyvm.dogue.input.WhateverControls
 import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
+import com.deweyvm.dogue.raven.{RavenException, Raven}
 
 
 object Main {
   def main(args: Array[String]) {
-    handleArgs(args)
-    val iconPath = "sprites/icon.gif"
-    val settings = new Settings(WhateverControls, WhateverDefaultSettings)
-    val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
-    val pathResolver = new PathResolver(
-      "fonts",
-      "sprites",
-      "sfx",
-      "music",
-      "shaders",
-      "maps"
-    )
-    val initializer = new GleanyInitializer(pathResolver, settings)
-    GleanyGame.runGame(config, new Game(initializer))
-  }
+    val parser = new scopt.OptionParser[DogueOptions]("dogue") {
+      head("dogue", Game.globals.Version)
 
-  def handleArgs(args: Array[String]) {
-    val isDebug = args.contains("--debug")
-    val showVersion = args.contains("--version")
-    val remoteIndex = args.indexOf("--remote")
-    if (remoteIndex != -1) {
-      val ip = args(remoteIndex + 1)
-      Game.globals.RemoteIp = Some(ip)
+      opt[String]("log") action { (x, c) =>
+        c.copy(log = x)
+      } text "directory to place logs"
+
+      opt[Unit]("isDebug") action { (_, c) =>
+        c.copy(isDebug = true)
+      } text "run in debug mode"
+
+      opt[Unit]("version") action { (_, c) =>
+        c.copy(version = true)
+      } text "show version"
+
+      opt[String]("address") action { (x, c) =>
+        c.copy(address = x)
+      } text "address of server"
+
+      opt[Int]("port") action { (x, c) =>
+        c.copy(port = x)
+      } text "port to use to connect"
+
     }
-    Game.globals.IsDebugMode = isDebug
-    if (showVersion) {
-      println("unknown")
-      sys.exit(0)
+    parser.parse(args, DogueOptions()) map { c =>
+      Log.initLog(c.log, Log.Verbose)
+      Game.globals.setAddress(c.address)
+      Game.globals.setPort(c.port)
+      Game.globals.IsDebugMode = c.isDebug
+      if (c.version) {
+        println(Game.globals.Version)
+        sys.exit(0)
+      }
+
+
+      val iconPath = "sprites/icon.gif"
+      val settings = new Settings(WhateverControls, WhateverDefaultSettings)
+      val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
+      val pathResolver = new PathResolver(
+        "fonts",
+        "sprites",
+        "sfx",
+        "music",
+        "shaders",
+        "maps"
+      )
+
+      val initializer = new GleanyInitializer(pathResolver, settings)
+      GleanyGame.runGame(config, new Game(initializer))
+    } getOrElse {
+      println(parser.usage)
+      throw new RuntimeException("invalid args")
     }
-    Log.initLog("logs", Log.Verbose)
+
+
+
   }
 }
