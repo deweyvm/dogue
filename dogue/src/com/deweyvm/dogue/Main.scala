@@ -6,6 +6,7 @@ import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.dogue.input.WhateverControls
 import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
+import com.badlogic.gdx.Gdx
 
 
 object Main {
@@ -61,7 +62,7 @@ object Main {
       GleanyGame.runGame(config, new Game(initializer))
     } getOrElse {
       println(parser.usage)
-      throw new RuntimeException("invalid args")
+      Gdx.app.exit()
     }
 
 
