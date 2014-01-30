@@ -10,6 +10,7 @@ import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.data.{LockedQueue, Encoding}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.{ThreadManager, Task}
+import com.deweyvm.dogue.common.io.DogueSocket
 
 trait ClientState
 class ClientError(error:String) {
@@ -37,7 +38,7 @@ object Client {
 
 class Client(address:String, port:Int, manager:ClientManager) extends Transmitter {
   private val waitTimeMillis = 16
-  private val socket = new Socket(address, port)
+  private val socket = DogueSocket.create(address, port)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[String] // read from the server
   private val writeQueue = new LockedQueue[String] //to be written to the server
