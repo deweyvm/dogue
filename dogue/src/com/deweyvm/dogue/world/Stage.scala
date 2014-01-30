@@ -35,7 +35,7 @@ case class Stage(t:StageType, cols:Int, rows:Int, factory:GlyphFactory, panels:V
       stageFactory.create(t.next)
     } else {
       this.copy(panels = panels map (_.update),
-        serverStatus = serverStatus.setString(Client.instance.getString))
+        serverStatus = serverStatus.setString(Client.instance.getStatus))
     }
   }
 

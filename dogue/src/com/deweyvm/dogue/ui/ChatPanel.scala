@@ -44,11 +44,7 @@ case class ChatPanel(override val x:Int,
 
     commands foreach transmitter.enqueue
     val newPosted = transmitter.dequeue
-    if (newPosted.length > 0) {
-      Log.info("Got %d posted on frame %d" format (newPosted.length, Game.getFrame))
-    }
     val newOutput = newPosted.foldLeft(output) { case (op:InfoPanel, next:String) =>
-      Log.info("added")
       op.addText(next, bgColor, fgColor)
     }
 

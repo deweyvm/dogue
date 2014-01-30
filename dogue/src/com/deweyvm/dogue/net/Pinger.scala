@@ -4,7 +4,7 @@ import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.threading.Task
 import com.deweyvm.dogue.common.logging.Log
 
-class Pinger(client:Client) extends Task {
+class Pinger(clientManager:ClientManager) extends Task {
   private var lastPongReceived = Game.getFrame
   private var lastPingSent = Game.getFrame
   private val pingFrequency = 5*60
@@ -19,12 +19,12 @@ class Pinger(client:Client) extends Task {
     while(running) {
       Thread.sleep(350)
       if (Game.getFrame - lastPingSent > pingFrequency) {
-        Log.info("Sending ping " + Game.getFrame)
+        Log.verbose("Sending ping " + Game.getFrame)
         lastPingSent = Game.getFrame
-        client.sendPing()
+        clientManager.sendPing()
       }
       if (Game.getFrame - lastPongReceived > maxPingFrames) {
-        client.doTimeout()
+        clientManager.doTimeout()
         Log.info("Ping timeout %d seconds" format (maxPingFrames/60))
         running = false
       }
