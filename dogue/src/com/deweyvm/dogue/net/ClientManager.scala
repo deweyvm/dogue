@@ -6,6 +6,7 @@ import com.deweyvm.dogue.common.logging.Log
 import java.io.IOException
 import java.net.{SocketException, UnknownHostException}
 import com.deweyvm.dogue.entities.Code
+import com.deweyvm.dogue.common.Implicits._
 
 class ClientManager extends Task with Transmitter {
   //result type of actions (success, failure). should probably be Either
