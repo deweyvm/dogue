@@ -7,10 +7,13 @@ import com.deweyvm.dogue.input.WhateverControls
 import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
+import com.deweyvm.dogue.common.protocol.Command
+import com.deweyvm.dogue.common.parsing.Command
 
 
 object Main {
   def main(args: Array[String]) {
+    Command.test()
     val parser = new scopt.OptionParser[DogueOptions]("dogue") {
       head("dogue", Game.globals.Version)
 

@@ -1,5 +1,15 @@
 ; BNF grammar for the dogue protocol
 
-<message> ::= (<command> '\0')*
+<message> ::= (<command>)*
 
-<command> ::=
+<command> ::= '/' <op> <space> <user> <space> <args>? '\0'
+
+<op> ::= 'ping' | 'pong' | 'say'
+
+<user> ::= [\w]+
+
+<args> ::= (<arg>) (' ' <arg>)*
+
+<arg> ::= [ ^ <space> '\0' ]+ | '"'
+
+<space> = (' ')+
