@@ -1,0 +1,5 @@
+; BNF grammar for the dogue protocol
+
+<message> ::= (<command> '\0')*
+
+<command> ::=
