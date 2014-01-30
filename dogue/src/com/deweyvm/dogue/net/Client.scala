@@ -36,7 +36,7 @@ object Client {
 }
 
 class Client(address:String, port:Int, manager:ClientManager) extends Transmitter {
-
+  private val waitTimeMillis = 16
   private val socket = new Socket(address, port)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[String] // read from the server
@@ -53,10 +53,7 @@ class Client(address:String, port:Int, manager:ClientManager) extends Transmitte
       val first = lines.dropRight(1)
       for (s <- first) {
         current += s
-
         commands += current
-        Log.warn(current)
-
         current = ""
       }
 
@@ -80,11 +77,8 @@ class Client(address:String, port:Int, manager:ClientManager) extends Transmitte
   def run() {
     read()
     write()
-    val waitMillis = 250
-    Thread.sleep(waitMillis)
+    Thread.sleep(waitTimeMillis)
   }
-
-  def isConnected:Boolean = ???
 
   private def write() {
     val toWrite = writeQueue.dequeueAll()
