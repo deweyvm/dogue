@@ -1,14 +1,11 @@
 package com.deweyvm.dogue
 
 import com.deweyvm.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
-import com.deweyvm.gleany.logging.Logger
 import com.deweyvm.gleany.files.PathResolver
 import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.dogue.input.WhateverControls
 import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
-import com.badlogic.gdx.Gdx
-import com.deweyvm.dogue.raven.{RavenException, Raven}
 
 
 object Main {
@@ -20,7 +17,7 @@ object Main {
         c.copy(log = x)
       } text "directory to place logs"
 
-      opt[Unit]("isDebug") action { (_, c) =>
+      opt[Unit]("debug") action { (_, c) =>
         c.copy(isDebug = true)
       } text "run in debug mode"
 
@@ -28,7 +25,7 @@ object Main {
         c.copy(version = true)
       } text "show version"
 
-      opt[String]("address") action { (x, c) =>
+      opt[String]("address") optional() action { (x, c) =>
         c.copy(address = x)
       } text "address of server"
 
