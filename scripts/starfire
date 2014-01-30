@@ -13,7 +13,7 @@ TIME=`date +%s`
 
 DAEMON_PATH="/home/doge/dogue_bin/"
 DAEMON=/usr/bin/starfire
-DAEMONOPTS="-jar $DAEMON_PATH/starfire.jar --log /var/log/starfire"
+DAEMONOPTS="-jar $DAEMON_PATH/starfire.jar --log /var/log/starfire --port 4815"
 DAEMONLOG="/var/log/starfire/daemon-start_$TIME.log"
 NAME=starfire
 DAEMON_USER=root
@@ -53,7 +53,8 @@ status)
 ;;
 stop)
     echo "Stopping $NAME"
-    pkill -9 --full $DEMON
+    echo "pkill -9 --full $DAEMON"
+    pkill -9 --full $DAEMON
     if [[ $? -eq 0 ]] ; then
         echo "Stopped"
     else
