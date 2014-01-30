@@ -8,7 +8,7 @@ class Pinger(clientManager:ClientManager) extends Task {
   private var lastPongReceived = Game.getFrame
   private var lastPingSent = Game.getFrame
   private val pingFrequency = 5*60
-  private val maxPingFrames = 60*60
+  private val maxPingFrames = 120*60
   private var running = true
 
   def kill() {

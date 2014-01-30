@@ -27,7 +27,7 @@ object Client {
   object Error {
     case class HostUnreachable(error:String) extends ClientError(error)
     case class ConnectionFailure(error:String) extends ClientError(error)
-    case class Timeout(error:String) extends ClientError(error)
+    case object Timeout extends ClientError("Ping timeout")
     case object Unknown extends ClientError("Unknown")
   }
 
@@ -38,10 +38,10 @@ object Client {
 class Client(address:String, port:Int, manager:ClientManager) extends Transmitter {
 
   private val socket = new Socket(address, port)
-  private var current = ""
-  private var pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
+  private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[String] // read from the server
   private val writeQueue = new LockedQueue[String] //to be written to the server
+  private var current = ""
 
   private def read() {
     val read = socket.receive()

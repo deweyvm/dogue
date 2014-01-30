@@ -11,8 +11,8 @@ import com.deweyvm.dogue.common.Implicits._
 class ClientManager extends Task with Transmitter {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
-  val name = createName
-  var running = true
+  private val name = createName
+  private var running = true
   private val port = 4815
   private val address = Game.globals.RemoteIp.getOrElse("localhost")
   def getName = name
@@ -29,8 +29,10 @@ class ClientManager extends Task with Transmitter {
       val stackTrace = exc.getStackTraceString
       Log.warn(Log.formatStackTrace(exc))
       delete(error(stackTrace).toState)
+      Thread.sleep(5000)
     }
     try {
+      state = Client.State.Connecting
       Log.info("Attempting to establish a connection to %s" format address)
       client = new Client(address, port, this).some
       state = Client.State.Connected
@@ -45,6 +47,7 @@ class ClientManager extends Task with Transmitter {
 
   private def delete(s:ClientState) {
     try {
+      Log.info("Deleting client")
       client foreach {_.close()}
       client = None
       state = s
@@ -75,6 +78,7 @@ class ClientManager extends Task with Transmitter {
 
   def disconnect() {
     tryMap {_.close()}
+    delete(Client.Error.Timeout.toState)
   }
 
   def doTimeout() {
@@ -114,6 +118,7 @@ class ClientManager extends Task with Transmitter {
         case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here
         case ConnectionFailure(msg) => "Failed to connect (r)" //todo -- put control widget here
         case Unknown => "Uknown error"
+        case Timeout => "Ping timeout"
       }
     }
   }
