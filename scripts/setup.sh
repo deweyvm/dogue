@@ -36,7 +36,9 @@ case $1 in
 
 exe)
     pushd $LOCAL_HOME/dogue/out/artifacts/ && \
-    scp raven_jar/raven.jar \
+    scp dogue_jar/dogue.jar \
+        dogue_common_jar/dogue-common.jar \
+        raven_jar/raven.jar \
         starfire_jar/starfire.jar \
         doge@dogue:dogue_bin
 ;;
