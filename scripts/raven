@@ -14,7 +14,7 @@ RAVEN_PATH="/home/doge/dogue_bin"
 
 DAEMON_PATH="$RAVEN_PATH/"
 DAEMON=/usr/bin/raven
-DAEMONOPTS="-jar $RAVEN_PATH/raven.jar --log /var/log/raven --timestamp $RAVEN_PATH/timestamp --lastRunFile $RAVEN_PATH/last"
+DAEMONOPTS="-jar $RAVEN_PATH/raven.jar --log /var/log/raven --timestamp $RAVEN_PATH/timestamp --lastRunFile $RAVEN_PATH/last --port 27181"
 DAEMONLOG="/var/log/raven/daemon-start_$TIME.log"
 NAME=raven
 
