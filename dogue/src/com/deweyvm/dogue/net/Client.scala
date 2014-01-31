@@ -10,7 +10,8 @@ import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.data.{LockedQueue, Encoding}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.{ThreadManager, Task}
-import com.deweyvm.dogue.common.io.DogueSocket
+import com.deweyvm.dogue.common.io.{NetworkData, DogueSocket}
+import com.deweyvm.dogue.common.protocol.{Invalid, Command, DogueMessage}
 
 trait ClientState
 class ClientError(error:String) {
@@ -36,42 +37,27 @@ object Client {
   val instance = ThreadManager.spawn(new ClientManager(Game.globals.getPort, Game.globals.getAddress))
 }
 
-class Client(address:String, port:Int, manager:ClientManager) extends Transmitter {
+class Client(name:String, address:String, port:Int, manager:ClientManager) extends Transmitter[DogueMessage] {
   private val waitTimeMillis = 16
   private val socket = DogueSocket.create(address, port)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
-  private val readQueue = new LockedQueue[String] // read from the server
-  private val writeQueue = new LockedQueue[String] //to be written to the server
-  private var current = ""
+  private val readQueue = new LockedQueue[DogueMessage] // read from the server
+  private val writeQueue = new LockedQueue[DogueMessage] //to be written to the server
 
   private def read() {
-    val read = socket.receive()
-    val commands = ArrayBuffer[String]()
 
-    read foreach { next =>
-      val lines = next.esplit('\0')
-      val last = lines(lines.length - 1)
-      val first = lines.dropRight(1)
-      for (s <- first) {
-        current += s
-        commands += current
-        current = ""
-      }
+    val commands = socket.receiveCommands()
 
-      commands foreach processServerCommand
+    commands foreach processServerCommand
 
-      current = last
-    }
   }
 
-  override def enqueue(s:String) {
-    Log.info("got command: " + s)
-    Log.info("Count before: " + writeQueue.length)
+  override def enqueue(s:DogueMessage) {
+    Log.info("Got command: " + s)
     writeQueue.enqueue(s)
-    Log.info("Count after: " + writeQueue.length)
   }
 
-  override def dequeue:Vector[String] = {
+  override def dequeue:Vector[DogueMessage] = {
     readQueue.dequeueAll()
   }
 
@@ -92,17 +78,22 @@ class Client(address:String, port:Int, manager:ClientManager) extends Transmitte
   }
 
 
-  def processServerCommand(command:String) {
-    Log.info("Processing: " + command)
-    if (current == "/pong") {
-      pinger.pong()
-    } else { //fixme -- pong doesnt get queue'd?
-      readQueue.enqueue(command)
+  def processServerCommand(command:DogueMessage) {
+    command match {
+      case Command(op, source, dest, args) =>
+        if (op == "pong") {
+          pinger.pong()
+        } else { //fixme -- pong doesnt get queue'd?
+          readQueue.enqueue(command)
+        }
+      case Invalid(s) => Log.warn("Invalid message received: " + s)
     }
+    Log.info("Processing: " + command)
+
   }
 
   def sendPing() {
-    socket.transmit("/ping")
+    socket.transmit(Command("ping", name, "starfire", Vector()))
   }
 
   def close() {

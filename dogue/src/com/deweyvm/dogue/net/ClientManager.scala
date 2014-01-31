@@ -7,8 +7,9 @@ import java.io.IOException
 import java.net.{SocketException, UnknownHostException}
 import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.dogue.common.protocol.DogueMessage
 
-class ClientManager(port:Int, address:String) extends Task with Transmitter {
+class ClientManager(port:Int, address:String) extends Task with Transmitter[DogueMessage] {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
   private val name = createName
@@ -32,7 +33,7 @@ class ClientManager(port:Int, address:String) extends Task with Transmitter {
     try {
       state = Client.State.Connecting
       Log.info("Attempting to establish a connection to %s" format address)
-      client = new Client(address, port, this).some
+      client = new Client(name, address, port, this).some
       state = Client.State.Connected
       Log.info("Success")
     } catch {
@@ -66,12 +67,12 @@ class ClientManager(port:Int, address:String) extends Task with Transmitter {
   }
 
 
-  override def enqueue(s:String) {
+  override def enqueue(s:DogueMessage) {
     tryMap { _.enqueue(s) }
 
   }
 
-  override def dequeue:Vector[String] = {
+  override def dequeue:Vector[DogueMessage] = {
     tryMap {_.dequeue} getOrElse Vector()
   }
 

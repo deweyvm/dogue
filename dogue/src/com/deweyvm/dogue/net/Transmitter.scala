@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.net
 
 
-trait Transmitter {
-  def enqueue(s:String):Unit
-  def dequeue:Vector[String]
+trait Transmitter[T] {
+  def enqueue(s:T):Unit
+  def dequeue:Vector[T]
 }

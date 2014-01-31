@@ -8,7 +8,6 @@ import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.protocol.Command
-import com.deweyvm.dogue.common.parsing.Command
 
 
 object Main {

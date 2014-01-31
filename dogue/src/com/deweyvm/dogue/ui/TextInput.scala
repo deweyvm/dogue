@@ -6,6 +6,8 @@ import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
 import scala.concurrent.Lock
+import com.deweyvm.dogue.common.protocol.{Invalid, DogueMessage, Command}
+import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.logging.Log
 
 
@@ -57,12 +59,38 @@ object TextInput {
     lock.release()
   }
 
-  def getCommands(id:Int):Vector[String] = {
+  def getCommands(id:Int):Vector[DogueMessage] = {
     lock.acquire()
     val result = commandQueue(id).toVector
     commandQueue(id) = Vector()
     lock.release()
-    result
+    result map lineToCommand
+  }
+
+  def lineToCommand(line:String):DogueMessage = {
+    Log.info("Converting " + line)
+    try {
+      val source = Client.instance.getName
+      val dest = "SERVER"
+      val s = if (line(0) == '/') {
+        line
+      } else {
+        "/say " + line
+      }
+      val split:Array[String] = s.split(" ", 2)
+      val op = split(0).substring(1)
+      Command(op, source, dest, Vector(split(1)))
+
+
+    } catch {
+      case t:Throwable =>
+        Log.warn(Log.formatStackTrace(t))
+        Invalid(line)
+    }
+  }
+
+  def test() {
+    lineToCommand("this is a test")
   }
 
 
@@ -82,9 +110,10 @@ case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color
   val cursor = Vector(makeText("_"), makeText(" "))
   val flashRate = 30 //cursor flashes on/off for `flashRate` frames
 
-  def update:(TextInput, Vector[String]) = {
+  def update:(TextInput, Vector[DogueMessage]) = {
     TextInput.active = Some(id)
-    (this.copy(string = TextInput.take(id)), TextInput.getCommands(id))
+    val commands = TextInput.getCommands(id)
+    (this.copy(string = TextInput.take(id)), commands)
   }
 
   def draw(iRoot:Int, jRoot:Int) {
