@@ -9,19 +9,6 @@ import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol.DogueMessage
 import com.deweyvm.dogue.common.parsing.CommandParser
 
-class TextOutput {
-  def update(commands:Vector[String]):TextOutput =  {
-    commands foreach { c =>
-      Log.info("outputting command " + c)
-    }
-    this
-  }
-  def draw(iRoot:Int, jRoot:Int) {
-
-
-  }
-}
-
 case class ChatPanel(override val x:Int,
                      override val y:Int,
                      override val width:Int,

@@ -30,7 +30,7 @@ class StageFactory(cols:Int, rows:Int, factory:GlyphFactory) {
         val bgColor = Color.Black
         val fgColor = Color.White
         val textInput = TextInput.create("such text: ", cols - 2, inputHeight, bgColor, fgColor, factory)
-        val textOutput = InfoPanel.makeNew(1, 1, cols - 2, rows - 2 - inputHeight, bgColor, factory)//new TextOutput()
+        val textOutput = InfoPanel.makeNew(1, 1, cols - 2, rows - 2 - inputHeight - 2, bgColor, factory)//new TextOutput()
 
         val chatPanel = new ChatPanel(1, 1, cols - 2, rows - 2, bgColor, fgColor, factory, Client.instance, textInput, textOutput)
         makeStage(t, Vector(chatPanel))
