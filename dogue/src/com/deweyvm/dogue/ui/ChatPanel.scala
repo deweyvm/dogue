@@ -40,7 +40,7 @@ case class ChatPanel(override val x:Int,
            Recti(x, y + (height - inputHeight), width, inputHeight))
 
   override def update = {
-    val (newInput, commands) = input.update
+    val (newInput, commands) = input.update(transmitter)
     commands foreach transmitter.enqueue
     val newPosted = transmitter.dequeue
     val newOutput = newPosted.foldLeft(output) { case (op:InfoPanel, next:DogueMessage) =>

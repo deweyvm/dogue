@@ -16,7 +16,7 @@ class Engine {
   val rows = Game.RenderHeight/codePage.tileHeight
   val factory = new StageFactory(cols, rows, codePage)
   var stage = factory.create(Stage.Chat)
-  Log.info(Client.instance.getName)
+  Log.info("Creating client named " + Client.instance.getName)
   def update() {
     stage = stage.update(factory)
     Controls.update()

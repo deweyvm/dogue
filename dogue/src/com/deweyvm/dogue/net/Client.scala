@@ -37,9 +37,9 @@ object Client {
   val instance = ThreadManager.spawn(new ClientManager(Game.globals.getPort, Game.globals.getAddress))
 }
 
-class Client(name:String, address:String, port:Int, manager:ClientManager) extends Transmitter[DogueMessage] {
+class Client(clientName:String, address:String, port:Int, manager:ClientManager) extends Transmitter[DogueMessage] {
   private val waitTimeMillis = 16
-  private val socket = DogueSocket.create(address, port)
+  private val socket = DogueSocket.create("unknown", address, port)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[DogueMessage] // read from the server
   private val writeQueue = new LockedQueue[DogueMessage] //to be written to the server
@@ -51,6 +51,8 @@ class Client(name:String, address:String, port:Int, manager:ClientManager) exten
     commands foreach processServerCommand
 
   }
+
+  override def getName = clientName
 
   override def enqueue(s:DogueMessage) {
     Log.info("Got command: " + s)
@@ -71,7 +73,6 @@ class Client(name:String, address:String, port:Int, manager:ClientManager) exten
     val toWrite = writeQueue.dequeueAll()
 
     toWrite foreach { s =>
-      Log.info("Transmitting: \"%s\"" format s)
       socket.transmit(s)
     }
 
@@ -93,7 +94,7 @@ class Client(name:String, address:String, port:Int, manager:ClientManager) exten
   }
 
   def sendPing() {
-    socket.transmit(Command("ping", name, "starfire", Vector()))
+    socket.transmit(Command("ping", clientName, "fixme", Vector()))
   }
 
   def close() {
