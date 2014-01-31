@@ -8,6 +8,7 @@ import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.protocol.Command
+import com.deweyvm.dogue.common.Macros
 
 
 object Main {
@@ -39,6 +40,9 @@ object Main {
     }
     parser.parse(args, DogueOptions()) map { c =>
       Log.initLog(c.log, Log.Verbose)
+
+      val thing = Some(Some(Some(1)))
+      thing foreach {_.foreach {_.foreach{ case e:Int => Log.info(Macros.FILE + "this is a test")}}}
       Game.globals.setAddress(c.address)
       Game.globals.setPort(c.port)
       Game.globals.IsDebugMode = c.isDebug
