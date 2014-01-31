@@ -43,13 +43,10 @@ class Client(clientName:String, address:String, port:Int, manager:ClientManager)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[DogueMessage] // read from the server
   private val writeQueue = new LockedQueue[DogueMessage] //to be written to the server
-
+  Log.verbose("test")
   private def read() {
-
     val commands = socket.receiveCommands()
-
     commands foreach processServerCommand
-
   }
 
   override def getName = clientName
