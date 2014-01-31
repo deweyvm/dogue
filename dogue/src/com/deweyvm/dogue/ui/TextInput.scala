@@ -5,10 +5,10 @@ import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
-import scala.concurrent.Lock
 import com.deweyvm.dogue.common.protocol.{Invalid, DogueMessage, Command}
 import com.deweyvm.dogue.net.{Transmitter, Client}
 import com.deweyvm.dogue.common.logging.Log
+import com.deweyvm.dogue.common.threading.Lock
 
 
 object TextInput {
@@ -53,18 +53,22 @@ object TextInput {
   val commandQueue = scala.collection.mutable.Map[Int, Vector[String]]().withDefaultValue(Vector())
 
   def putCommand(id:Int, string:String) {
-    lock.acquire()
-    val newVect:Vector[String] = commandQueue(id) :+ string
-    commandQueue(id) = newVect
-    lock.release()
+    type T = Unit ;
+    lock.foreach[(Int,String)]({case (i,s) =>
+      val newVect:Vector[String] = commandQueue(i) :+ s
+      commandQueue(i) = newVect
+
+    })((id, string))
+
   }
 
   def getCommands(id:Int, transmitter:Transmitter[DogueMessage]):Vector[DogueMessage] = {
-    lock.acquire()
-    val result = commandQueue(id).toVector
-    commandQueue(id) = Vector()
-    lock.release()
-    result map lineToCommand(transmitter)
+    lock.get({ () =>
+      val result = commandQueue(id).toVector map lineToCommand(transmitter)
+      commandQueue(id) = Vector()
+      result
+    })
+
   }
 
   def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):DogueMessage = {
