@@ -3,7 +3,7 @@ package com.deweyvm.dogue.world
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.dogue.data.Array2d
+import com.deweyvm.dogue.common.data.Array2d
 
 
 class Grid(width:Int, height:Int, val cols:Int, val rows:Int, glyphs:GlyphFactory) {

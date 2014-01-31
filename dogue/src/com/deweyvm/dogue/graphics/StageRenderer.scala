@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.graphics
 
-import com.deweyvm.dogue.data.Array2d
 import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.dogue.common.data.Array2d
 
 object StageRenderer {
   def create(cols:Int, rows:Int):StageRenderer = {

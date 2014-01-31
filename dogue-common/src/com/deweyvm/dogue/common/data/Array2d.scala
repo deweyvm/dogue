@@ -1,5 +1,4 @@
-package com.deweyvm.dogue.data
-
+package com.deweyvm.dogue.common.data
 
 object Array2d {
   def tabulate[T](cols:Int, rows:Int)(f:(Int,Int) => T):Array2d[T] = {

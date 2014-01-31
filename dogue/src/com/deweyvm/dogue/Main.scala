@@ -9,11 +9,12 @@ import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.protocol.Command
 import com.deweyvm.dogue.common.Macros
+import com.deweyvm.dogue.common.testing.TestManager
 
 
 object Main {
   def main(args: Array[String]) {
-    Command.test()
+    TestManager.runAll(true)
     val parser = new scopt.OptionParser[DogueOptions]("dogue") {
       head("dogue", Game.globals.Version)
 
@@ -40,9 +41,6 @@ object Main {
     }
     parser.parse(args, DogueOptions()) map { c =>
       Log.initLog(c.log, Log.Verbose)
-
-      val thing = Some(Some(Some(1)))
-      thing foreach {_.foreach {_.foreach{ case e:Int => Log.info(Macros.FILE + "this is a test")}}}
       Game.globals.setAddress(c.address)
       Game.globals.setPort(c.port)
       Game.globals.IsDebugMode = c.isDebug

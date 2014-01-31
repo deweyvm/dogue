@@ -4,12 +4,12 @@ import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.ui._
 import com.deweyvm.dogue.entities.{Tile, Code}
-import com.deweyvm.dogue.data.Array2d
 import com.deweyvm.gleany.data.{Point2f, Recti}
 import scala.Some
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.net.Client
+import com.deweyvm.dogue.common.data.Array2d
 
 object Stage {
   case object Title extends StageType {
