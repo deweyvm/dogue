@@ -464,7 +464,7 @@
     <configuration default="false" name="Local Server" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="com.deweyvm.dogue.starfire.Main" />
       <option name="VM_PARAMETERS" value="" />
-      <option name="PROGRAM_PARAMETERS" value="--log ../../" />
+      <option name="PROGRAM_PARAMETERS" value="--log ../../ --port 4815" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />

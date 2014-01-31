@@ -6,7 +6,7 @@ import com.deweyvm.dogue.net.Transmitter
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.protocol.DogueMessage
+import com.deweyvm.dogue.common.protocol.{Command, DogueMessage}
 import com.deweyvm.dogue.common.parsing.CommandParser
 
 case class ChatPanel(override val x:Int,
@@ -30,10 +30,13 @@ case class ChatPanel(override val x:Int,
     val (newInput, commands) = input.update(transmitter)
     commands foreach transmitter.enqueue
     val newPosted = transmitter.dequeue
-    val newOutput = newPosted.foldLeft(output) { case (op:InfoPanel, next:DogueMessage) =>
-      op.addText(next.toString, bgColor, fgColor)
+    val newOutput = newPosted.foldLeft(output) { case (panel:InfoPanel, next:DogueMessage) =>
+      next match {
+        case cmd@Command(op, src, dst, args) =>
+          panel.addText("%s: %s" format (src, cmd.toSay), bgColor, fgColor)
+        case _ => panel
+      }
     }
-
     this.copy(input = newInput, output = newOutput.update)
   }
 
