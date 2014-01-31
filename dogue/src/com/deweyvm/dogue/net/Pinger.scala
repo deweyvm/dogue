@@ -9,9 +9,9 @@ class Pinger(clientManager:ClientManager) extends Task {
   private var lastPingSent = Game.getFrame
   private val pingFrequency = 5*60
   private val maxPingFrames = 120*60
-
+  private val checkFrequency = 350
   override def doWork() {
-    Thread.sleep(350)
+    Thread.sleep(checkFrequency)
     if (Game.getFrame - lastPingSent > pingFrequency) {
       Log.verbose("Sending ping " + Game.getFrame)
       lastPingSent = Game.getFrame
