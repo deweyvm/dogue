@@ -26,21 +26,26 @@ def main():
     now = time.time()
     all_matching = []
     for f in onlyfiles:
-        prefix, date = get_date(f)
-        if abs(now - int(date)) < distance:
+        pair = get_date(f)
+        if pair is None:
+            continue
+        prefix, date = pair
+        if abs(now - date) < distance:
             all_matching.append((prefix, date))
     if len(all_matching) == 0:
         print("no log found")
         sys.exit(1)
     else:
         prefix, date = max(all_matching, key=lambda p: p[1])
-        path = os.path.join(loc, prefix + "_" + date)
+        path = os.path.join(loc, prefix + "_" + str(date))
         os.execl("/usr/bin/tail", "/usr/bin/tail", "-f", path)
 
 def get_date(s):
-    pair = s.split("_")
-    return (pair[0], pair[1])
-
+    try:
+        pair = s.split("_")
+        return (pair[0], int(pair[1]))
+    except:
+        return None
 
 
 if __name__ == '__main__':
