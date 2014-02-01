@@ -88,12 +88,11 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
         }
       case Invalid(s) => Log.warn("Invalid message received: " + s)
     }
-    Log.info("Processing: " + command)
 
   }
 
   def sendPing() {
-    socket.transmit(Command("ping", clientName, "fixme", Vector()))
+    socket.transmit(Command("ping", clientName, serverName, Vector()))
   }
 
   def close() {

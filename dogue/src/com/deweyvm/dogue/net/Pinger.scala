@@ -7,25 +7,25 @@ import com.deweyvm.dogue.common.logging.Log
 class Pinger(clientManager:ClientManager) extends Task {
   private var lastPongReceived = Game.getFrame
   private var lastPingSent = Game.getFrame
-  private val pingFrequency = 5*60
-  private val maxPingFrames = 120*60
+  private val pingFrequency = 90*60
+  private val maxPongFrames = 120*60
   private val checkFrequency = 350
   override def doWork() {
     Thread.sleep(checkFrequency)
     if (Game.getFrame - lastPingSent > pingFrequency) {
-      Log.verbose("Sending ping " + Game.getFrame)
+      Log.all("Sending ping " + Game.getFrame)
       lastPingSent = Game.getFrame
       clientManager.sendPing()
     }
-    if (Game.getFrame - lastPongReceived > maxPingFrames) {
+    if (Game.getFrame - lastPongReceived > maxPongFrames) {
       clientManager.doTimeout()
-      Log.info("Ping timeout %d seconds" format (maxPingFrames/60))
+      Log.info("Ping timeout %d seconds" format (maxPongFrames/60))
       kill()
     }
   }
 
   override def cleanup() {
-    Log.info("Pinger shutting down")
+    Log.all("Pinger shutting down")
   }
 
   def pong() {
