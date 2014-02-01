@@ -38,8 +38,8 @@ def main():
     else:
         prefix, date = max(all_matching, key=lambda p: p[1])
         path = os.path.join(loc, prefix + "_" + str(date))
-        print("tail -f %s" % path)
-        os.execl("/usr/bin/tail", "/usr/bin/tail", "-f", path)
+        print("tail -n 20 -f %s" % path)
+        os.execl("/usr/bin/tail", "/usr/bin/tail", "-f", path, "-n", 20)
 
 def get_date(s):
     try:
