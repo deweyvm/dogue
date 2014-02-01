@@ -103,6 +103,8 @@ db)
         exit 1
     fi && \
     echo "Set password for new user"
+    # this doesnt work, just run psql and do the command ALTER USER postgres PASSWORD 'whatever' ;
+    # /etc/postgresql/9.1/main/pg_hba.conf
     sudo -u postgres dropdb testdb &> /dev/null
     sudo -u postgres dropuser starfire &> /dev/null
     sudo -u postgres createuser --password --createdb --createrole --superuser starfire && \
