@@ -105,7 +105,7 @@ db)
     echo "Set password for new user"
     sudo -u postgres dropdb testdb &> /dev/null
     sudo -u postgres dropuser starfire &> /dev/null
-    sudo -u postgres createuser --password --createdb --no-createrole --no-superuser starfire && \
+    sudo -u postgres createuser --password --createdb --createrole --superuser starfire && \
     sudo -u postgres createdb testdb -O starfire
 ;;
 
