@@ -21,6 +21,7 @@ object TextInput {
   }
 
   def addListener() {
+
     Gdx.input.setInputProcessor(new InputAdapter {
       override def keyTyped(char:Char):Boolean = {
         //todo, make a collective reference where you can just query .string, .queue, etc
@@ -40,6 +41,7 @@ object TextInput {
         false
       }
     })
+
   }
 
   //pure reads do not need a lock as long as all writes are locked
