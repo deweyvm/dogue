@@ -39,7 +39,7 @@ def main():
         prefix, date = max(all_matching, key=lambda p: p[1])
         path = os.path.join(loc, prefix + "_" + str(date))
         print("tail -n 20 -f %s" % path)
-        os.execl("/usr/bin/tail", "/usr/bin/tail", "-f", path, "-n", 20)
+        os.execl("/usr/bin/tail", "/usr/bin/tail", "-n", "20", "-f", path)
 
 def get_date(s):
     try:
