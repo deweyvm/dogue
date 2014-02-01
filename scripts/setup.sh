@@ -102,7 +102,9 @@ db)
         echo "This script must be run as root"
         exit 1
     fi && \
-    echo "Set password for new user" && \
+    echo "Set password for new user"
+    sudo -u postgres dropdb testdb &> /dev/null
+    sudo -u postgres dropuser starfire &> /dev/null
     sudo -u postgres createuser --password --createdb --no-createrole --no-superuser starfire && \
     sudo -u postgres createdb testdb -O starfire
 ;;
