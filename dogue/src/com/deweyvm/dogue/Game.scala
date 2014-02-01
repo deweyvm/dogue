@@ -3,6 +3,7 @@ package com.deweyvm.dogue
 import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.threading.ThreadManager
+import com.deweyvm.dogue.loading.RawDogueSettings
 
 object Game {
   val Zoom = 1
@@ -12,6 +13,7 @@ object Game {
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom
   val globals = new Globals
+  val settings = RawDogueSettings.fromFile()
 
   private var frame = 0
   def getFrame = frame

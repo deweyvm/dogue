@@ -8,13 +8,17 @@ import java.net.{SocketException, UnknownHostException}
 import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.dogue.common.protocol.DogueMessage
+import com.deweyvm.dogue.common.io.DogueSocket
 
-class ClientManager(port:Int, address:String) extends Task with Transmitter[DogueMessage] {
+object ClientManager {
+  var num = 0
+}
+
+class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMessage] {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
-  private val name = createName
-
-  def getName = name
+  private val clientName = createName
+  def getName = clientName
 
   private var state:ClientState = Client.State.Connecting
   var client:Option[Client] = None
@@ -31,11 +35,20 @@ class ClientManager(port:Int, address:String) extends Task with Transmitter[Dogu
       Thread.sleep(5000)
     }
     try {
-      state = Client.State.Connecting
-      Log.info("Attempting to establish a connection to %s" format address)
-      client = new Client(name, address, port, this).some
-      state = Client.State.Connected
-      Log.info("Success")
+      def callback(socket:DogueSocket, serverName:String) {
+        client = new Client(clientName, serverName, socket, this).some
+        state = Client.State.Connected
+        Log.info("Handshake succeeded")
+      }
+      if (state != Client.State.Handshaking) {
+        Log.info("Attempting to establish a connection to %s" format host)
+        ClientManager.num += 1
+        new DogueHandshake(clientName, host, port, callback).start()
+        state = Client.State.Handshaking
+      } else {
+        Thread.sleep(100)
+      }
+      ()
     } catch {
       case ioe:IOException =>
         fail(ioe, Client.Error.ConnectionFailure)
@@ -112,6 +125,7 @@ class ClientManager(port:Int, address:String) extends Task with Transmitter[Dogu
     state match {
       case Offline => "Offline mode"
       case Connected => Code.☼.rawString
+      case Handshaking => "Handshaking..."
       case Connecting =>
         val codes = Vector(Code./, Code.─, Code.\, Code.│)
         "Connecting " + codes((Game.getFrame/10) % codes.length).rawString

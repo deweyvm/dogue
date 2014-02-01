@@ -20,7 +20,9 @@ class ClientError(error:String) {
 
 object Client {
   object State {
+
     case object Connecting extends ClientState
+    case object Handshaking extends ClientState
     case object Connected extends ClientState
     case object Offline extends ClientState
     case class Disconnected(error:ClientError) extends ClientState
@@ -37,9 +39,9 @@ object Client {
   val instance = ThreadManager.spawn(new ClientManager(Game.globals.getPort, Game.globals.getAddress))
 }
 
-class Client(clientName:String, address:String, port:Int, manager:ClientManager) extends Transmitter[DogueMessage] {
+class Client(clientName:String, serverName:String, socket:DogueSocket, manager:ClientManager) extends Transmitter[DogueMessage] {
   private val waitTimeMillis = 16
-  private val socket = DogueSocket.create("unknown", address, port)
+  //private val socket = DogueSocket.create("unknown", address, port)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[DogueMessage] // read from the server
   private val writeQueue = new LockedQueue[DogueMessage] //to be written to the server
