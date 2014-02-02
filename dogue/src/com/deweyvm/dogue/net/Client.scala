@@ -26,6 +26,7 @@ object Client {
     case class HostUnreachable(error:String) extends ClientError(error)
     case class ConnectionFailure(error:String) extends ClientError(error)
     case object Timeout extends ClientError("Ping timeout")
+    case object CloseRequested extends ClientError("Close requested")
     case object Unknown extends ClientError("Unknown")
   }
 
@@ -49,7 +50,6 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   override def destinationName = serverName
 
   override def enqueue(s:DogueMessage) {
-    Log.info("Got command: " + s)
     writeQueue.enqueue(s)
   }
 
@@ -65,11 +65,9 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
 
   private def write() {
     val toWrite = writeQueue.dequeueAll()
-
     toWrite foreach { s =>
       socket.transmit(s)
     }
-
   }
 
 
@@ -92,7 +90,8 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   }
 
   def close() {
-
+    ???
+    Log.error("This does nothing")
   }
 }
 

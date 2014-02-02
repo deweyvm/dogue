@@ -4,6 +4,8 @@ import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.threading.ThreadManager
 import com.deweyvm.dogue.loading.RawDogueSettings
+import com.deweyvm.dogue.common.logging.Log
+import com.badlogic.gdx.Gdx
 
 object Game {
   val Zoom = 1
@@ -17,6 +19,14 @@ object Game {
 
   private var frame = 0
   def getFrame = frame
+
+  def shutdown() {
+    Log.info("Closing game")
+    Log.flush()
+    Client.instance.close()
+    Client.instance.disconnect(Client.Error.CloseRequested)
+    Gdx.app.exit()
+  }
 }
 
 class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
@@ -33,5 +43,9 @@ class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
 
   override def resize(width: Int, height: Int) {
     Glean.y.settings.setWindowSize(width, height)
+  }
+
+  override def dispose() {
+    Game.shutdown()
   }
 }

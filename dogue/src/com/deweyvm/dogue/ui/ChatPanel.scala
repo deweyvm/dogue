@@ -2,7 +2,7 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.net.Transmitter
+import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.Game
@@ -31,6 +31,7 @@ case class ChatPanel(override val x:Int,
     commands foreach transmitter.enqueue
     val newPosted = transmitter.dequeue
     val newOutput = newPosted.foldLeft(output) { case (panel:InfoPanel, next:DogueMessage) =>
+
       next match {
         case cmd@Command(op, src, dst, args) =>
           op match {

@@ -6,7 +6,7 @@ import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol.{DogueOp, Invalid, DogueMessage, Command}
-import com.deweyvm.dogue.net.{Transmitter, Client}
+import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
 import com.deweyvm.dogue.common.parsing.{ParseError, CommandParser}
@@ -67,35 +67,48 @@ object TextInput {
 
   def getCommands(id:Int, transmitter:Transmitter[DogueMessage]):Vector[DogueMessage] = {
     lock.get({ () =>
-      val result = commandQueue(id).toVector map lineToCommand(transmitter)
+      val result = (commandQueue(id).toVector map lineToCommand(transmitter)).flatten
       commandQueue(id) = Vector()
       result
     })
 
   }
 
-  def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):DogueMessage = {
-    Log.info("Converting " + line)
+  /**
+   * return None if the command is executed immediately on the client as per #76
+   * @param transmitter
+   * @param line
+   * @return
+   */
+  def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):Option[DogueMessage] = {
+    Log.all("Converting \"%s\" to command for server" + line)
     try {
       val source = transmitter.sourceName
       val dest = transmitter.destinationName
       val (op, rest) = if (line(0) == '/') {
-        val cmdString = line.drop(0)
-        val split = cmdString.split(" ")
-        val cmdWord = split(0)
-        val rest = split(1)
-        val op = parser.getOp(cmdWord)
+        val command = line.drop(1)
+        val rest = line.split(" ", 2).toVector tryGet 1 getOrElse ""
+        val op = parser.getOp(command)
+
         (op, rest)
       } else {
         (DogueOp.Say, line)
       }
-      Command(op, source, dest, Vector(rest))
+      val result = Command(op, source, dest, Vector(rest))
+      op match {
+        case DogueOp.Quit =>
+          Log.info("Quit command")
+          Client.instance.disconnect(Client.Error.CloseRequested)
+          None
+        case _ =>
+          result.some
+      }
 
 
     } catch {
       case t:ParseError =>
         Log.warn(Log.formatStackTrace(t))
-        Invalid(line, t.getMessage)
+        Invalid(line, t.getMessage).some
     }
   }
 

@@ -15,7 +15,7 @@ class DogueHandshake(clientName:String, host:String, port:Int, callback:(DogueSo
   private var state:DogueHandshakeState = Await
   private val socket = DogueSocket.create("&unknown&", host, port)
   override def init() {
-    Log.verbose("Beginning handshake")
+    Log.all("Beginning handshake")
   }
 
   override def doWork() {
