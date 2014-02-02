@@ -80,7 +80,8 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
         } else { //fixme -- pong doesnt get queue'd?
           readQueue.enqueue(command)
         }
-      case Invalid(s) => Log.warn("Invalid message received: " + s)
+      case Invalid(s, msg) =>
+        Log.warn("Invalid message received: %s\n%s" format (s, msg))
     }
 
   }

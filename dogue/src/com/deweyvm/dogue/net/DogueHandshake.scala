@@ -34,8 +34,8 @@ class DogueHandshake(clientName:String, host:String, port:Int, callback:(DogueSo
               Log.warn("Command \"%s\" ignored during handshake." format cmd.toString)
             }
 
-          case Invalid(msg) =>
-            Log.warn("Invalid command " + msg)
+          case inv@Invalid(_,_) =>
+            inv.warn()
         }
     }
   }
