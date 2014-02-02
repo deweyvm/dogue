@@ -4,6 +4,7 @@ import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Task
 import com.deweyvm.dogue.common.protocol.{Invalid, Command}
+import com.deweyvm.dogue.common.protocol.DogueOp.Greet
 
 trait DogueHandshakeState
 object DogueHandshake {
@@ -24,9 +25,9 @@ class DogueHandshake(clientName:String, host:String, port:Int, callback:(DogueSo
         commands foreach {
           case cmd@Command(op, src, dest, args) =>
             val serverName = src
-            if (op == "greet") {
+            if (op == Greet) {
               Log.info("Received greeting from " + serverName)
-              socket.transmit(new Command("greet", clientName, serverName, "identify"))
+              socket.transmit(new Command(Greet, clientName, serverName, "identify"))
               kill()
               callback(socket, serverName)
             } else {

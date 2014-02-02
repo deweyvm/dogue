@@ -17,7 +17,10 @@ object ClientManager {
 class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMessage] {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
-  private val clientName = createName
+  private val clientName = {
+    val u = Game.settings.username
+    if (u == null) createName else u
+  }
   def getName = clientName
 
   private var state:ClientState = Client.State.Connecting

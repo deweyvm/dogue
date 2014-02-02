@@ -1,17 +1,11 @@
 package com.deweyvm.dogue.net
 
-import java.net._
 import com.deweyvm.dogue.Game
-import java.io.IOException
-import com.deweyvm.dogue.common.Implicits._
-import scala.collection.mutable.ArrayBuffer
-import com.deweyvm.gleany.Debug
-import com.deweyvm.dogue.entities.Code
-import com.deweyvm.dogue.common.data.{LockedQueue, Encoding}
+import com.deweyvm.dogue.common.data.LockedQueue
 import com.deweyvm.dogue.common.logging.Log
-import com.deweyvm.dogue.common.threading.{ThreadManager, Task}
-import com.deweyvm.dogue.common.io.{NetworkData, DogueSocket}
-import com.deweyvm.dogue.common.protocol.{Invalid, Command, DogueMessage}
+import com.deweyvm.dogue.common.threading.ThreadManager
+import com.deweyvm.dogue.common.io.DogueSocket
+import com.deweyvm.dogue.common.protocol.{DogueOp, Invalid, Command, DogueMessage}
 
 trait ClientState
 class ClientError(error:String) {
@@ -45,7 +39,7 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[DogueMessage] // read from the server
   private val writeQueue = new LockedQueue[DogueMessage] //to be written to the server
-  Log.verbose("test")
+
   private def read() {
     val commands = socket.receiveCommands()
     commands foreach processServerCommand
@@ -81,7 +75,7 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   def processServerCommand(command:DogueMessage) {
     command match {
       case Command(op, source, dest, args) =>
-        if (op == "pong") {
+        if (op == DogueOp.Pong) {
           pinger.pong()
         } else { //fixme -- pong doesnt get queue'd?
           readQueue.enqueue(command)
@@ -92,7 +86,7 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   }
 
   def sendPing() {
-    socket.transmit(Command("ping", clientName, serverName, Vector()))
+    socket.transmit(Command(DogueOp.Ping, clientName, serverName, Vector()))
   }
 
   def close() {

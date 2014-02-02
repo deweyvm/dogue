@@ -5,7 +5,7 @@ import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.protocol.{Invalid, DogueMessage, Command}
+import com.deweyvm.dogue.common.protocol.{DogueOp, Invalid, DogueMessage, Command}
 import com.deweyvm.dogue.net.{Transmitter, Client}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
@@ -84,8 +84,8 @@ object TextInput {
         "/say " + line
       }
       val split:Array[String] = s.split(" ", 2)
-      val op = split(0).substring(1)
-      Command(op, source, dest, Vector(split(1)))
+      val op = split(0).substring(1)//fixme
+      Command(DogueOp.Say, source, dest, Vector(split(1)))
 
 
     } catch {
