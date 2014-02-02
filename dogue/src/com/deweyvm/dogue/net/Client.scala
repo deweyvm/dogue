@@ -19,6 +19,7 @@ object Client {
     case object Handshaking extends ClientState
     case object Connected extends ClientState
     case object Offline extends ClientState
+    case object Closed extends ClientState
     case class Disconnected(error:ClientError) extends ClientState
   }
 
@@ -26,7 +27,6 @@ object Client {
     case class HostUnreachable(error:String) extends ClientError(error)
     case class ConnectionFailure(error:String) extends ClientError(error)
     case object Timeout extends ClientError("Ping timeout")
-    case object CloseRequested extends ClientError("Close requested")
     case object Unknown extends ClientError("Unknown")
   }
 
@@ -90,8 +90,8 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   }
 
   def close() {
-    ???
-    Log.error("This does nothing")
+    Log.info("Client closing connection")
+    socket.transmit(Command(DogueOp.Quit, clientName, serverName, Vector()))
   }
 }
 

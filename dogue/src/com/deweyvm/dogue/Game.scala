@@ -24,7 +24,7 @@ object Game {
     Log.info("Closing game")
     Log.flush()
     Client.instance.close()
-    Client.instance.disconnect(Client.Error.CloseRequested)
+    Client.instance.disconnect(Client.State.Closed)
     Gdx.app.exit()
   }
 }

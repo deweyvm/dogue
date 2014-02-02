@@ -47,7 +47,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
         state = Client.State.Connected
         Log.all("Handshake succeeded")
       }
-      if (state != Client.State.Handshaking) {
+      if (state != Client.State.Handshaking && state != Client.State.Closed) {
         Log.info("Attempting to establish a connection to %s" format host)
         ClientManager.num += 1
         new DogueHandshake(clientName, host, port, callback).start()
@@ -97,14 +97,14 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   }
 
 
-  def disconnect(reason:ClientError) {
+  def disconnect(reason:ClientState) {
     tryMap {_.close()}
-    delete(reason.toState)
+    delete(reason)
   }
 
   def doTimeout() {
     Log.warn("ping timeout")
-    disconnect(Client.Error.Timeout)
+    disconnect(Client.Error.Timeout.toState)
   }
 
 
@@ -140,14 +140,16 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
         case Unknown => "Uknown error"
         case Timeout => "Ping timeout"
       }
+      case Closed => "Closing..."
     }
   }
 
   /**
-   * Unrecoverably destroy this instance and alert the server.
-   * This is to be called when the client application is closed or crashes.
+   * Alert the server that the client application is closing.
    */
   def close() {
-
+    tryMap {_.close()}
+    delete(Client.State.Closed)
+    kill()
   }
 }

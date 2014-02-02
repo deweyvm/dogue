@@ -36,11 +36,7 @@ case class ChatPanel(override val x:Int,
         case cmd@Command(op, src, dst, args) =>
           op match {
             case DogueOp.Say =>
-              val text:String = args match {
-                case a +: _ => a
-                case _ => ""
-              } //todo issue #79
-              panel.addText("%s: %s" format (src, text), bgColor, fgColor)
+              panel.addText("%s: %s" format (src, args.mkString(" ")), bgColor, fgColor)
             case DogueOp.Greet =>
               panel.addText("Welcome!", bgColor, Color.Pink)
             case _ =>

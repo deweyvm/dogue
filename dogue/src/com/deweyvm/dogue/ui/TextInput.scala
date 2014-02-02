@@ -98,7 +98,7 @@ object TextInput {
       op match {
         case DogueOp.Quit =>
           Log.info("Quit command")
-          Client.instance.disconnect(Client.Error.CloseRequested)
+          Game.shutdown()
           None
         case _ =>
           result.some
