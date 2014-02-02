@@ -21,15 +21,20 @@ object Game {
   def getFrame = frame
 
   def shutdown() {
+    //cleanup()
+    Gdx.app.exit()
+  }
+
+  private def cleanup() {
     Log.info("Closing game")
     Log.flush()
-    Client.instance.close()
+    Client.instance.kill()
     Client.instance.disconnect(Client.State.Closed)
-    Gdx.app.exit()
   }
 }
 
 class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
+  import Game._
   private lazy val engine = new Engine()
 
   override def update() {
@@ -46,6 +51,6 @@ class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
   }
 
   override def dispose() {
-    Game.shutdown()
+    cleanup()
   }
 }

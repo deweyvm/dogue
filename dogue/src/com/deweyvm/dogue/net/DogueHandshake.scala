@@ -9,6 +9,16 @@ import com.deweyvm.dogue.common.protocol.DogueOp.Greet
 trait DogueHandshakeState
 object DogueHandshake {
   case object Await extends DogueHandshakeState
+
+  /**
+   *
+   * @return a function that will close the handshake in the event of a failure
+   */
+  def createAndStart(clientName:String, host:String, port:Int, callback:(DogueSocket, String)=>Unit):() => Unit = {
+    val result = new DogueHandshake(clientName, host, port, callback)
+    result.start()
+    result.kill
+  }
 }
 class DogueHandshake(clientName:String, host:String, port:Int, callback:(DogueSocket, String)=>Unit) extends Task {
   import DogueHandshake._

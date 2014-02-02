@@ -36,6 +36,7 @@ object Client {
 
 class Client(clientName:String, serverName:String, socket:DogueSocket, manager:ClientManager) extends Transmitter[DogueMessage] {
   private val waitTimeMillis = 16
+
   //private val socket = DogueSocket.create("unknown", address, port)
   private val pinger:Pinger = ThreadManager.spawn(new Pinger(manager))
   private val readQueue = new LockedQueue[DogueMessage] // read from the server

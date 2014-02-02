@@ -23,12 +23,12 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   }
 
   var destName:String = "&unknown&"
-
+  throw new RuntimeException
   override def sourceName = clientName
   override def destinationName = destName
   private var state:ClientState = Client.State.Connecting
-  var client:Option[Client] = None
-
+  private var client:Option[Client] = None
+  private var killHandshake:Option[() => Unit] = None
   private def createName = {
     Game.globals.makeMiniGuid
   }
@@ -50,7 +50,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       if (state != Client.State.Handshaking && state != Client.State.Closed) {
         Log.info("Attempting to establish a connection to %s" format host)
         ClientManager.num += 1
-        new DogueHandshake(clientName, host, port, callback).start()
+        killHandshake = DogueHandshake.createAndStart(clientName, host, port, callback).some
         state = Client.State.Handshaking
       } else {
         Thread.sleep(100)
@@ -68,6 +68,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     try {
       Log.info("Deleting client")
       tryMap {_.close()}
+      killHandshake foreach {_()}
       client = None
       state = s
     } catch {
@@ -147,9 +148,8 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   /**
    * Alert the server that the client application is closing.
    */
-  def close() {
-    tryMap {_.close()}
+  /*def close() {
     delete(Client.State.Closed)
     kill()
-  }
+  }*/
 }
