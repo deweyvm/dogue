@@ -2,6 +2,7 @@
 *.log
 *.iws
 *.json
+*.csv
 out/
 lines.txt
 graph.py
