@@ -41,7 +41,7 @@ class DogueHandshake(clientName:String, host:String, port:Int, callback:(DogueSo
   }
 
   override def cleanup() {
-    Log.verbose("Dogue handshake dying")
+    Log.all("Dogue handshake dying")
   }
 
 }

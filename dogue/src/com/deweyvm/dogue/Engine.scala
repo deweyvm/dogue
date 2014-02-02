@@ -16,12 +16,11 @@ class Engine {
   val rows = Game.RenderHeight/codePage.tileHeight
   val factory = new StageFactory(cols, rows, codePage)
   var stage = factory.create(Stage.Chat)
-  Log.info("Creating client named " + Client.instance.getName)
+  Log.info("Creating client named " + Client.instance.sourceName)
   def update() {
     stage = stage.update(factory)
     Controls.update()
     if (Controls.Escape.justPressed) {
-      //
       Client.instance.disconnect()
       Gdx.app.exit()
     }

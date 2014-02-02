@@ -33,7 +33,6 @@ object TextInput {
             strings(id) = strings(id).dropRight(1)
           } else if (code == 13 && strings(id).length > 0) {
             putCommand(id, strings(id))
-
             strings(id) = ""
           } else if (code > 31){
             strings(id) += char
@@ -78,8 +77,8 @@ object TextInput {
   def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):DogueMessage = {
     Log.info("Converting " + line)
     try {
-      val source = Client.instance.getName
-      val dest = transmitter.getName
+      val source = transmitter.sourceName
+      val dest = transmitter.destinationName
       val (op, rest) = if (line(0) == '/') {
         val cmdString = line.drop(0)
         val split = cmdString.split(" ")

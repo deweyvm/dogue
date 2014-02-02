@@ -40,10 +40,12 @@ case class ChatPanel(override val x:Int,
                 case _ => ""
               } //todo issue #79
               panel.addText("%s: %s" format (src, text), bgColor, fgColor)
+            case DogueOp.Greet =>
+              panel.addText("Welcome!", bgColor, Color.Pink)
             case _ =>
               Log.warn("Don't know how to process command \"%s\"" format cmd)
+              panel
           }
-          panel
           //
         case _ => panel
       }

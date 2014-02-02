@@ -45,7 +45,8 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
     commands foreach processServerCommand
   }
 
-  override def getName = clientName
+  override def sourceName = clientName
+  override def destinationName = serverName
 
   override def enqueue(s:DogueMessage) {
     Log.info("Got command: " + s)

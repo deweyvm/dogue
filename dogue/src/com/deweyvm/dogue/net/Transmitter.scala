@@ -5,5 +5,6 @@ trait Transmitter[T] {
   def enqueue(s:T):Unit
   def dequeue:Vector[T]
 
-  def getName:String
+  def sourceName:String
+  def destinationName:String
 }

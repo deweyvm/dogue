@@ -4,11 +4,9 @@ import com.deweyvm.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
 import com.deweyvm.gleany.files.PathResolver
 import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.dogue.input.WhateverControls
-import com.deweyvm.dogue.loading.{RawDogueSettings, WhateverDefaultSettings}
+import com.deweyvm.dogue.loading.WhateverDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
-import com.deweyvm.dogue.common.protocol.Command
-import com.deweyvm.dogue.common.Macros
 import com.deweyvm.dogue.common.testing.TestManager
 
 

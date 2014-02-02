@@ -21,8 +21,11 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     val u = Game.settings.username
     if (u == null) createName else u
   }
-  def getName = clientName
 
+  var destName:String = "&unknown&"
+
+  override def sourceName = clientName
+  override def destinationName = destName
   private var state:ClientState = Client.State.Connecting
   var client:Option[Client] = None
 
@@ -40,6 +43,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     try {
       def callback(socket:DogueSocket, serverName:String) {
         client = new Client(clientName, serverName, socket, this).some
+        destName = serverName
         state = Client.State.Connected
         Log.info("Handshake succeeded")
       }
