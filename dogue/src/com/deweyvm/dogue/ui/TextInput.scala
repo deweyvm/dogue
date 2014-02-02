@@ -75,10 +75,8 @@ object TextInput {
   }
 
   /**
-   * return None if the command is executed immediately on the client as per #76
-   * @param transmitter
-   * @param line
-   * @return
+   * Return None if the command is executed immediately.
+   * Otherwise return the command to be sent to the server.
    */
   def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):Option[DogueMessage] = {
     Log.all("Converting \"%s\" to command for server" + line)
@@ -89,7 +87,6 @@ object TextInput {
         val command = line.drop(1)
         val rest = line.split(" ", 2).toVector tryGet 1 getOrElse ""
         val op = parser.getOp(command)
-
         (op, rest)
       } else {
         (DogueOp.Say, line)
