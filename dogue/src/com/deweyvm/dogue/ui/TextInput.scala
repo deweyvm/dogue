@@ -81,7 +81,7 @@ object TextInput {
       val s = if (line(0) == '/') {
         line
       } else {
-        "/say " + line
+        "say " + line
       }
       val split:Array[String] = s.split(" ", 2)
       val op = split(0).substring(1)//fixme

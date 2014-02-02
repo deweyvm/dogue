@@ -21,7 +21,7 @@ class Engine {
     stage = stage.update(factory)
     Controls.update()
     if (Controls.Escape.justPressed) {
-      //Game.client.send("/quit") //uncomment to shut down server
+      //
       Client.instance.disconnect()
       Gdx.app.exit()
     }
