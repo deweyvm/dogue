@@ -9,9 +9,11 @@ import com.deweyvm.dogue.common.protocol.{DogueOp, Invalid, DogueMessage, Comman
 import com.deweyvm.dogue.net.{Transmitter, Client}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
+import com.deweyvm.dogue.common.parsing.{ParseError, CommandParser}
 
 
 object TextInput {
+  private val parser = new CommandParser
   private var count = 0
   private val lock = new Lock
   def create(prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
@@ -78,20 +80,23 @@ object TextInput {
     try {
       val source = Client.instance.getName
       val dest = transmitter.getName
-      val s = if (line(0) == '/') {
-        line
+      val (op, rest) = if (line(0) == '/') {
+        val cmdString = line.drop(0)
+        val split = cmdString.split(" ")
+        val cmdWord = split(0)
+        val rest = split(1)
+        val op = parser.getOp(cmdWord)
+        (op, rest)
       } else {
-        "say " + line
+        (DogueOp.Say, line)
       }
-      val split:Array[String] = s.split(" ", 2)
-      val op = split(0).substring(1)//fixme
-      Command(DogueOp.Say, source, dest, Vector(split(1)))
+      Command(op, source, dest, Vector(rest))
 
 
     } catch {
-      case t:Throwable =>
+      case t:ParseError =>
         Log.warn(Log.formatStackTrace(t))
-        Invalid(line)
+        Invalid(line, t.getMessage)
     }
   }
 

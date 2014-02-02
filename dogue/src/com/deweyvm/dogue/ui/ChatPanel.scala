@@ -6,7 +6,7 @@ import com.deweyvm.dogue.net.Transmitter
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.protocol.{Command, DogueMessage}
+import com.deweyvm.dogue.common.protocol.{DogueOp, Command, DogueMessage}
 import com.deweyvm.dogue.common.parsing.CommandParser
 
 case class ChatPanel(override val x:Int,
@@ -33,7 +33,18 @@ case class ChatPanel(override val x:Int,
     val newOutput = newPosted.foldLeft(output) { case (panel:InfoPanel, next:DogueMessage) =>
       next match {
         case cmd@Command(op, src, dst, args) =>
-          panel.addText("%s: %s" format (src, cmd.toSay), bgColor, fgColor)
+          op match {
+            case DogueOp.Say =>
+              val text:String = args match {
+                case a +: _ => a
+                case _ => ""
+              } //todo issue #79
+              panel.addText("%s: %s" format (src, text), bgColor, fgColor)
+            case _ =>
+              Log.warn("Don't know how to process command \"%s\"" format cmd)
+          }
+          panel
+          //
         case _ => panel
       }
     }
