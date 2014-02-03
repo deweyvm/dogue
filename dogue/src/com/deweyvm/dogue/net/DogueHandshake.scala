@@ -4,7 +4,7 @@ import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Task
 import com.deweyvm.dogue.common.protocol.{Invalid, Command}
-import com.deweyvm.dogue.common.protocol.DogueOp.Greet
+import com.deweyvm.dogue.common.protocol.DogueOps.Greet
 
 trait DogueHandshakeState
 object DogueHandshake {

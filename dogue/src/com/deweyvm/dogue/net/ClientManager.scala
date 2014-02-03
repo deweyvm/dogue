@@ -9,6 +9,8 @@ import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.dogue.common.protocol.DogueMessage
 import com.deweyvm.dogue.common.io.DogueSocket
+import com.deweyvm.dogue.common.procgen.Name
+import com.deweyvm.dogue.common.data.GenUtils
 
 object ClientManager {
   var num = 0
@@ -17,21 +19,22 @@ object ClientManager {
 class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMessage] {
   //result type of actions (success, failure). should probably be Either
   type T = Unit
-  private val clientName = {
+  Client.name = {
     val u = Game.settings.username
-    if (u == null) createName else u
+    if (u == null) new Name().get else u
+  }
+
+  (0 until 10) foreach { _ =>
+    println(new Name().get)
   }
 
   var destName:String = "&unknown&"
-  throw new RuntimeException
-  override def sourceName = clientName
+
+  override def sourceName = Client.name
   override def destinationName = destName
   private var state:ClientState = Client.State.Connecting
   private var client:Option[Client] = None
   private var killHandshake:Option[() => Unit] = None
-  private def createName = {
-    Game.globals.makeMiniGuid
-  }
 
   private def tryConnect() {
     def fail(exc:Exception, error:String => ClientError) {
@@ -42,7 +45,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     }
     try {
       def callback(socket:DogueSocket, serverName:String) {
-        client = new Client(clientName, serverName, socket, this).some
+        client = new Client(serverName, socket, this).some
         destName = serverName
         state = Client.State.Connected
         Log.all("Handshake succeeded")
@@ -50,7 +53,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       if (state != Client.State.Handshaking && state != Client.State.Closed) {
         Log.info("Attempting to establish a connection to %s" format host)
         ClientManager.num += 1
-        killHandshake = DogueHandshake.createAndStart(clientName, host, port, callback).some
+        killHandshake = DogueHandshake.createAndStart(Client.name, host, port, callback).some
         state = Client.State.Handshaking
       } else {
         Thread.sleep(100)

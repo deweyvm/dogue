@@ -5,7 +5,7 @@ import com.deweyvm.dogue.common.data.LockedQueue
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.ThreadManager
 import com.deweyvm.dogue.common.io.DogueSocket
-import com.deweyvm.dogue.common.protocol.{DogueOp, Invalid, Command, DogueMessage}
+import com.deweyvm.dogue.common.protocol.{DogueOps, Invalid, Command, DogueMessage}
 
 trait ClientState
 class ClientError(error:String) {
@@ -30,11 +30,15 @@ object Client {
     case object Unknown extends ClientError("Unknown")
   }
 
-
+  var name = "&unknown&"
   val instance = ThreadManager.spawn(new ClientManager(Game.globals.getPort, Game.globals.getAddress))
+
+  def setName(name:String) {
+    this.name = name
+  }
 }
 
-class Client(clientName:String, serverName:String, socket:DogueSocket, manager:ClientManager) extends Transmitter[DogueMessage] {
+class Client(serverName:String, socket:DogueSocket, manager:ClientManager) extends Transmitter[DogueMessage] {
   private val waitTimeMillis = 16
 
   //private val socket = DogueSocket.create("unknown", address, port)
@@ -47,7 +51,7 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
     commands foreach processServerCommand
   }
 
-  override def sourceName = clientName
+  override def sourceName = Client.name
   override def destinationName = serverName
 
   override def enqueue(s:DogueMessage) {
@@ -75,7 +79,7 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   def processServerCommand(command:DogueMessage) {
     command match {
       case Command(op, source, dest, args) =>
-        if (op == DogueOp.Pong) {
+        if (op == DogueOps.Pong) {
           pinger.pong()
         } else { //fixme -- pong doesnt get queue'd?
           readQueue.enqueue(command)
@@ -87,12 +91,12 @@ class Client(clientName:String, serverName:String, socket:DogueSocket, manager:C
   }
 
   def sendPing() {
-    socket.transmit(Command(DogueOp.Ping, clientName, serverName, Vector()))
+    socket.transmit(Command(DogueOps.Ping, Client.name, serverName, Vector()))
   }
 
   def close() {
     Log.info("Client closing connection")
-    socket.transmit(Command(DogueOp.Quit, clientName, serverName, Vector()))
+    socket.transmit(Command(DogueOps.Quit, Client.name, serverName, Vector()))
   }
 }
 

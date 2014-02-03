@@ -5,7 +5,7 @@ import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.protocol.{DogueOp, Invalid, DogueMessage, Command}
+import com.deweyvm.dogue.common.protocol.{DogueOps, Invalid, DogueMessage, Command}
 import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
@@ -65,7 +65,13 @@ object TextInput {
 
   }
 
-  def getCommands(id:Int, transmitter:Transmitter[DogueMessage]):Vector[DogueMessage] = {
+  /**
+   *
+   * @param id
+   * @param transmitter
+   * @return (commandsForServer, stringsToOutput)
+   */
+  def getCommands(id:Int, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = {
     lock.get({ () =>
       val result = (commandQueue(id).toVector map lineToCommand(transmitter)).flatten
       commandQueue(id) = Vector()
@@ -83,20 +89,28 @@ object TextInput {
     try {
       val source = transmitter.sourceName
       val dest = transmitter.destinationName
-      val (op, rest) = if (line(0) == '/') {
-        val command = line.drop(1)
-        val rest = line.split(" ", 2).toVector tryGet 1 getOrElse ""
+      val result = if (line(0) == '/') {
+        val split = line.split(" ")
+        val command = split(0).drop(1)
+        val rest = split.drop(1)
         val op = parser.getOp(command)
-        (op, rest)
+        Command(op, source, dest, rest.toVector)
       } else {
-        (DogueOp.Say, line)
+        Command(DogueOps.Say, source, dest, Vector(line))
       }
-      val result = Command(op, source, dest, Vector(rest))
-      op match {
-        case DogueOp.Quit =>
+      //fixme issue #100
+      result.op match {
+        case DogueOps.Quit =>
           Log.info("Quit command")
           Game.shutdown()
           None
+        case DogueOps.Nick =>
+          if (Game.settings.password != null) {
+            Log.info("Fixme, write output")
+            None
+          } else {
+            result.some
+          }
         case _ =>
           result.some
       }
@@ -128,8 +142,8 @@ case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color
 
   def update(transmitter:Transmitter[DogueMessage]):(TextInput, Vector[DogueMessage]) = {
     TextInput.active = Some(id)
-    val commands = TextInput.getCommands(id, transmitter)
-    (this.copy(string = TextInput.take(id)), commands)
+    val serverCommands = TextInput.getCommands(id, transmitter)
+    (this.copy(string = TextInput.take(id)), serverCommands)
   }
 
   def draw(iRoot:Int, jRoot:Int) {
