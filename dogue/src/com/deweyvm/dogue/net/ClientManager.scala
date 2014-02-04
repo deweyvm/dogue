@@ -11,6 +11,7 @@ import com.deweyvm.dogue.common.protocol.DogueMessage
 import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.procgen.Name
 import com.deweyvm.dogue.common.data.GenUtils
+import com.deweyvm.dogue.ui.TextInput
 
 object ClientManager {
   var num = 0
@@ -70,6 +71,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     try {
       Log.info("Deleting client")
       tryMap {_.close()}
+      TextInput.putCommand(0, "Disconnected")
       killHandshake foreach {_()}
       client = None
       state = s
@@ -139,7 +141,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       case Disconnected(e) => e match {
         case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here
         case ConnectionFailure(msg) => "Failed to connect (r)" //todo -- put control widget here
-        case Unknown => "Uknown error"
+        case Unknown => "Unknown error"
         case Timeout => "Ping timeout"
       }
       case Closed => "Closing..."
