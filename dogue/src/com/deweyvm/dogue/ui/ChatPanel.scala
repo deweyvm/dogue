@@ -38,7 +38,7 @@ case class ChatPanel(override val x:Int,
             case DogueOps.Say =>
               panel.addText("%s: %s" format (src, args(0)), bgColor, fgColor)
             case DogueOps.Greet =>
-              panel.addText("Welcome!", bgColor, Color.Pink)
+              panel.addText(args(0), bgColor, Color.Pink)
             case DogueOps.Reassign =>
               Client.setName(dst)
               panel

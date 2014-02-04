@@ -105,10 +105,11 @@ object TextInput {
           Game.shutdown()
           None
         case DogueOps.Nick =>
-          if (Game.settings.password != null) {
-            Log.info("Fixme, write output")
+          if (Game.settings.password != "" && Game.settings.password != null) {
+            Log.info("Fixme: write to output that you are already registered")
             None
           } else {
+            Log.info("Attempting to register username")
             result.some
           }
         case _ =>

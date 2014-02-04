@@ -12,14 +12,13 @@ lib=$jarloc/dogue_common_jar/dogue-common.jar
 starfire=$jarloc/starfire_jar/starfire.jar
 dest=dogue_bin
 stamp=timestamp
-cmd="scp -C $starfire $lib $host:$dest"
+cmd=""
 echo Copying jars
-echo $cmd
-$cmd && \
+scp -C $starfire $lib $host:$dest &> /dev/null
 echo Creating timestamp && \
 touch timestamp && \
 echo Sending timestamp &&\
-scp timestamp $host:$dest
+scp timestamp $host:$dest &> /dev/null
 
 if [[ $? -ne 0 ]] ; then
     echo Failed
