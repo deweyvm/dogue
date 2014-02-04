@@ -27,7 +27,6 @@ object DogueHandshake {
     }
     var iters = 10
     override def doWork() {
-
       socket.receiveCommands() foreach { case cmd@Command(op, src, dest, args) =>
         op match {
           case DogueOps.Greet =>
