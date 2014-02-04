@@ -5,6 +5,7 @@ import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Task
 import com.deweyvm.dogue.common.protocol.{DogueOps, Command}
 import com.deweyvm.dogue.Game
+import com.deweyvm.dogue.common.procgen.Name
 
 trait DogueHandshakeState
 object DogueHandshake {
@@ -15,7 +16,7 @@ object DogueHandshake {
    * @return a function that will close the handshake in the event of a failure
    */
   def begin(host:String, port:Int, success:SuccessCallback, failure:FailureCallback):() => Unit = {
-    val socket =  DogueSocket.create("&unknown&", host, port)
+    val socket =  DogueSocket.create(Name.unknown, host, port)
     val result = new AwaitGreeting(socket, success, failure)
     result.start()
     result.kill

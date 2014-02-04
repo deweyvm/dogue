@@ -24,7 +24,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     if (u == "") new Name().get else u
   }
 
-  var destName:String = "&unknown&"
+  var destName:String = Name.unknown
 
   override def sourceName = Client.name
   override def destinationName = destName

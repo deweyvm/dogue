@@ -6,6 +6,7 @@ import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.ThreadManager
 import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.protocol.{DogueOps, Invalid, Command, DogueMessage}
+import com.deweyvm.dogue.common.procgen.Name
 
 trait ClientState
 class ClientError(error:String) {
@@ -30,7 +31,7 @@ object Client {
     case object Unknown extends ClientError("Unknown")
   }
 
-  var name = "&unknown&"
+  var name = Name.unknown
   val instance = ThreadManager.spawn(new ClientManager(Game.settings.port.get, Game.settings.host.get))
   def isNameGenerated:Boolean = Game.settings.username.get == ""
   def setName(name:String) {
