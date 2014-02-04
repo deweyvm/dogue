@@ -100,7 +100,7 @@ object TextInput {
       }
       //fixme issue #100
       result.op match {
-        case DogueOps.Quit =>
+        case DogueOps.Close =>
           Log.info("Quit command")
           Game.shutdown()
           None

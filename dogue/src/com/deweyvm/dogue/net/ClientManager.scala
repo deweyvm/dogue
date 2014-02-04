@@ -21,11 +21,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   type T = Unit
   Client.name = {
     val u = Game.settings.username
-    if (u == null) new Name().get else u
-  }
-
-  (0 until 10) foreach { _ =>
-    println(new Name().get)
+    if (u == null || u == "") new Name().get else u
   }
 
   var destName:String = "&unknown&"
@@ -44,16 +40,19 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       Thread.sleep(5000)
     }
     try {
-      def callback(socket:DogueSocket, serverName:String) {
+      def success(socket:DogueSocket, serverName:String) {
         client = new Client(serverName, socket, this).some
         destName = serverName
         state = Client.State.Connected
         Log.all("Handshake succeeded")
       }
+      def fail() {
+        delete(Client.Error.ConnectionFailure("Handshake timeout").toState)
+      }
       if (state != Client.State.Handshaking && state != Client.State.Closed) {
         Log.info("Attempting to establish a connection to %s" format host)
         ClientManager.num += 1
-        killHandshake = DogueHandshake.createAndStart(Client.name, host, port, callback).some
+        killHandshake = DogueHandshake.begin(host, port, success, fail).some
         state = Client.State.Handshaking
       } else {
         Thread.sleep(100)

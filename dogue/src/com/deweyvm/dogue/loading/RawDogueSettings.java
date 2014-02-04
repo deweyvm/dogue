@@ -21,7 +21,6 @@ public class RawDogueSettings {
         try {
             final Json json = new Json();
             final Path path = Paths.get(settingsPath);
-
             if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
                 writeDefault(path);
                 return fromFile();
@@ -40,7 +39,8 @@ public class RawDogueSettings {
         final RawDogueSettings raw = new RawDogueSettings();
         raw.port = 4815;
         raw.server = "dogue.in";
-        raw.username = null;
+        raw.username = "";
+        raw.password = "";
         return raw;
     }
 
@@ -65,11 +65,11 @@ public class RawDogueSettings {
         final Path path = Paths.get(settingsPath);
         final Json json = new Json();
         final String s = json.prettyPrint(this);
-        /*try {
-            //Files.write(path, Encoding.toBytes(s), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        try {
+            Files.write(path, Encoding.toBytes(s), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         } catch (IOException ioe) {
             Log.error("Failed to write settings");
-        }*/
+        }
     }
 
 }

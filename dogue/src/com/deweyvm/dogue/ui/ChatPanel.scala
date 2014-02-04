@@ -40,6 +40,9 @@ case class ChatPanel(override val x:Int,
             case DogueOps.Greet =>
               panel.addText("Welcome!", bgColor, Color.Pink)
             case DogueOps.Reassign =>
+              Client.setName(dst)
+              panel
+            case DogueOps.Assign =>
               Client.setName(args(0))
               Game.settings.password = args(1)
               Game.settings.username = args(0)

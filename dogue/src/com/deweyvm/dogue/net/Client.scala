@@ -32,7 +32,7 @@ object Client {
 
   var name = "&unknown&"
   val instance = ThreadManager.spawn(new ClientManager(Game.globals.getPort, Game.globals.getAddress))
-
+  def isNameGenerated:Boolean = Game.settings.username == null || Game.settings.username == ""
   def setName(name:String) {
     this.name = name
   }
@@ -96,7 +96,7 @@ class Client(serverName:String, socket:DogueSocket, manager:ClientManager) exten
 
   def close() {
     Log.info("Client closing connection")
-    socket.transmit(Command(DogueOps.Quit, Client.name, serverName, Vector()))
+    socket.transmit(Command(DogueOps.Close, Client.name, serverName, Vector()))
   }
 }
 
