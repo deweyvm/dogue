@@ -44,6 +44,10 @@ object DogueHandshake {
         kill()
       }
     }
+
+    override def exception(t:Throwable) {
+      failure()
+    }
   }
 
   class Identify(socket:DogueSocket, serverName:String, success:SuccessCallback, failure:FailureCallback) extends Task {
@@ -57,6 +61,10 @@ object DogueHandshake {
       Log.info("Done identifying")
       kill()
       success(socket, serverName)
+    }
+
+    override def exception(t:Throwable) {
+      failure()
     }
 
   }
