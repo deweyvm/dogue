@@ -18,7 +18,6 @@ object ClientManager {
 }
 
 class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMessage] {
-  //result type of actions (success, failure). should probably be Either
   type T = Unit
   Client.name = {
     val u = Game.settings.username.get
@@ -51,7 +50,9 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
         delete(Client.Error.ConnectionFailure("Handshake timeout").toState)
       }
       if (state != Client.State.Handshaking && state != Client.State.Closed) {
-        Log.info("Attempting to establish a connection to %s" format host)
+        val s = "Attempting to establish a connection to %s" format host
+        Log.info(s)
+        TextInput.putCommand(TextInput.chat, "/local \"%s\"" format s)
         ClientManager.num += 1
         killHandshake = DogueHandshake.begin(host, port, success, fail).some
         state = Client.State.Handshaking
@@ -71,7 +72,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     try {
       Log.info("Deleting client")
       tryMap {_.close()}
-      TextInput.putCommand(0, "Disconnected")
+      TextInput.putCommand(TextInput.chat, "/local Disconnected")
       killHandshake foreach {_()}
       client = None
       state = s

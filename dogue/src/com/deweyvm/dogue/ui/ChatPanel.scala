@@ -8,6 +8,7 @@ import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol.{DogueOps, Command, DogueMessage}
 import com.deweyvm.dogue.common.parsing.CommandParser
+import scala.collection.mutable.ArrayBuffer
 
 case class ChatPanel(override val x:Int,
                      override val y:Int,
@@ -28,8 +29,17 @@ case class ChatPanel(override val x:Int,
 
   override def update = {
     val (newInput, commands) = input.update(transmitter)
-    commands foreach transmitter.enqueue
-    val newPosted = transmitter.dequeue
+    val (serverCommands, localCommands) = commands.partition {
+      case cmd@Command(op, _,_,_) =>
+        op match {
+          case DogueOps.LocalMessage => false
+          case _ => true
+
+        }
+    }
+    serverCommands foreach transmitter.enqueue
+
+    val newPosted = transmitter.dequeue ++ localCommands
     val newOutput = newPosted.foldLeft(output) { case (panel:InfoPanel, next:DogueMessage) =>
 
       next match {
@@ -39,6 +49,9 @@ case class ChatPanel(override val x:Int,
               panel.addText("%s: %s" format (src, args(0)), bgColor, fgColor)
             case DogueOps.Greet =>
               panel.addText(args(0), bgColor, Color.Pink)
+            case DogueOps.LocalMessage =>
+              Log.info("local message")
+              panel.addText(args(0), bgColor, Color.Red)
             case DogueOps.Reassign =>
               Client.setName(dst)
               panel

@@ -27,7 +27,7 @@ object Main {
     }
     parser.parse(args, DogueOptions()) map { c =>
       val s = Game.settings
-      Log.initLog(s.logLocation.get, Log.Verbose)
+      Log.initLog(s.logLocation.get, Log.All)
       Game.globals.IsDebugMode = c.isDebug
       if (c.version) {
         println(Game.globals.Version)

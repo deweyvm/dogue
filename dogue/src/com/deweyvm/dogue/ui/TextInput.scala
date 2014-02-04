@@ -6,19 +6,18 @@ import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol.{DogueOps, Invalid, DogueMessage, Command}
-import com.deweyvm.dogue.net.{Client, Transmitter}
+import com.deweyvm.dogue.net.Transmitter
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
 import com.deweyvm.dogue.common.parsing.{ParseError, CommandParser}
 
 
 object TextInput {
+  val chat = "chat"
   private val parser = new CommandParser
-  private var count = 0
   private val lock = new Lock
-  def create(prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
-    val result = new TextInput(count, prompt, width, height, bgColor, fgColor, "", factory)
-    count += 1
+  def create(name:String, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
+    val result = new TextInput(name, prompt, width, height, bgColor, fgColor, "", factory)
     result
   }
 
@@ -46,18 +45,18 @@ object TextInput {
   }
 
   //pure reads do not need a lock as long as all writes are locked
-  def take(id:Int):String = {
+  def take(id:String):String = {
     val added = strings(id)
     added
   }
 
-  val strings = scala.collection.mutable.Map[Int, String]().withDefaultValue("")
-  val inputs = scala.collection.mutable.Map[Int, TextInput]()
-  val commandQueue = scala.collection.mutable.Map[Int, Vector[String]]().withDefaultValue(Vector())
+  val strings = scala.collection.mutable.Map[String, String]().withDefaultValue("")
+  val inputs = scala.collection.mutable.Map[String, TextInput]()
+  val commandQueue = scala.collection.mutable.Map[String, Vector[String]]().withDefaultValue(Vector())
 
-  def putCommand(id:Int, string:String) {
+  def putCommand(id:String, string:String) {
     type T = Unit ;
-    lock.foreach[(Int,String)]({case (i,s) =>
+    lock.foreach[(String,String)]({case (i,s) =>
       val newVect:Vector[String] = commandQueue(i) :+ s
       commandQueue(i) = newVect
 
@@ -71,7 +70,7 @@ object TextInput {
    * @param transmitter
    * @return (commandsForServer, stringsToOutput)
    */
-  def getCommands(id:Int, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = {
+  def getCommands(id:String, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = {
     lock.get({ () =>
       val result = (commandQueue(id).toVector map lineToCommand(transmitter)).flatten
       commandQueue(id) = Vector()
@@ -85,21 +84,31 @@ object TextInput {
    * Otherwise return the command to be sent to the server.
    */
   def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):Option[DogueMessage] = {
-    Log.all("Converting \"%s\" to command for server" + line)
+    Log.all("Converting \"%s\" to command for server" format line)
     try {
       val source = transmitter.sourceName
       val dest = transmitter.destinationName
-      val result = if (line(0) == '/') {
+      val command =
+        if (line(0) == '/') {
+          line.drop(1)
+        } else {
+          "say " + line
+        }
+      val parsed = parser.getLocalCommand(command)
+
+      /*val result = if (line(0) == '/') {
         val split = line.split(" ")
         val command = split(0).drop(1)
         val rest = split.drop(1)
         val op = parser.getOp(command)
-        Command(op, source, dest, rest.toVector)
+        val result = Command(op, source, dest, rest.toVector)
+        println(result)
+        result
       } else {
         Command(DogueOps.Say, source, dest, Vector(line))
-      }
+      }*/
       //fixme issue #100
-      result.op match {
+      parsed.op match {
         case DogueOps.Close =>
           Log.info("Quit command")
           Game.shutdown()
@@ -110,10 +119,10 @@ object TextInput {
             None
           } else {
             Log.info("Attempting to register username")
-            result.some
+            parsed.toCommand(source, dest).some
           }
         case _ =>
-          result.some
+          parsed.toCommand(source, dest).some
       }
 
 
@@ -125,11 +134,11 @@ object TextInput {
   }
 
 
-  var active:Option[Int] = None
+  var active:Option[String] = None
 
 }
 
-case class TextInput(id:Int, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
+case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
   TextInput.inputs(id) = this
 
   private def makeText(s:String) = {
