@@ -145,12 +145,4 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       case Closed => "Closing..."
     }
   }
-
-  /**
-   * Alert the server that the client application is closing.
-   */
-  /*def close() {
-    delete(Client.State.Closed)
-    kill()
-  }*/
 }
