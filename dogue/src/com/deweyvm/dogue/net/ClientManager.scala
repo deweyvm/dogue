@@ -101,7 +101,6 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
 
 
   def disconnect(reason:ClientState) {
-    tryMap {_.close()}
     delete(reason)
   }
 
