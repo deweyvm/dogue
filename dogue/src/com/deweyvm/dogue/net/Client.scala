@@ -31,8 +31,8 @@ object Client {
   }
 
   var name = "&unknown&"
-  val instance = ThreadManager.spawn(new ClientManager(Game.globals.getPort, Game.globals.getAddress))
-  def isNameGenerated:Boolean = Game.settings.username == null || Game.settings.username == ""
+  val instance = ThreadManager.spawn(new ClientManager(Game.settings.port.get, Game.settings.host.get))
+  def isNameGenerated:Boolean = Game.settings.username.get == ""
   def setName(name:String) {
     this.name = name
   }

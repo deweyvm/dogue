@@ -55,7 +55,7 @@ object DogueHandshake {
       if (Client.isNameGenerated) {
         socket.transmit(Command(DogueOps.Greet, Client.name, serverName, Vector()))
       } else {
-        socket.transmit(new Command(DogueOps.Identify, Client.name, serverName, Client.name, Option(Game.settings.password) getOrElse ""))
+        socket.transmit(new Command(DogueOps.Identify, Client.name, serverName, Client.name, Game.settings.password.get))
       }
       Log.info("Done identifying")
       kill()

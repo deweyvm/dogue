@@ -11,7 +11,11 @@ public class RawDogueSettings {
     public String username;
     public int port;
     public String password;
-    public String server;
+    public String host;
+    public int pingFrequency;
+    public int pingCheckFrequency;
+    public int maxPongWait;
+    public String logLocation;
     public RawDogueSettings() {
 
     }
@@ -36,12 +40,7 @@ public class RawDogueSettings {
     }
 
     public static RawDogueSettings createDefault() {
-        final RawDogueSettings raw = new RawDogueSettings();
-        raw.port = 4815;
-        raw.server = "dogue.in";
-        raw.username = "";
-        raw.password = "";
-        return raw;
+        return DogueSettings.makeDefault();
     }
 
     public static void writeDefault(Path path) {

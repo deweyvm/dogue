@@ -20,8 +20,8 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   //result type of actions (success, failure). should probably be Either
   type T = Unit
   Client.name = {
-    val u = Game.settings.username
-    if (u == null || u == "") new Name().get else u
+    val u = Game.settings.username.get
+    if (u == "") new Name().get else u
   }
 
   var destName:String = "&unknown&"

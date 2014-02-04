@@ -16,10 +16,6 @@ object Main {
     val parser = new scopt.OptionParser[DogueOptions]("dogue") {
       head("dogue", Game.globals.Version)
 
-      opt[String]("log") action { (x, c) =>
-        c.copy(log = x)
-      } text "directory to place logs"
-
       opt[Unit]("debug") action { (_, c) =>
         c.copy(isDebug = true)
       } text "run in debug mode"
@@ -28,19 +24,10 @@ object Main {
         c.copy(version = true)
       } text "show version"
 
-      opt[String]("address") optional() action { (x, c) =>
-        c.copy(address = x)
-      } text "address of server"
-
-      opt[Int]("port") action { (x, c) =>
-        c.copy(port = x)
-      } text "port to use to connect"
-
     }
     parser.parse(args, DogueOptions()) map { c =>
-      Log.initLog(c.log, Log.Verbose)
-      Game.globals.setAddress(c.address)
-      Game.globals.setPort(c.port)
+      val s = Game.settings
+      Log.initLog(s.logLocation.get, Log.Verbose)
       Game.globals.IsDebugMode = c.isDebug
       if (c.version) {
         println(Game.globals.Version)

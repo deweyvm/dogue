@@ -44,9 +44,8 @@ case class ChatPanel(override val x:Int,
               panel
             case DogueOps.Assign =>
               Client.setName(args(0))
-              Game.settings.password = args(1)
-              Game.settings.username = args(0)
-              Game.settings.flush()
+              Game.settings.password.set(args(1))
+              Game.settings.username.set(args(0))
               panel
             case _ =>
               Log.warn("Don't know how to process command \"%s\"" format cmd)

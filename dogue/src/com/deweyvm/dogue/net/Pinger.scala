@@ -7,9 +7,9 @@ import com.deweyvm.dogue.common.logging.Log
 class Pinger(clientManager:ClientManager) extends Task {
   private var lastPongReceived = Game.getFrame
   private var lastPingSent = Game.getFrame
-  private val pingFrequency = 90*60
-  private val maxPongFrames = 120*60
-  private val checkFrequency = 350
+  private val pingFrequency = Game.settings.pingFrequency.get*Game.fps//90*60
+  private val maxPongFrames = Game.settings.maxPongWait.get*Game.fps//120*60
+  private val checkFrequency = Game.settings.pingCheckFrequency.get*Game.fps//6*60
   override def doWork() {
     Thread.sleep(checkFrequency)
     if (Game.getFrame - lastPingSent > pingFrequency) {

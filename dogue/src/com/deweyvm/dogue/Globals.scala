@@ -9,7 +9,7 @@ class Globals {
   private var drawDebug = false
   var IsDebugMode = true
 
-  def setAddress(address:String) {
+  /*def setAddress(address:String) {
     remoteIp = address.some
   }
 
@@ -22,7 +22,7 @@ class Globals {
 
 
   def getPort = port.getOrElse(4815)
-  def getAddress = remoteIp.getOrElse("localhost")
+  def getAddress = remoteIp.getOrElse("localhost")*/
 
   var Version = "0.X.X"
 

@@ -3,7 +3,7 @@ package com.deweyvm.dogue
 import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.threading.ThreadManager
-import com.deweyvm.dogue.loading.RawDogueSettings
+import com.deweyvm.dogue.loading.{DogueSettings, RawDogueSettings}
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 
@@ -15,7 +15,9 @@ object Game {
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom
   val globals = new Globals
-  val settings = RawDogueSettings.fromFile()
+  val settings = DogueSettings.load()
+  DogueSettings.flush()
+  val fps = 60
 
   private var frame = 0
   def getFrame = frame
