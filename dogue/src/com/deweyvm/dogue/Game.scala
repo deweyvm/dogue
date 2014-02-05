@@ -55,6 +55,10 @@ class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
   }
 
   override def dispose() {
-    cleanup()
+    val executor = Executors.newSingleThreadExecutor()
+    executor.invokeAll(util.Arrays.asList(new Callable[Unit] {
+      override def call(): Unit = cleanup()
+    }), 2, TimeUnit.SECONDS)
+    executor.shutdown()
   }
 }
