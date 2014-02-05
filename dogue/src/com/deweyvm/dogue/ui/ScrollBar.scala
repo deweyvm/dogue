@@ -1,9 +1,10 @@
 package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.graphics.GlyphFactory
-import com.deweyvm.dogue.entities.{Tile, Code}
+import com.deweyvm.dogue.entities.{Tile}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Assets
+import com.deweyvm.dogue.common.data.Code
 
 /*
  * have continuous scrollbar

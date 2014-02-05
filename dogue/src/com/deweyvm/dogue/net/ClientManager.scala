@@ -5,13 +5,12 @@ import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.logging.Log
 import java.io.IOException
 import java.net.{SocketException, UnknownHostException}
-import com.deweyvm.dogue.entities.Code
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.dogue.common.protocol.DogueMessage
 import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.procgen.Name
-import com.deweyvm.dogue.common.data.GenUtils
 import com.deweyvm.dogue.ui.TextInput
+import com.deweyvm.dogue.common.data.Code
 
 object ClientManager {
   var num = 0
@@ -137,7 +136,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       case Connected => Code.☼.rawString
       case Handshaking => "Handshaking..."
       case Connecting =>
-        val codes = Vector(Code./, Code.─, Code.\, Code.│)
+        val codes = Vector(Code./, Code.─, Code.backslash, Code.│)
         "Connecting " + codes((Game.getFrame/10) % codes.length).rawString
       case Disconnected(e) => e match {
         case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here

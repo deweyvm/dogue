@@ -9,9 +9,8 @@ import com.deweyvm.dogue.common.protocol._
 import com.deweyvm.dogue.net.Transmitter
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
-import com.deweyvm.dogue.common.parsing.{ParseError, CommandParser}
+import com.deweyvm.dogue.common.parsing.CommandParser
 import scala.Some
-import com.deweyvm.dogue.common.protocol.Invalid
 
 
 object TextInput {
@@ -87,57 +86,39 @@ object TextInput {
    */
   def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):Option[DogueMessage] = {
     Log.all("Converting \"%s\" to command" format line)
-    try {
-      val source = transmitter.sourceName
-      val dest = transmitter.destinationName
-      val command =
-        if (line(0) == '/') {
-          line.drop(1)
-        } else {
-          "say " + line
-        }
-      val parsed = parser.getLocalCommand(command)
-
-      /*val result = if (line(0) == '/') {
-        val split = line.split(" ")
-        val command = split(0).drop(1)
-        val rest = split.drop(1)
-        val op = parser.getOp(command)
-        val result = Command(op, source, dest, rest.toVector)
-        println(result)
-        result
+    val source = transmitter.sourceName
+    val dest = transmitter.destinationName
+    val command =
+      if (line(0) == '/') {
+        line.drop(1)
       } else {
-        Command(DogueOps.Say, source, dest, Vector(line))
-      }*/
-      //fixme issue #100
-      parsed match {
-        case cmd@LocalCommand(op, args) =>
-          op match {
-            case DogueOps.Close =>
-              Log.info("Quit command")
-              Game.shutdown()
-              None
-            case DogueOps.Nick =>
-              if (Game.settings.password != "" && Game.settings.password != null) {
-                new LocalCommand(DogueOps.LocalMessage, "You are already registered -- don't be greedy!").toDogueMessage(source, dest).some
-              } else {
-                Log.info("Attempting to register username")
-                parsed.toDogueMessage(source, dest).some
-              }
-            case _ =>
-              parsed.toDogueMessage(source, dest).some
-          }
-        case inv@LocalInvalid(s, msg) =>
-          new LocalCommand(DogueOps.LocalMessage, "Invalid command.").toDogueMessage(source, dest).some
+        "say " + line
       }
+    val parsed = parser.getLocalCommand(command)
 
-
-
-    } catch {
-      case t:ParseError =>
-        Log.warn(Log.formatStackTrace(t))
-        Invalid(line, t.getMessage).some
+    //fixme issue #100
+    parsed match {
+      case cmd@LocalCommand(op, args) =>
+        op match {
+          case DogueOps.Close =>
+            Log.info("Quit command")
+            Game.shutdown()
+            None
+          case DogueOps.Nick =>
+            if (Game.settings.password != "" && Game.settings.password != null) {
+              new LocalCommand(DogueOps.LocalMessage, "You are already registered -- don't be greedy!").toDogueMessage(source, dest).some
+            } else {
+              Log.info("Attempting to register username")
+              parsed.toDogueMessage(source, dest).some
+            }
+          case _ =>
+            parsed.toDogueMessage(source, dest).some
+        }
+      case inv@LocalInvalid(s, msg) =>
+        new LocalCommand(DogueOps.LocalMessage, "Invalid command.").toDogueMessage(source, dest).some
     }
+
+
   }
 
 
