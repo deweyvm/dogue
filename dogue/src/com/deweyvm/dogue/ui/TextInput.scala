@@ -5,11 +5,13 @@ import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.protocol.{DogueOps, Invalid, DogueMessage, Command}
+import com.deweyvm.dogue.common.protocol._
 import com.deweyvm.dogue.net.Transmitter
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
 import com.deweyvm.dogue.common.parsing.{ParseError, CommandParser}
+import scala.Some
+import com.deweyvm.dogue.common.protocol.Invalid
 
 
 object TextInput {
@@ -84,7 +86,7 @@ object TextInput {
    * Otherwise return the command to be sent to the server.
    */
   def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):Option[DogueMessage] = {
-    Log.all("Converting \"%s\" to command for server" format line)
+    Log.all("Converting \"%s\" to command" format line)
     try {
       val source = transmitter.sourceName
       val dest = transmitter.destinationName
@@ -108,22 +110,27 @@ object TextInput {
         Command(DogueOps.Say, source, dest, Vector(line))
       }*/
       //fixme issue #100
-      parsed.op match {
-        case DogueOps.Close =>
-          Log.info("Quit command")
-          Game.shutdown()
-          None
-        case DogueOps.Nick =>
-          if (Game.settings.password != "" && Game.settings.password != null) {
-            Log.info("Fixme: write to output that you are already registered")
-            None
-          } else {
-            Log.info("Attempting to register username")
-            parsed.toCommand(source, dest).some
+      parsed match {
+        case cmd@LocalCommand(op, args) =>
+          op match {
+            case DogueOps.Close =>
+              Log.info("Quit command")
+              Game.shutdown()
+              None
+            case DogueOps.Nick =>
+              if (Game.settings.password != "" && Game.settings.password != null) {
+                new LocalCommand(DogueOps.LocalMessage, "You are already registered -- don't be greedy!").toDogueMessage(source, dest).some
+              } else {
+                Log.info("Attempting to register username")
+                parsed.toDogueMessage(source, dest).some
+              }
+            case _ =>
+              parsed.toDogueMessage(source, dest).some
           }
-        case _ =>
-          parsed.toCommand(source, dest).some
+        case inv@LocalInvalid(s, msg) =>
+          new LocalCommand(DogueOps.LocalMessage, "Invalid command.").toDogueMessage(source, dest).some
       }
+
 
 
     } catch {

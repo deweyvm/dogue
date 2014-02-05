@@ -49,7 +49,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       def fail() {
         delete(Client.Error.ConnectionFailure("Handshake timeout").toState)
       }
-      if (state != Client.State.Handshaking && state != Client.State.Closed) {
+      if (state == Client.State.Connecting) {
         val s = "Attempting to establish a connection to %s" format host
         Log.info(s)
         TextInput.putCommand(TextInput.chat, "/local \"%s\"" format s)
@@ -133,7 +133,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     import Client.State._
     import Client.Error._
     state match {
-      case Offline => "Offline mode"
+      case Offline => "Offline"
       case Connected => Code.☼.rawString
       case Handshaking => "Handshaking..."
       case Connecting =>

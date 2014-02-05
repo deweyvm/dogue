@@ -6,6 +6,8 @@ import com.deweyvm.dogue.common.threading.ThreadManager
 import com.deweyvm.dogue.loading.{DogueSettings, RawDogueSettings}
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
+import java.util.concurrent.{TimeUnit, Callable, Executors}
+import java.util
 
 object Game {
   val Zoom = 1
