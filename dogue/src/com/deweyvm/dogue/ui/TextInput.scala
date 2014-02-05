@@ -73,7 +73,7 @@ object TextInput {
    */
   def getCommands(id:String, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = {
     lock.get({ () =>
-      val result = (commandQueue(id).toVector map lineToCommand(transmitter)).flatten
+      val result = (commandQueue(id).toVector map lineToCommands(transmitter)).flatten
       commandQueue(id) = Vector()
       result
     })
@@ -82,9 +82,9 @@ object TextInput {
 
   /**
    * Return None if the command is executed immediately.
-   * Otherwise return the command to be sent to the server.
+   * Otherwise return the commands to be sent to the server.
    */
-  def lineToCommand(transmitter:Transmitter[DogueMessage])(line:String):Option[DogueMessage] = {
+  def lineToCommands(transmitter:Transmitter[DogueMessage])(line:String):Vector[DogueMessage] = {
     Log.all("Converting \"%s\" to command" format line)
     val source = transmitter.sourceName
     val dest = transmitter.destinationName
@@ -95,7 +95,9 @@ object TextInput {
         "say " + line
       }
     val parsed = parser.getLocalCommand(command)
-
+    def makeLocal(s:String) = {
+      new LocalCommand(DogueOps.LocalMessage, s).toDogueMessage(source, dest)
+    }
     //fixme issue #100
     parsed match {
       case cmd@LocalCommand(op, args) =>
@@ -103,19 +105,21 @@ object TextInput {
           case DogueOps.Close =>
             Log.info("Quit command")
             Game.shutdown()
-            None
+            Vector()
           case DogueOps.Nick =>
-            if (Game.settings.password != "" && Game.settings.password != null) {
-              new LocalCommand(DogueOps.LocalMessage, "You are already registered -- don't be greedy!").toDogueMessage(source, dest).some
+            if (Game.settings.password.get != "") {
+              Vector(makeLocal("You are already registered -- don't be greedy!"))
             } else {
               Log.info("Attempting to register username")
-              parsed.toDogueMessage(source, dest).some
+              val registerMessage = parsed.toDogueMessage(source, dest)
+              val chatOutput = makeLocal("Attempting to register name")
+              Vector(registerMessage, chatOutput)
             }
           case _ =>
-            parsed.toDogueMessage(source, dest).some
+            Vector(parsed.toDogueMessage(source, dest))
         }
       case inv@LocalInvalid(s, msg) =>
-        new LocalCommand(DogueOps.LocalMessage, "Invalid command.").toDogueMessage(source, dest).some
+        Vector(new LocalCommand(DogueOps.LocalMessage, "Invalid command.").toDogueMessage(source, dest))
     }
 
 
