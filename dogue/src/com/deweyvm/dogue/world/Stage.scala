@@ -22,20 +22,16 @@ object Stage {
   }
 }
 
-case class Stage(t:StageType, cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel], serverStatus:Text) {
+case class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel], serverStatus:Text) {
   val rect = Recti(0, 0, cols, rows)
 
   val rightPartition = 32
   val testText = new Text("this is a test", Color.Blue, Color.White, factory)
   val borders = calculateBorders
 
-  def update(stageFactory:StageFactory):Stage = {
-    if (Controls.Tab.justPressed) {
-      stageFactory.create(t.next)
-    } else {
-      this.copy(panels = panels map (_.update),
-        serverStatus = serverStatus.setString(Client.instance.getStatus))
-    }
+  def update:Stage = {
+    this.copy(panels = panels map (_.update),
+              serverStatus = serverStatus.setString(Client.instance.getStatus))
   }
 
   def draw() {
