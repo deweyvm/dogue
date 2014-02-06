@@ -33,7 +33,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   private var killHandshake:Option[() => Unit] = None
 
   private def tryConnect() {
-    def fail(exc:Exception, error:String => ClientError) {
+    def fail(exc:Throwable, error:String => ClientError) {
       val stackTrace = exc.getStackTraceString
       Log.warn(Log.formatStackTrace(exc))
       delete(error(stackTrace).toState)
@@ -65,6 +65,8 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
         fail(ioe, Client.Error.ConnectionFailure)
       case uhe:UnknownHostException =>
         fail(uhe, Client.Error.HostUnreachable)
+      case t:Throwable =>
+        fail(t, _ => Client.Error.Unknown)
     }
   }
 
@@ -97,6 +99,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     if (!client.isDefined) {
       tryConnect()
     }
+
     tryMap { _.run() }
   }
 
@@ -132,6 +135,10 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     } catch {
       case e:SocketException =>
         delete(ConnectionFailure(e.getMessage).toState)
+        None
+      case t:Throwable =>
+        Log.error(Log.formatStackTrace(t))
+        delete(Client.Error.Unknown.toState)
         None
     }
   }
