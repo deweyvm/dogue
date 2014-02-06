@@ -15,10 +15,8 @@ stamp=timestamp
 cmd=""
 echo Copying jars
 scp -C $starfire $lib $host:$dest &> /dev/null
-echo Creating timestamp && \
-touch timestamp && \
 echo Sending timestamp &&\
-scp timestamp $host:$dest &> /dev/null
+ssh $host touch $dest/$stamp &> /dev/null
 
 if [[ $? -ne 0 ]] ; then
     echo Failed

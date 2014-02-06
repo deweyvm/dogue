@@ -94,7 +94,7 @@ object TextInput {
       if (line(0) == '/') {
         line.drop(1)
       } else {
-        "say " + line
+        "say %s \"%s\"" format (source, line)
       }
     val parsed = parser.getLocalCommand(command)
     def makeLocal(s:String) = {
