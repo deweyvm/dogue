@@ -45,7 +45,7 @@ object DogueHandshake {
       }
     }
 
-    override def exception(t:Throwable) {
+    override def exception(t:Exception) {
       failure()
     }
   }
@@ -63,7 +63,7 @@ object DogueHandshake {
       success(socket, serverName)
     }
 
-    override def exception(t:Throwable) {
+    override def exception(t:Exception) {
       failure()
     }
 
