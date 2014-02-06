@@ -19,7 +19,6 @@ object Client {
     case object Connecting extends ClientState
     case object Handshaking extends ClientState
     case object Connected extends ClientState
-    case object Offline extends ClientState
     case object Closed extends ClientState
     case class Disconnected(error:ClientError) extends ClientState
   }

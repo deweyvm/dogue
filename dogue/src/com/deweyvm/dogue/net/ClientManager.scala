@@ -11,6 +11,7 @@ import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.procgen.Name
 import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.common.data.Code
+import com.deweyvm.dogue.net.Client.State.{Connecting, Disconnected}
 
 object ClientManager {
   var num = 0
@@ -67,11 +68,23 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     }
   }
 
+  def requestConnect():Boolean = {
+    state match {
+      case Disconnected(_) =>
+        state = Connecting
+        true
+      case _ =>
+        state
+        false
+
+    }
+  }
+
   private def delete(s:ClientState) {
     try {
       Log.info("Deleting client")
       tryMap {_.close()}
-      TextInput.putCommand(TextInput.chat, "/local Disconnected")
+      TextInput.putCommand(TextInput.chat, "/local \"Failed to connect.\"")
       killHandshake foreach {_()}
       client = None
       state = s
@@ -132,7 +145,6 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     import Client.State._
     import Client.Error._
     state match {
-      case Offline => "Offline"
       case Connected => Code.☼.rawString
       case Handshaking => "Handshaking..."
       case Connecting =>

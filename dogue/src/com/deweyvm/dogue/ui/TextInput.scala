@@ -104,6 +104,12 @@ object TextInput {
     parsed match {
       case cmd@LocalCommand(op, args) =>
         op match {
+          case DogueOps.Connect =>
+            if (Client.instance.requestConnect()) {
+              Vector()//reconnecting already shows a local message
+            } else {
+              Vector(makeLocal("You are already connected or attempting to connect"))
+            }
           case DogueOps.Close =>
             Log.info("Quit command")
             Game.shutdown()
