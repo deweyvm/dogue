@@ -59,7 +59,7 @@ case class ChatPanel(override val x:Int,
               Client.setName(args(0))
               Game.settings.password.set(args(1))
               Game.settings.username.set(args(0))
-              panel.addText("You have registered the name %s. Hope you like it!" format Client.name, bgColor, Color.Red)
+              panel
             case _ =>
               Log.warn("Don't know how to process command \"%s\"" format cmd)
               panel

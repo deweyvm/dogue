@@ -106,7 +106,7 @@ object TextInput {
             Log.info("Quit command")
             Game.shutdown()
             Vector()
-          case DogueOps.Nick =>
+          case DogueOps.Register =>
             if (Game.settings.password.get != "") {
               Vector(makeLocal("You are already registered -- don't be greedy!"))
             } else {

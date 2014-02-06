@@ -7,5 +7,5 @@ out/
 lines.txt
 graph.py
 logs/
-db/
+DbSettings.scala
 
