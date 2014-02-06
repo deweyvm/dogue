@@ -3,6 +3,7 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.dogue.common.data.Code
 
 object Text {
   def create(bgColor:Color, fgColor:Color, factory:GlyphFactory):Text = {
@@ -14,7 +15,7 @@ object Text {
 class Text(text:String, bgColor:Color, fgColor:Color, factory:GlyphFactory) {
   private val letters = text map { c =>
     val index = if (c.toInt > 255) {
-      '?'.toInt
+      Code.unicodeToCode(c).index
     } else {
       c
     }

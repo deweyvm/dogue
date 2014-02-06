@@ -6,7 +6,7 @@ import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol._
-import com.deweyvm.dogue.net.Transmitter
+import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.threading.Lock
 import com.deweyvm.dogue.common.parsing.CommandParser
@@ -17,8 +17,10 @@ object TextInput {
   val chat = "chat"
   private val parser = new CommandParser
   private val lock = new Lock
-  def create(name:String, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
-    val result = new TextInput(name, prompt, width, height, bgColor, fgColor, "", factory)
+  def getPrompt = Client.name + ": "
+  def create(name:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
+
+    val result = new TextInput(name, getPrompt, width, height, bgColor, fgColor, "", factory)
     result
   }
 
@@ -145,7 +147,7 @@ case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Co
   def update(transmitter:Transmitter[DogueMessage]):(TextInput, Vector[DogueMessage]) = {
     TextInput.active = Some(id)
     val serverCommands = TextInput.getCommands(id, transmitter)
-    (this.copy(string = TextInput.take(id)), serverCommands)
+    (this.copy(prompt=TextInput.getPrompt, string = TextInput.take(id)), serverCommands)
   }
 
   def draw(iRoot:Int, jRoot:Int) {

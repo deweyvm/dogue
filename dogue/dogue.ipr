@@ -212,6 +212,7 @@
         <inspection_tool class="FeatureEnvy" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="ignoreTestCases" value="false" />
         </inspection_tool>
+        <inspection_tool class="ForwardReference" enabled="true" level="ERROR" enabled_by_default="true" />
         <inspection_tool class="IncrementDecrementUsedAsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
         <inspection_tool class="InstanceVariableOfConcreteClass" enabled="true" level="WARNING" enabled_by_default="true" />
         <inspection_tool class="InstanceofChain" enabled="true" level="WARNING" enabled_by_default="true">
@@ -436,6 +437,7 @@
         <w>scannable</w>
         <w>scannables</w>
         <w>screenshot</w>
+        <w>sigil</w>
         <w>spawner</w>
         <w>starfire</w>
         <w>textbox</w>
