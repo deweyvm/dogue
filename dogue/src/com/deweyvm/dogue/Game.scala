@@ -42,6 +42,18 @@ class Game(initializer: GleanyInitializer) extends GleanyGame(initializer) {
   import Game._
   private lazy val engine = new Engine()
 
+
+  override def render() {
+    try {
+      super.render()
+    } catch {
+      case t:Throwable =>
+        dispose()
+        throw t
+    }
+
+  }
+
   override def update() {
     engine.update()
     Game.frame += 1

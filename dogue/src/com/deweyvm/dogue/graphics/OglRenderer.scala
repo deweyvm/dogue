@@ -6,7 +6,6 @@ import com.deweyvm.gleany.AssetLoader
 import com.deweyvm.gleany.data.Recti
 import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
-import com.deweyvm.dogue.Assets
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.entities.Tile
 import scala.collection.mutable.ArrayBuffer
@@ -37,6 +36,7 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
+
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)

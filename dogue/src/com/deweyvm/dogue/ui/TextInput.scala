@@ -7,7 +7,6 @@ import com.deweyvm.dogue.{Dogue, Game}
 import com.deweyvm.dogue.common.protocol._
 import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
-import com.deweyvm.dogue.common.threading.Lock
 import com.deweyvm.dogue.common.parsing.CommandParser
 import scala.Some
 
@@ -15,7 +14,6 @@ import scala.Some
 object TextInput {
   val chat = "chat"
   private val parser = new CommandParser
-  private val lock = new Lock
   def getPrompt = Client.name + ": "
   def create(name:String, width:Int, height:Int, bgColor:Color, fgColor:Color):TextInput = {
 
@@ -57,14 +55,9 @@ object TextInput {
   val inputs = scala.collection.mutable.Map[String, TextInput]()
   val commandQueue = scala.collection.mutable.Map[String, Vector[String]]().withDefaultValue(Vector())
 
-  def putCommand(id:String, string:String) {
-    type T = Unit ;
-    lock.foreach[(String,String)]({case (i,s) =>
-      val newVect:Vector[String] = commandQueue(i) :+ s
-      commandQueue(i) = newVect
-
-    })((id, string))
-
+  def putCommand(id:String, string:String):Unit = synchronized {
+    val newVect:Vector[String] = commandQueue(id) :+ string
+    commandQueue(id) = newVect
   }
 
   /**
@@ -73,13 +66,10 @@ object TextInput {
    * @param transmitter
    * @return (commandsForServer, stringsToOutput)
    */
-  def getCommands(id:String, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = {
-    lock.get({ () =>
-      val result = (commandQueue(id).toVector map lineToCommands(transmitter)).flatten
-      commandQueue(id) = Vector()
-      result
-    })
-
+  def getCommands(id:String, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = synchronized {
+    val result = (commandQueue(id).toVector map lineToCommands(transmitter)).flatten
+    commandQueue(id) = Vector()
+    result
   }
 
   /**
