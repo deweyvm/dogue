@@ -60,12 +60,6 @@ object TextInput {
     commandQueue(id) = newVect
   }
 
-  /**
-   *
-   * @param id
-   * @param transmitter
-   * @return (commandsForServer, stringsToOutput)
-   */
   def getCommands(id:String, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = synchronized {
     val result = (commandQueue(id).toVector map lineToCommands(transmitter)).flatten
     commandQueue(id) = Vector()
