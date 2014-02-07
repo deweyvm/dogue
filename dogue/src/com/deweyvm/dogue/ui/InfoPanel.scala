@@ -46,14 +46,16 @@ case class InfoPanel(override val x:Int,
   private def atBottom:Boolean = lines.length <= height || jView < height
 
   private def updateView:InfoPanel = {
-    val (jMin, jMax) = {
+    val newJ = {
       if (lines.length < height) {
-        (lines.length - 1, height - 1)
+        lines.length - 1
       } else {
-        (height - 1, lines.length - 1)
+        (-Controls.AxisY.justPressed + jView).clamp(height - 1, lines.length - 1)
+       // (, )
       }
     }
-    this.copy(jView = (-Controls.AxisY.justPressed + jView).clamp(jMin, jMax))
+    println(jView)
+    this.copy(jView = newJ)
   }
 
   override def update:InfoPanel = {
