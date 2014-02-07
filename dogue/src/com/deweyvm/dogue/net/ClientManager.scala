@@ -134,6 +134,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       client map f
     } catch {
       case e:SocketException =>
+        Log.error(Log.formatStackTrace(e))
         delete(ConnectionFailure(e.getMessage).toState)
         None
       case t:Exception =>
@@ -152,7 +153,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     import Client.State._
     import Client.Error._
     state match {
-      case Connected => Code.☼.rawString
+      case Connected => Code.☼.unicode + ""
       case Handshaking => "Handshaking..."
       case Connecting =>
         val codes = Vector(Code./, Code.─, Code.backslash, Code.│)

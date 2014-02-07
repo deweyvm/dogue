@@ -3,6 +3,7 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.dogue.common.logging.Log
 
 object InfoPanel {
   def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color):InfoPanel = {
@@ -31,8 +32,16 @@ case class InfoPanel(override val x:Int,
     val addedLines = string.toLines(textWidth) map { s =>
       new Text(s, bgColor, fgColor)
     }
+    Log.error(jView + "")
+    //dont scroll if the user is scrolled up
+    val newjView = if (lines.length > height && jView >= height ) {
+      jView + addedLines.length
+    } else {
+      jView
+    }
     this.copy(text = text + string,
-              lines = lines ++ addedLines)
+              lines = lines ++ addedLines,
+              jView = newjView)
   }
 
   private def updateView:InfoPanel = {
