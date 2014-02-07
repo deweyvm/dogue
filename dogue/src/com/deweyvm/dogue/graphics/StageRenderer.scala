@@ -17,7 +17,7 @@ class StageRenderer(cols:Int, rows:Int, val draws:Array2d[Option[Tile]]) {
 
   def render() {
     draws foreach { case (i, j, tile) =>
-      tile foreach {t => Dogue.renderer.draw(t, i, j)}
+      tile foreach {_.draw(i, j)}
     }
   }
 

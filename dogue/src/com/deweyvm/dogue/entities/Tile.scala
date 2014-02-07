@@ -2,10 +2,14 @@ package com.deweyvm.dogue.entities
 
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.Code
+import com.deweyvm.dogue.Dogue
 
 
-
-case class Tile(code:Code, bgColor:Color, fgColor:Color)
+case class Tile(code:Code, bgColor:Color, fgColor:Color) {
+  def draw(i:Int, j:Int) = {
+    Dogue.renderer.draw(this, i, j)
+  }
+}
 
 /*object Tile {
   def fromCode(code:Code, bgColor:Color, fgColor:Color, factory:GlyphFactory) = {

@@ -39,7 +39,7 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   def draw() {
     panels foreach { _.draw() }
     borders foreach { case (i, j, tile) =>
-      tile foreach { t => Dogue.renderer.draw(t, i, j) }
+      tile foreach { _.draw(i, j) }
     }
     serverStatus.draw(cols - serverStatus.width, rows - 1)
   }

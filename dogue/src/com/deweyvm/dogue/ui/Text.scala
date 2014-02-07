@@ -35,7 +35,7 @@ class Text(text:String, bgColor:Color, fgColor:Color) {
   def filterDraw(i:Int, j:Int, f:(Int, Int) => Boolean) {
     letters.zipWithIndex map { case (tile, k) =>
       if (f(i + k, j)) {
-        Dogue.renderer.draw(tile, i + k, j)
+        tile.draw(i + k, j)
       }
     }
   }

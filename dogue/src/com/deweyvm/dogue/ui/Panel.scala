@@ -16,7 +16,7 @@ class Panel(val x:Int, val y:Int, val width:Int, val height:Int, bgColor:Color) 
   def draw() {
     for (i <- x until (x + width);
          j <- y until (y + height)) {
-      Dogue.renderer.draw(new Tile(Code.` `, bgColor, bgColor), i, j)
+      new Tile(Code.` `, bgColor, bgColor).draw(i, j)
     }
 
 

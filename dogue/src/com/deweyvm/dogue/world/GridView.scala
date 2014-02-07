@@ -16,7 +16,7 @@ class GridView(iView:Int, jView:Int, width:Int, height:Int) {
     grid.tiles slice (iView, jView, width, height) foreach { case (i, j, tile) =>
       val x = iRoot + i
       val y = jRoot + j
-      tile foreach {t => Dogue.renderer.draw(t, x, y)}
+      tile foreach { _.draw(x, y)}
     }
   }
 }

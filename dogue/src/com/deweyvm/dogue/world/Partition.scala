@@ -13,11 +13,11 @@ class Partition(char:Tile, index:Int, orientation:Orientation) {
      orientation match {
        case Vertical =>
          (0 until partitionHeight) foreach { j =>
-           Dogue.renderer.draw(char, index, j)
+           char.draw(index, j)
          }
        case Horizontal =>
          (0 until partitionWidth) foreach { i =>
-           Dogue.renderer.draw(char, i, index)
+           char.draw(i, index)
          }
 
      }

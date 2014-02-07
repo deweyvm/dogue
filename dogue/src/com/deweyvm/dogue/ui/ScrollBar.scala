@@ -20,7 +20,7 @@ class ScrollBar {
 
 
   def drawTile(t:Tile)(i:Int, j:Int) {
-    Dogue.renderer.draw(t, i, j)
+    t.draw(i, j)
   }
 
   val upArrow = makeTile(Code.▲)

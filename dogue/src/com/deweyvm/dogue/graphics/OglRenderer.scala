@@ -37,31 +37,33 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
+  private val width = tileset.tileWidth
+  private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
   private val batch = new SpriteBatch
   private val camera = new Camera
   private val draws = ArrayBuffer[() => Unit]()
 
-  def draw(s:Sprite, x:Float, y:Float) {
+  private def draw(s:Sprite, x:Float, y:Float) {
     draws += (() => {
       s.setPosition(x, y)
       s.draw(batch)
     })
   }
 
-  def render() {
+  override def draw(t:Tile, i:Int, j:Int) {
+    val (fg, bg) = oglTile.getSprites(t.code, t.fgColor, t.bgColor)
+    draw(bg, i*width, j*height)
+    draw(fg, i*width, j*height)
+  }
+
+  override def render() {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
     draws foreach {_()}
     draws.clear()
     batch.end()
-  }
-
-  def draw(t:Tile, i:Int, j:Int) {
-    val (fg, bg) = oglTile.getSprites(t.code, t.fgColor, t.bgColor)
-    draw(bg, i*16, j*16)
-    draw(fg, i*16, j*16)
   }
 
 }
