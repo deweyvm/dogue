@@ -1,10 +1,10 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.graphics.GlyphFactory
-import com.deweyvm.dogue.entities.{Tile}
+import com.deweyvm.dogue.graphics.Renderer
+import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.Assets
 import com.deweyvm.dogue.common.data.Code
+import com.deweyvm.dogue.Dogue
 
 /*
  * have continuous scrollbar
@@ -14,9 +14,14 @@ import com.deweyvm.dogue.common.data.Code
  * for each remaining half square: if it collides with the continuous scrollbar, add it to the queue, otherwise continue
  * when done, merge all overlapping half squares to full squares
  */
-class ScrollBar(factory:GlyphFactory) {
+class ScrollBar {
   private def makeTile(code:Code):Tile =
-    new Tile(Color.Black, Color.White, code.index, Assets.page437_16x16)
+    new Tile(code, Color.Black, Color.White)
+
+
+  def drawTile(t:Tile)(i:Int, j:Int) {
+    Dogue.renderer.draw(t, i, j)
+  }
 
   val upArrow = makeTile(Code.▲)
   val downArrow = makeTile(Code.▼)
@@ -25,18 +30,18 @@ class ScrollBar(factory:GlyphFactory) {
   def draw(numLines:Int, j:Int, width:Int, height:Int, iRoot:Int, jRoot:Int) {
     import scala.math._
     if (numLines > height) {
-      upArrow.draw(iRoot + width - 1, jRoot)
-      downArrow.draw(iRoot + width - 1, jRoot + height - 1)
+      drawTile(upArrow)(iRoot + width - 1, jRoot)
+      drawTile(downArrow)(iRoot + width - 1, jRoot + height - 1)
       val percentProgress = j.toFloat/(numLines - height - 2)
       val atStart = j == 0
       val atEnd = j == numLines - height
       if (atStart) {
-        lineTile.draw(iRoot + width - 1, jRoot + 1)
+        drawTile(lineTile)(iRoot + width - 1, jRoot + 1)
       } else if (atEnd) {
-        lineTile.draw(iRoot + width - 1, jRoot + height - 2)
+        drawTile(lineTile)(iRoot + width - 1, jRoot + height - 2)
       } else {
         val jDraw = min(height - 3, max(2, (percentProgress*(height - 4)).toInt))
-        lineTile.draw(iRoot + width - 1, jRoot + jDraw)
+        drawTile(lineTile)(iRoot + width - 1, jRoot + jDraw)
       }
     }
   }

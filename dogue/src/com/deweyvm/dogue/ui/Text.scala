@@ -1,35 +1,31 @@
 package com.deweyvm.dogue.ui
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.graphics.GlyphFactory
+import com.deweyvm.dogue.graphics.Renderer
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
+import com.deweyvm.dogue.Dogue
 
 object Text {
-  def create(bgColor:Color, fgColor:Color, factory:GlyphFactory):Text = {
-    new Text("", bgColor, fgColor, factory)
+  def create(bgColor:Color, fgColor:Color):Text = {
+    new Text("", bgColor, fgColor)
   }
 
 }
 
-class Text(text:String, bgColor:Color, fgColor:Color, factory:GlyphFactory) {
+class Text(text:String, bgColor:Color, fgColor:Color) {
   private val letters = text map { c =>
-    val index = if (c.toInt > 255) {
-      Code.unicodeToCode(c).index
-    } else {
-      c
-    }
-    new Tile(bgColor, fgColor, index, factory)
+    Tile(Code.unicodeToCode(c), bgColor, fgColor)
   }
 
   def width = letters.length
 
   def append(s:String):Text = {
-    new Text(text + s, bgColor, fgColor, factory)
+    new Text(text + s, bgColor, fgColor)
   }
 
   def setString(s:String):Text = {
-    new Text(s, bgColor, fgColor, factory)
+    new Text(s, bgColor, fgColor)
   }
 
   def draw(i:Int, j:Int) {
@@ -39,7 +35,7 @@ class Text(text:String, bgColor:Color, fgColor:Color, factory:GlyphFactory) {
   def filterDraw(i:Int, j:Int, f:(Int, Int) => Boolean) {
     letters.zipWithIndex map { case (tile, k) =>
       if (f(i + k, j)) {
-        tile.draw(i + k, j)
+        Dogue.renderer.draw(tile, i + k, j)
       }
     }
   }

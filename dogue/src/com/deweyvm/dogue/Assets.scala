@@ -1,11 +1,9 @@
 package com.deweyvm.dogue
 
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.dogue.graphics.GlyphFactory
+import com.deweyvm.dogue.graphics.Tileset
 
 object Assets {
   import AssetLoader._
-  val font = loadFont("RetrovilleNC.ttf", 10)
-  val marbleDice16x16 = loadTexture("Md_curses_16x16")
-  val page437_16x16 = new GlyphFactory(16, 16, 16, 16, marbleDice16x16)
+  lazy val marbleDice16x16 = new Tileset(16, 16, 16, 16, loadTexture("Md_curses_16x16"))
 }

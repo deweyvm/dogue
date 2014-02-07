@@ -1,6 +1,5 @@
 package com.deweyvm.dogue.entities
 
-import com.badlogic.gdx.net.Socket
 
 trait Move
 

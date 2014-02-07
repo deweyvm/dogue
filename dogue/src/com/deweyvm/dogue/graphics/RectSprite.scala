@@ -29,7 +29,7 @@ object RectSprite {
 class RectSprite(val width: Int, val height: Int, color: Color) {
   import RectSprite._
 
-  private val sprite = makeSprite(width, height, color)
+  val sprite = makeSprite(width, height, color)
 
   def update() {}
 
@@ -40,10 +40,6 @@ class RectSprite(val width: Int, val height: Int, color: Color) {
 
   def setSize(width: Int, height: Int): RectSprite = {
     new RectSprite(width, height, color)
-  }
-
-  def draw(x: Float, y: Float) {
-    Renderer.draw(sprite, x, y)
   }
 }
 

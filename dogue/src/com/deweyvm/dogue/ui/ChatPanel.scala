@@ -1,6 +1,5 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
@@ -8,7 +7,6 @@ import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol.{DogueOps, Command, DogueMessage}
 import com.deweyvm.dogue.common.parsing.CommandParser
-import scala.collection.mutable.ArrayBuffer
 
 case class ChatPanel(override val x:Int,
                      override val y:Int,
@@ -16,7 +14,6 @@ case class ChatPanel(override val x:Int,
                      override val height:Int,
                      bgColor:Color,
                      fgColor:Color,
-                     factory:GlyphFactory,
                      transmitter:Transmitter[DogueMessage],
                      input:TextInput,
                      output:InfoPanel)

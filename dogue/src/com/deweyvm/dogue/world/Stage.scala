@@ -1,14 +1,16 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.ui._
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.gleany.data.{Point2f, Recti}
-import scala.Some
-import com.deweyvm.dogue.input.Controls
+
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.data.{Code, Array2d}
+import com.deweyvm.dogue.graphics.Renderer
+import com.deweyvm.gleany.data.{Point2f, Recti}
+import com.deweyvm.dogue.common.Implicits
+import Implicits._
+import com.deweyvm.dogue.Dogue
 
 object Stage {
   case object Title extends StageType {
@@ -22,11 +24,11 @@ object Stage {
   }
 }
 
-case class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel], serverStatus:Text) {
+case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   val rect = Recti(0, 0, cols, rows)
 
   val rightPartition = 32
-  val testText = new Text("this is a test", Color.Blue, Color.White, factory)
+  val testText = new Text("this is a test", Color.Blue, Color.White)
   val borders = calculateBorders
 
   def update:Stage = {
@@ -37,7 +39,7 @@ case class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel],
   def draw() {
     panels foreach { _.draw() }
     borders foreach { case (i, j, tile) =>
-      tile foreach { _.draw(i, j) }
+      tile foreach { t => Dogue.renderer.draw(t, i, j) }
     }
     serverStatus.draw(cols - serverStatus.width, rows - 1)
   }
@@ -64,7 +66,7 @@ case class Stage(cols:Int, rows:Int, factory:GlyphFactory, panels:Vector[Panel],
           case (false, true,  true,  false) => Code.╚
           case _                            => Code.?
         }
-        Some(Tile.fromCode(code, Color.Black, Color.White, factory))
+        Tile(code, Color.Black, Color.White).some
       }
     }
   }

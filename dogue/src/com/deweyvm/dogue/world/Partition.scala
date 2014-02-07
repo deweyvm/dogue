@@ -1,6 +1,8 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.dogue.graphics.Renderer
+import com.deweyvm.dogue.Dogue
 
 trait Orientation
 case object Vertical extends Orientation
@@ -11,11 +13,11 @@ class Partition(char:Tile, index:Int, orientation:Orientation) {
      orientation match {
        case Vertical =>
          (0 until partitionHeight) foreach { j =>
-           char.draw(index, j)
+           Dogue.renderer.draw(char, index, j)
          }
        case Horizontal =>
          (0 until partitionWidth) foreach { i =>
-           char.draw(i, index)
+           Dogue.renderer.draw(char, i, index)
          }
 
      }

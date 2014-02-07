@@ -24,11 +24,15 @@ object Main {
         c.copy(version = true)
       } text "show version"
 
+      opt[Unit]("headless") action { (_, c) =>
+        c.copy(headless = true)
+      }
     }
     parser.parse(args, DogueOptions()) map { c =>
       val s = Game.settings
       Log.initLog(s.logLocation.get, Log.Verbose)
       Game.globals.IsDebugMode = c.isDebug
+      Game.globals.IsHeadless = c.headless
       if (c.version) {
         println(Game.globals.Version)
         sys.exit(0)
@@ -46,10 +50,20 @@ object Main {
         "maps"
       )
       val initializer = new GleanyInitializer(pathResolver, settings)
-      GleanyGame.runGame(config, new Game(initializer))
+      if (!c.headless) {
+        GleanyGame.runGame(config, new Game(initializer))
+      } else {
+        Dogue.behead()
+        val game = new Engine()
+        while (true) {
+          game.update()
+          game.draw()
+          Thread.sleep(16)
+        }
+      }
     } getOrElse {
       println(parser.usage)
-      Gdx.app.exit()
+      Dogue.gdxApp foreach {_.exit()}
     }
 
 

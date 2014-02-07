@@ -507,6 +507,8 @@
       <JAVADOC />
       <SOURCES>
         <root url="file://$PROJECT_DIR$/../gleany/gleany/libs" />
+        <root url="jar://$PROJECT_DIR$/../gleany/gleany/libs/gdx-backend-lwjgl-sources.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../gleany/gleany/libs/gdx-backend-lwjgl-sources.jar!/" />
       </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/../gleany/gleany/libs" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/../gleany/gleany/libs" recursive="false" type="SOURCES" />

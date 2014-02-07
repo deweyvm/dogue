@@ -3,6 +3,7 @@ package com.deweyvm.dogue.input
 import com.deweyvm.gleany.input.triggers.{KeyboardTrigger, TriggerAggregate}
 import com.badlogic.gdx.Input
 import com.deweyvm.gleany.input.AxisControl
+import com.deweyvm.dogue.Game
 
 
 object Controls {
@@ -22,7 +23,11 @@ object Controls {
   val All = Vector(Up, Down, Right, Left, Tab, Escape)
 
   def makeControl(key:Int) = {
-    new TriggerAggregate(Seq(new KeyboardTrigger(key)))
+    if (Game.globals.IsHeadless) {
+      new NullControl
+    } else {
+      new TriggerAggregate(Seq(new KeyboardTrigger(key)))
+    }
   }
 
   def update() {

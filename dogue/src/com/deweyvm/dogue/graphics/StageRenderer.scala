@@ -2,6 +2,7 @@ package com.deweyvm.dogue.graphics
 
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Array2d
+import com.deweyvm.dogue.Dogue
 
 object StageRenderer {
   def create(cols:Int, rows:Int):StageRenderer = {
@@ -16,7 +17,7 @@ class StageRenderer(cols:Int, rows:Int, val draws:Array2d[Option[Tile]]) {
 
   def render() {
     draws foreach { case (i, j, tile) =>
-      tile foreach {_.draw(i, j)}
+      tile foreach {t => Dogue.renderer.draw(t, i, j)}
     }
   }
 

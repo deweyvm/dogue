@@ -8,7 +8,7 @@ class Globals {
   Debug.load()
   private var drawDebug = false
   var IsDebugMode = true
-
+  var IsHeadless = false
   var Version = "0.X.X"
 
   def shouldDrawDebug: Boolean = drawDebug

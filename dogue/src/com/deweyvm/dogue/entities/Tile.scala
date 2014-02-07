@@ -1,12 +1,13 @@
 package com.deweyvm.dogue.entities
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.graphics.{GlyphFactory, RectSprite, Glyph}
-import com.deweyvm.dogue.Assets
 import com.deweyvm.dogue.common.data.Code
 
 
-object Tile {
+
+case class Tile(code:Code, bgColor:Color, fgColor:Color)
+
+/*object Tile {
   def fromCode(code:Code, bgColor:Color, fgColor:Color, factory:GlyphFactory) = {
     new Tile(bgColor, fgColor, code.index, factory)
   }
@@ -27,4 +28,4 @@ class Tile(bgColor:Color, fgColor:Color, index:Int, factory:GlyphFactory) {
     bg.draw(x, y)
     character.draw(x, y)
   }
-}
+}*/

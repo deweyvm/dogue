@@ -1,14 +1,12 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits._
-import com.deweyvm.dogue.common.logging.Log
 
 object InfoPanel {
-  def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color, factory:GlyphFactory):InfoPanel = {
-    new InfoPanel(x, y, width, height, bgColor, factory, "", Vector(), new ScrollBar(factory), 0)
+  def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color):InfoPanel = {
+    new InfoPanel(x, y, width, height, bgColor, "", Vector(), new ScrollBar, 0)
   }
 
 
@@ -19,7 +17,6 @@ case class InfoPanel(override val x:Int,
                      override val width:Int,
                      override val height:Int,
                      bgColor:Color,
-                     factory:GlyphFactory,
                      text:String,
                      lines:Vector[Text],
                      scrollBar:ScrollBar,
@@ -32,7 +29,7 @@ case class InfoPanel(override val x:Int,
 
   def addText(string:String, bgColor:Color, fgColor:Color):InfoPanel = {
     val addedLines = string.toLines(textWidth) map { s =>
-      new Text(s, bgColor, fgColor, factory)
+      new Text(s, bgColor, fgColor)
     }
     this.copy(text = text + string,
               lines = lines ++ addedLines)

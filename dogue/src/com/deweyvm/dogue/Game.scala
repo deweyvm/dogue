@@ -26,7 +26,8 @@ object Game {
 
   def shutdown() {
     //cleanup()
-    Gdx.app.exit()
+    Dogue.gdxApp foreach {_.exit()}
+    System.exit(0)
   }
 
   private def cleanup() {

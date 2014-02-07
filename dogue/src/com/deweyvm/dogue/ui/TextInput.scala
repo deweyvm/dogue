@@ -1,10 +1,9 @@
 package com.deweyvm.dogue.ui
 
 import com.badlogic.gdx.{InputAdapter, Gdx}
-import com.deweyvm.dogue.graphics.GlyphFactory
 import com.deweyvm.dogue.common.Implicits._
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.Game
+import com.deweyvm.dogue.{Dogue, Game}
 import com.deweyvm.dogue.common.protocol._
 import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
@@ -18,32 +17,33 @@ object TextInput {
   private val parser = new CommandParser
   private val lock = new Lock
   def getPrompt = Client.name + ": "
-  def create(name:String, width:Int, height:Int, bgColor:Color, fgColor:Color, factory:GlyphFactory):TextInput = {
+  def create(name:String, width:Int, height:Int, bgColor:Color, fgColor:Color):TextInput = {
 
-    val result = new TextInput(name, getPrompt, width, height, bgColor, fgColor, "", factory)
+    val result = new TextInput(name, getPrompt, width, height, bgColor, fgColor, "")
     result
   }
 
   def addListener() {
-
-    Gdx.input.setInputProcessor(new InputAdapter {
-      override def keyTyped(char:Char):Boolean = {
-        //todo, make a collective reference where you can just query .string, .queue, etc
-        val code = char.toInt
-        active foreach { id =>
-          if (code == 8) {
-            strings(id) = strings(id).dropRight(1)
-          } else if (code == 13 && strings(id).length > 0) {
-            putCommand(id, strings(id))
-            strings(id) = ""
-          } else if (code > 31){
-            strings(id) += char
-            //println("here <%s>".format(char.toInt.toString))
+    Dogue.gdxInput foreach {
+      _.setInputProcessor(new InputAdapter {
+        override def keyTyped(char:Char):Boolean = {
+          //todo, make a collective reference where you can just query .string, .queue, etc
+          val code = char.toInt
+          active foreach { id =>
+            if (code == 8) {
+              strings(id) = strings(id).dropRight(1)
+            } else if (code == 13 && strings(id).length > 0) {
+              putCommand(id, strings(id))
+              strings(id) = ""
+            } else if (code > 31){
+              strings(id) += char
+              //println("here <%s>".format(char.toInt.toString))
+            }
           }
+          false
         }
-        false
-      }
-    })
+      })
+    }
 
   }
 
@@ -138,11 +138,11 @@ object TextInput {
 
 }
 
-case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String, factory:GlyphFactory) {
+case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String) {
   TextInput.inputs(id) = this
 
   private def makeText(s:String) = {
-    new Text(s, bgColor, fgColor, factory)
+    new Text(s, bgColor, fgColor)
   }
 
 
