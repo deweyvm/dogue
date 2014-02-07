@@ -32,9 +32,8 @@ case class InfoPanel(override val x:Int,
     val addedLines = string.toLines(textWidth) map { s =>
       new Text(s, bgColor, fgColor)
     }
-    Log.error(jView + "")
-    //dont scroll if the user is scrolled up
-    val newjView = if (lines.length > height && jView >= height ) {
+
+    val newjView = if (!atBottom) {
       jView + addedLines.length
     } else {
       jView
@@ -43,6 +42,8 @@ case class InfoPanel(override val x:Int,
               lines = lines ++ addedLines,
               jView = newjView)
   }
+
+  private def atBottom:Boolean = lines.length <= height || jView < height
 
   private def updateView:InfoPanel = {
     val (jMin, jMax) = {
