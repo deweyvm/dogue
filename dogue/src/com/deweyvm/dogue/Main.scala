@@ -28,6 +28,7 @@ object Main {
         c.copy(headless = true)
       }
     }
+
     parser.parse(args, DogueOptions()) map { c =>
       val s = Game.settings
       Log.initLog(s.logLocation.get, Log.Verbose)

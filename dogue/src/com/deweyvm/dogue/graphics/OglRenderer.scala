@@ -45,7 +45,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
   private val draws = ArrayBuffer[() => Unit]()
 
   private def draw(s:Sprite, x:Float, y:Float) {
-    draws += (() => {
+    draws.append(() => {
       s.setPosition(x, y)
       s.draw(batch)
     })

@@ -6,6 +6,8 @@ import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.data.Pointer
+import com.deweyvm.dogue.common.procgen.PerlinNoise
+import com.deweyvm.gleany.graphics.ImageUtils
 
 
 class Engine {
@@ -13,7 +15,9 @@ class Engine {
   val cols = Game.RenderWidth/Dogue.tileSpec.width
   val rows = Game.RenderHeight/Dogue.tileSpec.height
   val factory = new StageFactory(cols, rows)
-
+  val default = PerlinNoise.default
+  ImageUtils.saveHeight(default.render.elements, default.size, default.size, "test.png")
+  Game.shutdown()
 
   var stage = new StageManager(Pointer.create(
     factory.create(Stage.World),

@@ -85,7 +85,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   private def delete(s:ClientState) {
     try {
       Log.info("Deleting client")
-      tryMap {_.close()}
+      map {_.close()}
       TextInput.putCommand(TextInput.chat, "/local \"Failed to connect.\"")
       killHandshake foreach {_()}
       client = None
@@ -101,7 +101,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       tryConnect()
     }
 
-    tryMap { _.run() }
+    foreach { _.run() }
   }
 
   override def cleanup() {
@@ -110,12 +110,12 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
 
 
   override def enqueue(s:DogueMessage) {
-    tryMap { _.enqueue(s) }
+    foreach { _.enqueue(s) }
 
   }
 
   override def dequeue:Vector[DogueMessage] = {
-    tryMap {_.dequeue} getOrElse Vector()
+    map {_.dequeue} getOrElse Vector()
   }
 
 
@@ -129,7 +129,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   }
 
 
-  private def tryMap[A](f:Client => A/*,r: A => T*/):Option[A] = {
+  private def map[A](f:Client => A/*,r: A => T*/):Option[A] = {
     import Client.Error._
     try {
       client map f
@@ -145,8 +145,12 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
     }
   }
 
+  private def foreach(f:Client => Unit):Unit = {
+    map(f).getOrElse(())
+  }
+
   def sendPing() {
-    tryMap(_.sendPing())
+    foreach(_.sendPing())
   }
 
 
