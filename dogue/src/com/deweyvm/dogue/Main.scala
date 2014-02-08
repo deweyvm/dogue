@@ -3,8 +3,8 @@ package com.deweyvm.dogue
 import com.deweyvm.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
 import com.deweyvm.gleany.files.PathResolver
 import com.deweyvm.gleany.saving.Settings
-import com.deweyvm.dogue.input.WhateverControls
-import com.deweyvm.dogue.loading.WhateverDefaultSettings
+import com.deweyvm.dogue.input.DogueControls
+import com.deweyvm.dogue.loading.DogueDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.testing.TestManager
@@ -39,8 +39,8 @@ object Main {
       }
 
       val iconPath = "sprites/icon.gif"
-      val settings = new Settings(WhateverControls, WhateverDefaultSettings)
-      val config = new GleanyConfig(settings, "Whatever", Some(iconPath))
+      val settings = new Settings(DogueControls, DogueDefaultSettings)
+      val config = new GleanyConfig(settings, "Dogue", Some(iconPath))
       val pathResolver = new PathResolver(
         "fonts",
         "sprites",

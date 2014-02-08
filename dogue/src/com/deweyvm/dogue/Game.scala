@@ -11,8 +11,8 @@ import java.util
 
 object Game {
   val Zoom = 1
-  private val factor = 1
-  val Width = 32*32*factor
+  private val factor = 2
+  val Width = 32*16*factor
   val Height = 32*9*factor
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom

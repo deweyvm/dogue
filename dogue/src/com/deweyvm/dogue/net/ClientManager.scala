@@ -91,7 +91,8 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       client = None
       state = s
     } catch {
-      case t:Exception => ()
+      case t:Exception =>
+        Log.error("Error attempting to delete client:\n" + Log.formatStackTrace(t))
     }
   }
 

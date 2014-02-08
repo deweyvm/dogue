@@ -3,14 +3,11 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits._
-import com.deweyvm.dogue.common.logging.Log
 
 object InfoPanel {
   def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color):InfoPanel = {
     new InfoPanel(x, y, width, height, bgColor, "", Vector(), new ScrollBar, 0)
   }
-
-
 }
 
 case class InfoPanel(override val x:Int,
@@ -51,10 +48,8 @@ case class InfoPanel(override val x:Int,
         lines.length - 1
       } else {
         (-Controls.AxisY.justPressed + jView).clamp(height - 1, lines.length - 1)
-       // (, )
       }
     }
-    println(jView)
     this.copy(jView = newJ)
   }
 

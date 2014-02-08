@@ -4,9 +4,13 @@ import com.deweyvm.dogue.graphics.{Renderer, NullRenderer, OglRenderer}
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+import com.deweyvm.dogue.loading.TileSpec
+
 
 object Dogue {
   private var r:Option[Renderer] = None
+
+  val tileSpec = TileSpec(16, 16)
 
   def behead() {
     r = new NullRenderer().some

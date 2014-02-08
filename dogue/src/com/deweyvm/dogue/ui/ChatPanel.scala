@@ -48,7 +48,7 @@ case class ChatPanel(override val x:Int,
               panel.addText(args(0), bgColor, Color.Pink)
             case DogueOps.LocalMessage =>
               Log.info("local message")
-              panel.addText(args(0), bgColor, Color.Red)
+              panel.addText(args(0), bgColor, Color.Pink)
             case DogueOps.Reassign =>
               Client.setName(dst)
               panel

@@ -33,10 +33,11 @@ class StageFactory(cols:Int, rows:Int) {
         makeStage(Vector(chatPanel))
       case World =>
         val controlsHeight = 8
-        val messagePanel = InfoPanel.makeNew(1, 1, cols/2 - 1 - 1, rows - 8 - 1, bgColor).
+        val sideWidth = scala.math.min(cols/2 - 1, 24)
+        val messagePanel = InfoPanel.makeNew(1, 1, sideWidth, rows - 8 - 1, bgColor).
           addText("abc1", Color.White, Color.Black)
-        val worldPanel = WorldPanel.create(0, 0, cols/2, 1, cols/2 - 1, rows - 1 - 1, bgColor, 50, 50)
-        val controlPanel = new Panel(1, rows - controlsHeight + 1, cols/2 - 1 - 1, controlsHeight - 1 - 1, bgColor)
+        val worldPanel = WorldPanel.create(0, 0, sideWidth + 2, 1, cols - sideWidth - 3, rows - 1 - 1, bgColor, 256, 256)
+        val controlPanel = new Panel(1, rows - controlsHeight + 1, sideWidth, controlsHeight - 1 - 1, bgColor)
         makeStage(Vector(messagePanel, worldPanel, controlPanel))
 
     }

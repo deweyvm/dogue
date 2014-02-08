@@ -10,14 +10,14 @@ import com.deweyvm.dogue.common.data.Pointer
 
 class Engine {
   TextInput.addListener()//put this somewhere more reasonable
-  val cols = Game.RenderWidth/16//codePage.tileWidth
-  val rows = Game.RenderHeight/16//codePage.tileHeight
+  val cols = Game.RenderWidth/Dogue.tileSpec.width
+  val rows = Game.RenderHeight/Dogue.tileSpec.height
   val factory = new StageFactory(cols, rows)
 
 
   var stage = new StageManager(Pointer.create(
-    factory.create(Stage.Chat),
     factory.create(Stage.World),
+    factory.create(Stage.Chat),
     factory.create(Stage.Title)
 
 
