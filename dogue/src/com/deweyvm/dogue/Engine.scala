@@ -15,9 +15,18 @@ class Engine {
   val cols = Game.RenderWidth/Dogue.tileSpec.width
   val rows = Game.RenderHeight/Dogue.tileSpec.height
   val factory = new StageFactory(cols, rows)
-  val default = PerlinNoise.default
-  ImageUtils.saveHeight(default.render.elements, default.size, default.size, "test.png")
-  Game.shutdown()
+  /*val start = System.nanoTime()
+  val iters = 1
+  (0 until iters) foreach { _ =>
+    val default = PerlinNoise.default
+    val rendered = default.render
+    ImageUtils.saveHeight(rendered.elements, default.size, default.size, "test.png")
+    ()
+  }
+  val end = (System.nanoTime() - start)/(iters*1000000L)
+  println(end + " ms")
+  //
+  Game.shutdown()*/
 
   var stage = new StageManager(Pointer.create(
     factory.create(Stage.World),

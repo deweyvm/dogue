@@ -11,8 +11,8 @@ class Grid(width:Int, height:Int, val cols:Int, val rows:Int) {
 
   val tiles:Array2d[Tile] = {
     val noise = PerlinNoise.default.render
-    noise.cut[Double](cols, rows, x => x, 0).map({ case (i,j, t) =>
-      new Tile(Code.intToCode((t*13 + 13).toInt), Color.Orange, Color.White)
+    noise.cut[Double](cols, rows, x => x, 0).map({ case (i, j, t) =>
+      new Tile(Code.intToCode((t*10 + 48 + 4).toInt), Color.Orange, Color.White)
     })
     /*Array2d.tabulate(cols, rows) { case (i,j, t) =>
       new Tile(Code.intToCode((noise(i)(j)*13 + 13).toInt), Color.Orange, Color.White)

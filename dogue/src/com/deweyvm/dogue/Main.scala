@@ -8,6 +8,8 @@ import com.deweyvm.dogue.loading.DogueDefaultSettings
 import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.testing.TestManager
+import com.deweyvm.gleany.graphics.ImageUtils
+import com.deweyvm.dogue.common.procgen.PerlinNoise
 
 
 object Main {
