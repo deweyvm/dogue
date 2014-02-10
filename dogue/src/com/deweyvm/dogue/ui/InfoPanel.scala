@@ -40,6 +40,13 @@ case class InfoPanel(override val x:Int,
               jView = newjView)
   }
 
+  def addLines(lines:Vector[String], bgColor:Color, fgColor:Color):InfoPanel = {
+    lines.foldLeft(this){case (acc, string) => acc.addText(string, bgColor, fgColor)}
+
+  }
+
+
+
   private def atBottom:Boolean = lines.length <= height || jView < height
 
   private def updateView:InfoPanel = {

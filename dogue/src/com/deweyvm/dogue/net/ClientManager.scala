@@ -85,7 +85,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   private def delete(s:ClientState) {
     try {
       Log.info("Deleting client")
-      map {_.close()}
+      client foreach {_.close()}
       TextInput.putCommand(TextInput.chat, "/local \"Failed to connect.\"")
       killHandshake foreach {_()}
       client = None

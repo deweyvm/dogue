@@ -12,6 +12,7 @@ object Controls {
   val Right = makeControl(Input.Keys.RIGHT)
   val Left = makeControl(Input.Keys.LEFT)
   val Enter = makeControl(Input.Keys.ENTER)
+  val Backspace = makeControl(Input.Keys.BACKSPACE)
 
   val Tab = makeControl(Input.Keys.TAB)
 
@@ -20,7 +21,7 @@ object Controls {
   val AxisX = new AxisControl(Left, Right)
   val AxisY = new AxisControl(Up, Down)
 
-  val All = Vector(Up, Down, Right, Left, Tab, Escape)
+  val All = Vector(Up, Down, Right, Left, Enter, Backspace, Tab, Escape)
 
   def makeControl(key:Int) = {
     if (Game.globals.IsHeadless) {
