@@ -6,8 +6,8 @@ import com.deweyvm.dogue.entities.Tile
 
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.data.{Code, Array2d}
-import com.deweyvm.dogue.graphics.Renderer
-import com.deweyvm.gleany.data.{Point2f, Recti}
+import com.deweyvm.dogue.graphics.{OglRenderer, Renderer}
+import com.deweyvm.gleany.data.{Point2d, Point2f, Recti}
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.Dogue
@@ -42,6 +42,8 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
       tile foreach { _.draw(i, j) }
     }
     serverStatus.draw(cols - serverStatus.width, rows - 1)
+
+    Dogue.renderer.asInstanceOf[OglRenderer].draw(WorldPanel.texture, 0, 0)
   }
 
   def calculateBorders:Array2d[Option[Tile]] = {
@@ -72,7 +74,7 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   }
 
   def isSolid(i:Int, j:Int): Boolean = {
-    !rect.contains(Point2f(i,j)) || (panels exists { p =>
+    !rect.contains(Point2d(i,j)) || (panels exists { p =>
       p.contains(i, j)
     })
   }

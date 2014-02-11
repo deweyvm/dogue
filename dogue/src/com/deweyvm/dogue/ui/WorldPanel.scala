@@ -7,7 +7,9 @@ import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.common.data.Indexed2d
-import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.dogue.common.procgen.{PerlinNoise, PoissonRng}
+import com.badlogic.gdx.graphics.{Texture, Pixmap}
+import com.badlogic.gdx.graphics.g2d.Sprite
 
 object WorldPanel {
   trait State {
@@ -26,6 +28,33 @@ object WorldPanel {
     val minimap = new Minimap(world, 64)
     val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
     new WorldPanel(x, y, width, height, bgColor, world, worldViewer, tooltip, minimap, Mini)
+  }
+
+  val texture = {
+    val size = 512
+    val perlin = new PerlinNoise(1/32.0, 5, size, 50).render
+    println("Perlin rendererd")
+    val min = 2
+    val rng = new PoissonRng(size,size, {
+      case (i, j) => perlin.get(i, j).map{t =>
+        val x = t*35
+        //println(x)
+        math.max(x, min)
+      }.getOrElse(10)
+    }, min)
+    val pixmap = new Pixmap(size,size, Pixmap.Format.RGBA8888)
+    pixmap.setColor(Color.Green.toLibgdxColor)
+    pixmap.fill()
+    rng.getPoints foreach { p =>
+      pixmap.setColor(Color.DarkGreen.toLibgdxColor)
+      pixmap.drawPixel(p.x.toInt, p.y.toInt)
+      pixmap.drawPixel(p.x.toInt+1, p.y.toInt)
+      pixmap.drawPixel(p.x.toInt, p.y.toInt+1)
+      pixmap.drawPixel(p.x.toInt+1, p.y.toInt+1)
+    }
+    val t = new Texture(pixmap)
+    pixmap.dispose()
+    new Sprite(t)
   }
 }
 
@@ -99,11 +128,6 @@ case class WorldPanel(override val x:Int,
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       t.tile.draw(i, j)
     }
-
-    def drawTile(i:Int, j:Int, t:Tile) = {
-      t.draw(i, j)
-    }
-
     state match {
       case Full =>
         view.draw(world.tiles, x, y, drawWorldTile)
