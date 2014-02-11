@@ -43,7 +43,6 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
     }
     serverStatus.draw(cols - serverStatus.width, rows - 1)
 
-    Dogue.renderer.asInstanceOf[OglRenderer].draw(WorldPanel.texture, 0, 0)
   }
 
   def calculateBorders:Array2d[Option[Tile]] = {

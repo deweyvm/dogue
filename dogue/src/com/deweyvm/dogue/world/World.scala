@@ -9,8 +9,9 @@ import com.deweyvm.dogue.entities.Tile
 
 
 object WorldParams {
-  def default = WorldParams(64, 6, 1024)
+  def default = WorldParams(128, 7, 1024)
 }
+
 case class WorldParams(period:Int, octaves:Int, size:Int, seed:Int=0)
 
 class World(val worldParams:WorldParams) {

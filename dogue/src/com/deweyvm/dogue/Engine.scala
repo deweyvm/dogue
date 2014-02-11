@@ -1,6 +1,6 @@
 package com.deweyvm.dogue
 
-import com.deweyvm.dogue.world.{World, StageManager, StageFactory, Stage}
+import com.deweyvm.dogue.world._
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.net.Client
@@ -16,10 +16,10 @@ class Engine {
   val rows = Game.RenderHeight/Dogue.tileSpec.height
   val factory = new StageFactory(cols, rows)
   val start = System.nanoTime()
-  /*val iters = 1
-  (0 until iters) foreach { _ =>
+  val iters = 1
+  /*(0 until iters) foreach { _ =>fl
     val size = 512
-    val world = new World(50,50,size,size).tiles.strictGetAll map { _.height
+    val world = new World(WorldParams(128, 7, size, System.nanoTime.toInt)).tiles.strictGetAll map { _.height
 
     }
     ImageUtils.saveHeight(world, size, size, "test.png")
