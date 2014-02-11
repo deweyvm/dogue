@@ -42,7 +42,7 @@ class OglTile(tileset:Tileset) {
 class OglRenderer(tileset:Tileset) extends Renderer {
 
   val vor = new FortuneVoronoi
-  val points = (0 until 300).map {_ => Point2d(Random.nextDouble()*1000, Random.nextDouble()*500)}
+  val points = (0 until 30).map {_ => Point2d(Random.nextDouble()*1000, Random.nextDouble()*500)}
   val buff = new ArrayBuffer[Point2d]()
   points foreach {p => buff += p}
   val edges = vor.GetEdges(buff, 1000, 800)
