@@ -7,6 +7,7 @@ import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.common.data.Indexed2d
+import com.deweyvm.dogue.entities.Tile
 
 object WorldPanel {
   trait State {
@@ -22,17 +23,14 @@ object WorldPanel {
              bgColor:Color, cols:Int, rows:Int):WorldPanel = {
     val world = new World(WorldParams.default)
     val tooltip = InfoPanel.makeNew(1, 1, tooltipWidth, tooltipHeight, bgColor)
-    val minimap = new Minimap(world, 38)
+    val minimap = new Minimap(world, 64)
     val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
     new WorldPanel(x, y, width, height, bgColor, world, worldViewer, tooltip, minimap, Mini)
   }
 }
-case object Region extends WorldPanel.State {
-  override def next = None
-  override def prev = Full.some
-}
+
 case object Full extends WorldPanel.State {
-  override def next = Region.some
+  override def next = None
   override def prev = Mini.some
 }
 case object Mini extends WorldPanel.State {
@@ -53,7 +51,6 @@ case class WorldPanel(override val x:Int,
                       state:WorldPanel.State)
   extends Panel(x, y, width, height, bgColor) {
   val (iSpawn, jSpawn) = (0,0)
-
   override def getRects:Vector[Recti] = {
     super.getRects ++ tooltip.getRects
   }
@@ -68,21 +65,22 @@ case class WorldPanel(override val x:Int,
     } else {
       state
     }
+
+    val newView = view.update(getTiles, getScale)
+
     this.copy(world = newWorld,
-              view = view.update(getTiles, getScale),
+              view = newView,
               tooltip = newTooltip.update,
               state = newState)
 
   }
 
   def getScale:Int = state match {
-    case Region => 1
     case Full => 1
     case Mini => div
   }
 
   def getTiles:Indexed2d[WorldTile] = state match {
-    case Region => world.tiles
     case Full => world.tiles
     case Mini => world.tiles//minimap.sampled
   }
@@ -98,15 +96,19 @@ case class WorldPanel(override val x:Int,
 
   override def draw() {
     super.draw()
-    def drawTile(i:Int, j:Int, t:WorldTile) = {
+    def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       t.tile.draw(i, j)
     }
-    state match {
-      case Region => ()
-      case Full => view.draw(world.tiles, x, y, drawTile)
-      case Mini =>
 
-        view.withCursor(view.xCursor/div, view.yCursor/div).draw(minimap.sampled, x, y, drawTile)
+    def drawTile(i:Int, j:Int, t:Tile) = {
+      t.draw(i, j)
+    }
+
+    state match {
+      case Full =>
+        view.draw(world.tiles, x, y, drawWorldTile)
+      case Mini =>
+        view.withCursor(view.xCursor/div, view.yCursor/div).draw(minimap.sampled, x, y, drawWorldTile)
     }
 
 

@@ -14,7 +14,7 @@ import com.deweyvm.dogue.common.procgen.PerlinNoise
 
 object Main {
   def main(args: Array[String]) {
-    //TestManager.runAll(true)
+    TestManager.runAll(true)
     val parser = new scopt.OptionParser[DogueOptions]("dogue") {
       head("dogue", Game.globals.Version)
 
