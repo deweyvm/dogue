@@ -17,13 +17,24 @@ object WorldPanel {
     def prev:Option[State]
   }
 
+  case object Region extends State {
+    override def next = None
+    override def prev = Full.some
+  }
+  case object Full extends State {
+    override def next = Region.some
+    override def prev = Mini.some
+  }
+  case object Mini extends State {
+    override def next = Full.some
+    override def prev = None
+  }
 
 
-  def create(iSpawn:Int, jSpawn:Int,
-             x:Int, y:Int, width:Int, height:Int,
+  def create(x:Int, y:Int, width:Int, height:Int,
              tooltipWidth:Int, tooltipHeight:Int,
-             bgColor:Color, cols:Int, rows:Int):WorldPanel = {
-    val world = new World(WorldParams(512, 14, cols))
+             bgColor:Color, size:Int):WorldPanel = {
+    val world = new World(WorldParams(512, 14, size))
     val tooltip = InfoPanel.makeNew(1, 1, tooltipWidth, tooltipHeight, bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
@@ -31,14 +42,7 @@ object WorldPanel {
   }
 }
 
-case object Full extends WorldPanel.State {
-  override def next = None
-  override def prev = Mini.some
-}
-case object Mini extends WorldPanel.State {
-  override def next = Full.some
-  override def prev = None
-}
+
 
 
 case class WorldPanel(override val x:Int,
@@ -52,11 +56,14 @@ case class WorldPanel(override val x:Int,
                       minimap:Minimap,
                       state:WorldPanel.State)
   extends Panel(x, y, width, height, bgColor) {
+  import WorldPanel._
   val (iSpawn, jSpawn) = (0,0)
   override def getRects:Vector[Recti] = {
     super.getRects ++ tooltip.getRects
   }
-  val div = world.cols/minimap.sampled.cols
+  val regionSize = 16
+  val miniDiv = (4096*16)/69
+  val regionDiv = 16
   override def update:WorldPanel = {
     val newTooltip = getTooltip
     val newWorld = world.update
@@ -78,21 +85,29 @@ case class WorldPanel(override val x:Int,
   }
 
   def getScale:Int = state match {
-    case Full => 1
-    case Mini => div
+    case Region => 1
+    case Full => regionDiv
+    case Mini => miniDiv
   }
 
   def getTiles:Indexed2d[WorldTile] = state match {
+    case Region => world.tiles
     case Full => world.tiles
-    case Mini => world.tiles//minimap.sampled
+    case Mini => world.tiles
   }
 
-  private def getTooltip:InfoPanel = {
+
+  private def getTooltip:InfoPanel =  {
+    def getTooltip(t:WorldTile):Tooltip = state match {
+      case Region => t.regionTooltip
+      case Full => t.fullTooltip
+      case Mini => t.fullTooltip
+    }
     val fresh = InfoPanel.makeNew(1, 1, tooltip.width, tooltip.height, bgColor)
     val (i, j) = (view.xCursor, view.yCursor)
-    val tip = getTiles.get(i, j) map {_.tooltip}
-    tip.foldLeft(fresh){ case (acc, (tColor, lines)) =>
-      acc.addLines(lines, bgColor, tColor)
+    val tip = getTiles.get(i, j) map getTooltip
+    tip.foldLeft(fresh){ case (acc, tt) =>
+      acc.addLines(tt.lines, bgColor, tt.color)
     }
   }
 
@@ -101,15 +116,21 @@ case class WorldPanel(override val x:Int,
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       t.tile.draw(i, j)
     }
+    println(view.xCursor + " " + view.yCursor)
     state match {
-      case Full =>
+      case Region =>
         view.draw(world.tiles, x, y, drawWorldTile)
+      case Full =>
+        println("full")
+        val d = 16
+        view.scaled(d).draw(world.tiles.sample(d), x, y, drawWorldTile)
       case Mini =>
-        view.withCursor(view.xCursor/div, view.yCursor/div).draw(minimap.sampled, x, y, drawWorldTile)
+        view.scaled(miniDiv).draw(minimap.sampled, x, y, drawWorldTile)
     }
 
 
     tooltip.draw()
+    new Text(world.worldParams.name, Color.Black, Color.White).draw(30,1)
     //
   }
 }

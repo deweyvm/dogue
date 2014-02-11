@@ -6,7 +6,7 @@ import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.data.Pointer
-import com.deweyvm.dogue.common.procgen.PerlinNoise
+import com.deweyvm.dogue.common.procgen.{MapName, PerlinNoise}
 import com.deweyvm.gleany.graphics.ImageUtils
 
 
@@ -29,10 +29,9 @@ class Engine {
   println(end + " ms")
   //
   Game.shutdown()*/
-
   var stage = new StageManager(Pointer.create(
-    factory.create(Stage.World),
     factory.create(Stage.Chat),
+    factory.create(Stage.World),
     factory.create(Stage.Title)
 
 

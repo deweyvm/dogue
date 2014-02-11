@@ -20,6 +20,8 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
 
   def withCursor(x:Int, y:Int) = this.copy(xCursor = x, yCursor = y)
 
+  def scaled(div:Int) = this.copy(xCursor = xCursor/div, yCursor = yCursor/div)
+
   def draw[T](a:Indexed2d[T], iRoot:Int, jRoot:Int, draw:(Int,Int,T) => Unit) {
     val width = a.cols
     val height = a.rows

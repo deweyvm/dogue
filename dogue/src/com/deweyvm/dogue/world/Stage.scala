@@ -37,10 +37,11 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   }
 
   def draw() {
-    panels foreach { _.draw() }
+
     borders foreach { case (i, j, tile) =>
       tile foreach { _.draw(i, j) }
     }
+    panels foreach { _.draw() }
     serverStatus.draw(cols - serverStatus.width, rows - 1)
 
   }

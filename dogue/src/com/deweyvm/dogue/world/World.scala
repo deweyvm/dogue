@@ -2,7 +2,7 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.{Indexed2d, Code}
-import com.deweyvm.dogue.common.procgen.PerlinNoise
+import com.deweyvm.dogue.common.procgen.{MapName, PerlinNoise}
 
 import scala.math._
 import com.deweyvm.dogue.entities.Tile
@@ -12,11 +12,12 @@ object WorldParams {
   def default = WorldParams(128, 7, 1024)
 }
 
-case class WorldParams(period:Int, octaves:Int, size:Int, seed:Int=0)
+case class WorldParams(period:Int, octaves:Int, size:Int, seed:Int=0) {
+  val name = new MapName(seed).makeName
+}
 
 class World(val worldParams:WorldParams) {
   val (cols, rows) = (worldParams.size, worldParams.size)
-  val (iSpawn, jSpawn) = (0,0)
 
   val border = min(cols, rows)/2 - 10
 

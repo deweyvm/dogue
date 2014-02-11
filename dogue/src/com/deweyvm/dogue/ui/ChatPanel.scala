@@ -18,7 +18,7 @@ case class ChatPanel(override val x:Int,
                      input:TextInput,
                      output:InfoPanel)
   extends Panel(x, y, width, height, bgColor) {
-  val inputHeight = 3
+  val inputHeight = input.height
   val parser = new CommandParser
   override def getRects:Vector[Recti] =
     Vector(Recti(x, y, width, height - inputHeight - 1),
@@ -69,7 +69,7 @@ case class ChatPanel(override val x:Int,
   }
 
   override def draw() {
-    super.draw()
+    //super.draw()
     output.draw()
     input.draw(x, y + height - inputHeight)
   }

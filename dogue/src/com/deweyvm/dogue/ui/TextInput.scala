@@ -9,6 +9,7 @@ import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.parsing.CommandParser
 import scala.Some
+import com.deweyvm.gleany.data.Recti
 
 
 object TextInput {
