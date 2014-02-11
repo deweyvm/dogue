@@ -9,11 +9,18 @@ import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.testing.TestManager
 import com.deweyvm.gleany.graphics.ImageUtils
-import com.deweyvm.dogue.common.procgen.PerlinNoise
+import com.deweyvm.dogue.common.procgen.{Voronoi, PerlinNoise}
+import com.deweyvm.gleany.data.Time
 
 
 object Main {
   def main(args: Array[String]) {
+    /*val size = 512
+    val (vor, time) = Time.timer(() =>
+      Voronoi.generateVoronoi(size,size,30, Voronoi.manhattan)
+    )
+    println(time/1000000L)
+    System.exit(0)*/
     TestManager.runAll(true)
     val parser = new scopt.OptionParser[DogueOptions]("dogue") {
       head("dogue", Game.globals.Version)

@@ -3,7 +3,7 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.Recti
+import com.deweyvm.gleany.data.{Point2d, Recti}
 import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
@@ -11,6 +11,10 @@ import com.deweyvm.dogue.entities.Tile
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
+import com.deweyvm.dogue.common.procgen.voronoi.FortuneVoronoi
+import scala.util.Random
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -37,10 +41,16 @@ class OglTile(tileset:Tileset) {
 
 class OglRenderer(tileset:Tileset) extends Renderer {
 
+  val vor = new FortuneVoronoi
+  val points = (0 until 300).map {_ => Point2d(Random.nextDouble()*1000, Random.nextDouble()*500)}
+  val buff = new ArrayBuffer[Point2d]()
+  points foreach {p => buff += p}
+  val edges = vor.GetEdges(buff, 1000, 800)
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
   private val batch = new SpriteBatch
+  private val shape = new ShapeRenderer
   private val camera = new Camera
   private val draws = ArrayBuffer[() => Unit]()
 
@@ -49,6 +59,16 @@ class OglRenderer(tileset:Tileset) extends Renderer {
       s.setPosition(x, y)
       s.draw(batch)
     })
+  }
+
+  def draw(pt:Point2d, pr:Point2d) {
+
+    shape.begin(ShapeType.Line)
+    shape.setColor(Color.Black.toLibgdxColor)
+    if (pt != null && pr != null)
+      shape.line(pt.x.toFloat, pt.y.toFloat, pr.x.toFloat, pr.y.toFloat)
+    shape.end()
+
   }
 
   override def draw(t:Tile, i:Int, j:Int) {
@@ -64,6 +84,9 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws foreach {_()}
     draws.clear()
     batch.end()
+    edges foreach { e =>
+      draw(e.start, e.end)
+    }
   }
 
 }

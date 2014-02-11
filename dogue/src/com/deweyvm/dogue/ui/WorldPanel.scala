@@ -30,11 +30,10 @@ object WorldPanel {
     override def prev = None
   }
 
-
   def create(x:Int, y:Int, width:Int, height:Int,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val world = new World(WorldParams(512, 14, size))
+    val world = new World(WorldParams(size/4, 22, size))
     val tooltip = InfoPanel.makeNew(1, 1, tooltipWidth, tooltipHeight, bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
@@ -116,21 +115,24 @@ case class WorldPanel(override val x:Int,
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       t.tile.draw(i, j)
     }
-    println(view.xCursor + " " + view.yCursor)
     state match {
       case Region =>
         view.draw(world.tiles, x, y, drawWorldTile)
       case Full =>
-        println("full")
-        val d = 16
-        view.scaled(d).draw(world.tiles.sample(d), x, y, drawWorldTile)
+        view.scaled(regionDiv).draw(world.tiles.sample(regionDiv), x, y, drawWorldTile)
       case Mini =>
         view.scaled(miniDiv).draw(minimap.sampled, x, y, drawWorldTile)
     }
 
 
     tooltip.draw()
-    new Text(world.worldParams.name, Color.Black, Color.White).draw(30,1)
+    drawName()
     //
+  }
+
+  private def drawName() {
+    val name = world.worldParams.name
+    val xName = x + (width - name.length)/2
+    new Text(name, Color.Black, Color.White).draw(xName,0)
   }
 }
