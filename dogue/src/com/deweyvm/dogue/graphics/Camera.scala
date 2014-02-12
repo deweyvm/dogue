@@ -10,6 +10,10 @@ class Camera {
     c
   }
 
+  def translate(x:Int, y:Int) {
+    cam.translate(x, y)
+  }
+
   def getProjection = {
     cam.update()
     cam.combined

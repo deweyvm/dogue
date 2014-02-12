@@ -13,8 +13,10 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
-import com.deweyvm.dogue.common.procgen.voronoi.FortuneVoronoi
+import com.deweyvm.dogue.common.procgen.voronoi.{Edge, Voronoi, FortuneVoronoi}
 import scala.util.Random
+import javax.print.attribute.standard.ColorSupported
+import com.deweyvm.dogue.common.procgen.{Line, PoissonRng}
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -40,12 +42,22 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-
-  val vor = new FortuneVoronoi
-  val points = (0 until 30).map {_ => Point2d(Random.nextDouble()*1000, Random.nextDouble()*500)}
-  val buff = new ArrayBuffer[Point2d]()
-  points foreach {p => buff += p}
-  val edges = vor.GetEdges(buff, 1000, 800)
+  val r = new Random()
+  val size = 500
+  val pts = Vector(
+    Point2d(10,size/2),
+    Point2d(size/2 - 2, size/2 + 1),
+    Point2d(size - 10, size/2 - 1),
+    Point2d(size/2 - 3, 10),
+    Point2d(size/2 + 1, size - 10)
+  )//new PoissonRng(size, size, {case (i, j) => 100}, 100).getPoints
+  val edges = Voronoi.getEdges(pts, size, size)
+  edges foreach {println(_)}
+  val polys = Voronoi.getFaces(edges) map { v:Vector[Line] =>
+    val mapped = v map {_.p}
+    flattenVector(mapped)
+  }
+  val colors = polys map {_ => Color.randomHue()}
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
@@ -61,14 +73,41 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     })
   }
 
-  def draw(pt:Point2d, pr:Point2d) {
-
+  def drawLine(pt:Point2d, pr:Point2d, color:Color) {
     shape.begin(ShapeType.Line)
-    shape.setColor(Color.Black.toLibgdxColor)
-    if (pt != null && pr != null)
-      shape.line(pt.x.toFloat, pt.y.toFloat, pr.x.toFloat, pr.y.toFloat)
+    shape.setColor(color.toLibgdxColor)
+    shape.line(pt.x.toFloat, pt.y.toFloat, pr.x.toFloat, pr.y.toFloat)
     shape.end()
 
+  }
+
+  def drawPoint(pt:Point2d, color:Color) {
+    shape.begin(ShapeType.Filled)
+    shape.setColor(color.toLibgdxColor)
+    shape.circle(pt.x.toFloat, pt.y.toFloat, 4)
+    shape.end()
+  }
+
+  def flattenVector(pts:Vector[Point2d]):Array[Float] = {
+    val flat = pts.foldRight(Vector[Float]()){ case (p, acc) =>
+      p.x.toFloat +: (p.y.toFloat +: acc)
+    }
+    Array(flat:_*)
+  }
+
+
+  def drawPolygon(pts:Array[Float], color:Color) {
+    shape.begin(ShapeType.Line)
+    shape.setColor(color.toLibgdxColor)
+    shape.polygon(pts)
+    shape.end()
+  }
+
+  def drawRect(x:Int, y:Int, width:Int, height:Int, color:Color) {
+    shape.begin(ShapeType.Filled)
+    shape.setColor(color.toLibgdxColor)
+    shape.rect(x, y, width, height)
+    shape.end()
   }
 
   override def draw(t:Tile, i:Int, j:Int) {
@@ -84,9 +123,22 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws foreach {_()}
     draws.clear()
     batch.end()
+
+    camera.translate(-100,-30)
+    shape.setProjectionMatrix(camera.getProjection)
+    drawRect(0,0,size,size, Color.Black)
     edges foreach { e =>
-      draw(e.start, e.end)
+      drawLine(e.vorStart, e.vorEnd, Color.White)
+      //drawLine(e.triStart, e.triEnd, Color.Green)
+      drawPoint(e.triStart, Color.Red)
+      drawPoint(e.triEnd, Color.Red)
     }
+    polys.zip(colors) foreach { case (p, c) => ()
+      drawPolygon(p, c)
+    }
+
+    camera.translate(100,30)
+
   }
 
 }

@@ -9,7 +9,7 @@ import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.testing.TestManager
 import com.deweyvm.gleany.graphics.ImageUtils
-import com.deweyvm.dogue.common.procgen.{Voronoi, PerlinNoise}
+import com.deweyvm.dogue.common.procgen.{NaiveVoronoi, PerlinNoise}
 import com.deweyvm.gleany.data.Time
 
 
