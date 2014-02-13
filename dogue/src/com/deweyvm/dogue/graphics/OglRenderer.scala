@@ -16,7 +16,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.deweyvm.dogue.common.procgen.voronoi.{Edge, Voronoi, FortuneVoronoi}
 import scala.util.Random
 import javax.print.attribute.standard.ColorSupported
-import com.deweyvm.dogue.common.procgen.{Line, PoissonRng}
+import com.deweyvm.dogue.common.procgen.{Polygon, Line, PoissonRng}
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -44,10 +44,11 @@ class OglTile(tileset:Tileset) {
 class OglRenderer(tileset:Tileset) extends Renderer {
   val r = new Random()
   val size = 500
-  val pts = new PoissonRng(size, size, {case (i, j) => size/10}, size/10, 2L).getPoints
+  val scale = size/10
+  val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, 0L).getPoints
   val edges = Voronoi.getEdges(pts, size, size)
-  val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { v:Vector[Line] =>
-    val mapped = v map {_.p}
+  val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
+    val mapped = p.lines map { _.p }
     flattenVector(mapped)
   }
   val colors = polys map {_ => Color.randomHue()}
