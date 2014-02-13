@@ -1,8 +1,12 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.data.{Indexed2d, Code}
-import com.deweyvm.dogue.common.procgen.{MapName, PerlinNoise}
+import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d, Code}
+import com.deweyvm.dogue.common.procgen.{PoissonRng, MapName, PerlinNoise}
+import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
+import com.deweyvm.gleany.data.Point2d
+import com.deweyvm.dogue.graphics.OglRenderer._
+import com.deweyvm.gleany.data.Rectd
 import com.deweyvm.dogue.entities.Tile
 
 
@@ -14,11 +18,9 @@ class World(val worldParams:WorldParams) {
   val (cols, rows) = (worldParams.size, worldParams.size)
 
   val border = math.min(cols, rows)/2 - 10
-
-  val tiles:Indexed2d[WorldTile] = {
-    val noise = new PerlinNoise(1/worldParams.period.toFloat, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
-    noise.cut[Double](cols, rows, x => x, 0).map({ case (i, j, t) =>
-
+  val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
+  val heightMap:Indexed2d[Int] = {
+    noise.map({ case (i, j, t) =>
       val xCenter = math.abs(cols/2 - i)
       val yCenter = math.abs(cols/2 - j)
       val dist = math.sqrt(xCenter *xCenter + yCenter*yCenter)
@@ -28,28 +30,48 @@ class World(val worldParams:WorldParams) {
       } else {
         10
       }
-      val region = (c*10).toInt
-      val color = if (region <= 0) {
-        Color.Blue.dim(1/(1 - math.abs(region - 2)/10f))
-      } else if (region == 1) {
+      (c*10).toInt
+    })
+  }
+
+  val regionMap:Indexed2d[Color] = {
+    val size = cols
+    val regionSize = cols/8
+    val regionCenters = new PoissonRng(size, size, {case (i, j) => regionSize}, regionSize, vorSeed).getPoints
+    val edges = Voronoi.getEdges(regionCenters, size, size)
+    val faces = Voronoi.getFaces(edges, Rectd(0, 0, size, size))
+    val colors = (0 until faces.length) map {_ => Color.randomHue()}
+    val f = colors zip faces
+    Lazy2d.tabulate(cols, rows){ case (i, j) =>
+      f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
+    }
+  }
+
+
+  def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
+    val elevation:Int = heightMap.get(i, j).getOrElse(10)
+    val region = regionMap.get(i, j).getOrElse(Color.Black)
+    val color =
+      if (elevation <= 0) {
+        Color.Blue.dim((1/(1 - math.abs(elevation - 2)/10f)).toFloat)
+      } else if (elevation == 1) {
         Color.Yellow
-      } else if (region == 2) {
+      } else if (elevation == 2) {
         Color.Green
-      } else if (region <= 5) {
+      } else if (elevation <= 5) {
         Color.DarkGreen
-      } else if (region == 6) {
+      } else if (elevation == 6) {
         Color.DarkGrey
-      } else if (region == 7) {
+      } else if (elevation == 7) {
         Color.Grey
-      } else if (region == 8){
+      } else if (elevation == 8){
         Color.White.dim(1.2f)
-      } else if (region == 9) {
+      } else if (elevation == 9) {
         Color.White.dim(1.1f)
       } else {
         Color.White
       }
-      WorldTile(c, c, new Tile(Code.intToCode((c*10 + 48 + 4).toInt), color, Color.White))
-    })
+    new WorldTile(elevation, elevation, region, new Tile(Code.` `, color, Color.White))
   }
 
   def update:World = this

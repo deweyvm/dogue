@@ -20,8 +20,8 @@ class Engine {
 
   var stage = new StageManager(Pointer.create(
     factory.create(Stage.Title),
-    factory.create(Stage.World),
-    factory.create(Stage.Chat)
+    factory.create(Stage.Chat),
+    factory.create(Stage.World)
 
 
   ))

@@ -14,10 +14,17 @@ class Panel(val x:Int, val y:Int, val width:Int, val height:Int, bgColor:Color) 
   def getRects:Vector[Recti] = Vector(Recti(x, y, width, height))
   def update:Panel = this
   def draw() {
-    for (i <- x until (x + width);
-         j <- y until (y + height)) {
-      new Tile(Code.` `, bgColor, bgColor).draw(i, j)
+    getRects foreach {rect =>
+      val xMin = rect.x
+      val xMax = rect.x + rect.width
+      val yMin = rect.y
+      val yMax = rect.y + rect.height
+      for (i <- xMin until xMax;
+           j <- yMin until yMax) {
+        new Tile(Code.` `, bgColor, bgColor).draw(i, j)
+      }
     }
+
 
 
     //new RectSprite(width*16, height*16, bgColor).draw(x*16, y*16)

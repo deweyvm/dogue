@@ -39,13 +39,22 @@ class OglTile(tileset:Tileset) {
     val bg = new RectSprite(width, height, bgColor).sprite
     (fg, bg)
   }
+
+
+}
+
+object OglRenderer {
+  val vorSize = 300
+  val vorScale = 30
+  val vorSeed = 1L
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
+  import OglRenderer._
   val r = new Random()
-  val size = 500
-  val scale = size/10
-  val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, 0L).getPoints
+  val size = vorSize
+  val scale = vorScale
+  val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints
   val edges = Voronoi.getEdges(pts, size, size)
   val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
     val mapped = p.lines map { _.p }
@@ -118,11 +127,11 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws.clear()
     batch.end()
 
-    camera.translate(-100,-30)
+    /*camera.translate(-100,-30)
     shape.setProjectionMatrix(camera.getProjection)
     drawRect(0,0,size,size, Color.Black)
     edges foreach { e =>
-      drawLine(e.vorStart, e.vorEnd, Color.White)
+      //drawLine(e.vorStart, e.vorEnd, Color.White)
       //drawLine(e.triStart, e.triEnd, Color.Green)
       drawPoint(e.triStart, Color.Red)
       drawPoint(e.triEnd, Color.Red)
@@ -131,7 +140,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
       drawPolygon(p, c)
     }
 
-    camera.translate(100,30)
+    camera.translate(100,30)*/
 
   }
 

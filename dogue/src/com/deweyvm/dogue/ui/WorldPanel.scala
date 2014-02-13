@@ -6,10 +6,11 @@ import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
-import com.deweyvm.dogue.common.data.Indexed2d
+import com.deweyvm.dogue.common.data.{Code, Indexed2d}
 import com.deweyvm.dogue.common.procgen.PerlinPoisson
 import com.badlogic.gdx.graphics.{Texture, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.deweyvm.dogue.entities.Tile
 
 object WorldPanel {
   trait State {
@@ -61,7 +62,7 @@ case class WorldPanel(override val x:Int,
     super.getRects ++ tooltip.getRects
   }
   val regionSize = 16
-  val miniDiv = (4096*16)/69
+  val miniDiv = world.cols/minimap.div //(4096*16)/69
   val regionDiv = 16
   override def update:WorldPanel = {
     val newTooltip = getTooltip
@@ -90,9 +91,9 @@ case class WorldPanel(override val x:Int,
   }
 
   def getTiles:Indexed2d[WorldTile] = state match {
-    case Region => world.tiles
-    case Full => world.tiles
-    case Mini => world.tiles
+    case Region => world.worldTiles
+    case Full => world.worldTiles
+    case Mini => world.worldTiles
   }
 
 
@@ -114,12 +115,13 @@ case class WorldPanel(override val x:Int,
     super.draw()
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       t.tile.draw(i, j)
+      //new Tile(Code.` `, t.region, Color.White).draw(i, j)
     }
     state match {
       case Region =>
-        view.draw(world.tiles, x, y, drawWorldTile)
+        view.draw(world.worldTiles, x, y, drawWorldTile)
       case Full =>
-        view.scaled(regionDiv).draw(world.tiles.sample(regionDiv), x, y, drawWorldTile)
+        view.scaled(regionDiv).draw(world.worldTiles.sample(regionDiv), x, y, drawWorldTile)
       case Mini =>
         view.scaled(miniDiv).draw(minimap.sampled, x, y, drawWorldTile)
     }
