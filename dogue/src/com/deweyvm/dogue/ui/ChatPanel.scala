@@ -69,7 +69,7 @@ case class ChatPanel(override val x:Int,
   }
 
   override def draw() {
-    //super.draw()
+    super.draw()
     output.draw()
     input.draw(x, y + height - inputHeight)
   }
