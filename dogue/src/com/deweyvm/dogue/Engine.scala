@@ -17,18 +17,7 @@ class Engine {
   val factory = new StageFactory(cols, rows)
   val start = System.nanoTime()
   val iters = 1
-  /*(0 until iters) foreach { _ =>fl
-    val size = 512
-    val world = new World(WorldParams(128, 7, size, System.nanoTime.toInt)).tiles.strictGetAll map { _.height
 
-    }
-    ImageUtils.saveHeight(world, size, size, "test.png")
-    ()
-  }
-  val end = (System.nanoTime() - start)/(iters*1000000L)
-  println(end + " ms")
-  //
-  Game.shutdown()*/
   var stage = new StageManager(Pointer.create(
     factory.create(Stage.Title),
     factory.create(Stage.World),

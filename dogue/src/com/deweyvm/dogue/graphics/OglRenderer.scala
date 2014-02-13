@@ -44,13 +44,7 @@ class OglTile(tileset:Tileset) {
 class OglRenderer(tileset:Tileset) extends Renderer {
   val r = new Random()
   val size = 500
-  val pts = /*Vector(
-    Point2d(10,size/2),
-    Point2d(size/2 - 2, size/2 + 1),
-    Point2d(size - 1, size/2 - 1),
-    Point2d(size/2 - 3, 10),
-    Point2d(size/2 + 1, size - 1)
-  )*/new PoissonRng(size, size, {case (i, j) => size/10}, size/10).getPoints
+  val pts = new PoissonRng(size, size, {case (i, j) => size/10}, size/10, 2L).getPoints
   val edges = Voronoi.getEdges(pts, size, size)
   val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { v:Vector[Line] =>
     val mapped = v map {_.p}
