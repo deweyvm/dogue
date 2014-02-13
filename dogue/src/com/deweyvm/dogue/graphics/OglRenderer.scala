@@ -3,7 +3,7 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Point2d, Recti}
+import com.deweyvm.gleany.data.{Rectd, Point2d, Recti}
 import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
@@ -43,16 +43,16 @@ class OglTile(tileset:Tileset) {
 
 class OglRenderer(tileset:Tileset) extends Renderer {
   val r = new Random()
-  val size = 100
-  val pts = Vector(
+  val size = 500
+  val pts = /*Vector(
     Point2d(10,size/2),
     Point2d(size/2 - 2, size/2 + 1),
     Point2d(size - 1, size/2 - 1),
     Point2d(size/2 - 3, 10),
     Point2d(size/2 + 1, size - 1)
-  )//new PoissonRng(size, size, {case (i, j) => 100}, 100).getPoints
+  )*/new PoissonRng(size, size, {case (i, j) => size/10}, size/10).getPoints
   val edges = Voronoi.getEdges(pts, size, size)
-  val polys = Voronoi.getFaces(edges) map { v:Vector[Line] =>
+  val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { v:Vector[Line] =>
     val mapped = v map {_.p}
     flattenVector(mapped)
   }
@@ -127,7 +127,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     shape.setProjectionMatrix(camera.getProjection)
     drawRect(0,0,size,size, Color.Black)
     edges foreach { e =>
-      //drawLine(e.vorStart, e.vorEnd, Color.White)
+      drawLine(e.vorStart, e.vorEnd, Color.White)
       //drawLine(e.triStart, e.triEnd, Color.Green)
       drawPoint(e.triStart, Color.Red)
       drawPoint(e.triEnd, Color.Red)

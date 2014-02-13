@@ -40,7 +40,7 @@ object Main {
 
     parser.parse(args, DogueOptions()) map { c =>
       val s = Game.settings
-      Log.initLog(s.logLocation.get, Log.Verbose)
+      Log.initLog(s.logLocation.get, Log.Warn)
       Game.globals.IsDebugMode = c.isDebug
       Game.globals.IsHeadless = c.headless
       if (c.version) {
