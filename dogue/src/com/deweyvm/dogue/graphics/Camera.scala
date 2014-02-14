@@ -14,6 +14,10 @@ class Camera {
     cam.translate(x, y)
   }
 
+  def zoom(f:Double) {
+    cam.zoom = f.toFloat
+  }
+
   def getProjection = {
     cam.update()
     cam.combined

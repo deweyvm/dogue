@@ -3,20 +3,21 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Rectd, Point2d, Recti}
+import com.deweyvm.gleany.data.{Point2d, Recti}
 import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
-import com.deweyvm.dogue.entities.Tile
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
-import com.deweyvm.dogue.common.procgen.voronoi.{Edge, Voronoi, FortuneVoronoi}
+import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
 import scala.util.Random
-import javax.print.attribute.standard.ColorSupported
-import com.deweyvm.dogue.common.procgen.{Polygon, Line, PoissonRng}
+import com.deweyvm.dogue.common.procgen._
+import com.deweyvm.gleany.data.Rectd
+import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.dogue.Game
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -51,6 +52,7 @@ object OglRenderer {
 
 class OglRenderer(tileset:Tileset) extends Renderer {
   import OglRenderer._
+  val vectorField = VectorField.windSpiral(Game.RenderWidth, Game.RenderHeight, 40)
   val r = new Random()
   val size = vorSize
   val scale = vorScale
@@ -91,6 +93,30 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     shape.end()
   }
 
+  def drawVectorField(v:VectorField, color:Color) {
+
+    shape.setColor(color.toLibgdxColor)
+    v.vectors foreach {case (pt, arrow) =>
+      val (line, (l1, l2, l3)) = arrow.getShapes(pt)
+      shape.begin(ShapeType.Line)
+      shape.line(line.p.x.toFloat, line.p.y.toFloat, line.q.x.toFloat, line.q.y.toFloat)
+      shape.end()
+      shape.begin(ShapeType.Filled)
+      shape.triangle(
+        l1.p.x.toFloat,
+        l1.p.y.toFloat,
+        l2.q.x.toFloat,
+        l2.q.y.toFloat,
+        l3.p.x.toFloat,
+        l3.p.y.toFloat
+      )
+      shape.end()
+
+    }
+
+
+  }
+
   def flattenVector(pts:Vector[Point2d]):Array[Float] = {
     val flat = pts.foldRight(Vector[Float]()){ case (p, acc) =>
       p.x.toFloat +: (p.y.toFloat +: acc)
@@ -126,7 +152,13 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws foreach {_()}
     draws.clear()
     batch.end()
+    camera.zoom(2)
+    camera.translate(-Game.RenderWidth/2,-Game.RenderHeight/2)
+    shape.setProjectionMatrix(camera.getProjection)
+    drawVectorField(vectorField, Color.White)
+    camera.translate(Game.RenderWidth/2,Game.RenderHeight/2)
 
+    camera.zoom(1)
     /*camera.translate(-100,-30)
     shape.setProjectionMatrix(camera.getProjection)
     drawRect(0,0,size,size, Color.Black)
