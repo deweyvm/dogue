@@ -19,6 +19,7 @@ class Engine {
   val iters = 1
 
   var stage = new StageManager(Pointer.create(
+    factory.create(Stage.Blank),
     factory.create(Stage.Title),
     factory.create(Stage.Chat),
     factory.create(Stage.World)

@@ -19,6 +19,8 @@ class StageFactory(cols:Int, rows:Int) {
   def create(t:StageType):Stage = {
     import Stage._
     t match {
+      case Blank =>
+        makeStage(Vector(new Panel(1,1,cols-2, rows-2, Color.Black)))
       case Title =>
         val titlePanel = new TitlePanel(1, 1, cols - 2, rows - 2, bgColor)
         makeStage(Vector(titlePanel))

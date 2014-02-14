@@ -13,6 +13,9 @@ import Implicits._
 import com.deweyvm.dogue.Dogue
 
 object Stage {
+  case object Blank extends StageType {
+    override def next = Title
+  }
   case object Title extends StageType {
     override def next = Chat
   }
@@ -20,7 +23,7 @@ object Stage {
     override def next = World
   }
   case object World extends StageType {
-    override def next = Title
+    override def next = Blank
   }
 }
 

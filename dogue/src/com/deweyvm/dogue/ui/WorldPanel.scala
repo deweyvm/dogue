@@ -119,11 +119,11 @@ case class WorldPanel(override val x:Int,
     }
     state match {
       case Region =>
-        view.draw(world.worldTiles, x, y, drawWorldTile)
+        view.draw(world.worldTiles, x, y, drawWorldTile, WorldTile.Blank)
       case Full =>
-        view.scaled(regionDiv).draw(world.worldTiles.sample(regionDiv), x, y, drawWorldTile)
+        view.scaled(regionDiv).draw(world.worldTiles.sample(regionDiv), x, y, drawWorldTile, WorldTile.Blank)
       case Mini =>
-        view.scaled(miniDiv).draw(minimap.sampled, x, y, drawWorldTile)
+        view.scaled(miniDiv).draw(minimap.sampled, x, y, drawWorldTile, WorldTile.Blank)
     }
 
 

@@ -52,7 +52,7 @@ object OglRenderer {
 
 class OglRenderer(tileset:Tileset) extends Renderer {
   import OglRenderer._
-  val vectorField = VectorField.windSpiral(Game.RenderWidth, Game.RenderHeight, 40)
+  val vectorField = VectorField.windSpiral(Game.RenderWidth, Game.RenderHeight, 20)
   val r = new Random()
   val size = vorSize
   val scale = vorScale
@@ -95,13 +95,16 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   def drawVectorField(v:VectorField, color:Color) {
 
-    shape.setColor(color.toLibgdxColor)
-    v.vectors foreach {case (pt, arrow) =>
+
+    v.vectors foreach {case (pt, arrow, lineColor) =>
       val (line, (l1, l2, l3)) = arrow.getShapes(pt)
       shape.begin(ShapeType.Line)
+      shape.setColor(lineColor.toLibgdxColor)
+
       shape.line(line.p.x.toFloat, line.p.y.toFloat, line.q.x.toFloat, line.q.y.toFloat)
       shape.end()
       shape.begin(ShapeType.Filled)
+      //shape.setColor(color.toLibgdxColor)
       shape.triangle(
         l1.p.x.toFloat,
         l1.p.y.toFloat,

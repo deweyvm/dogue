@@ -22,15 +22,15 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
 
   def scaled(div:Int) = this.copy(xCursor = xCursor/div, yCursor = yCursor/div)
 
-  def draw[T](a:Indexed2d[T], iRoot:Int, jRoot:Int, draw:(Int,Int,T) => Unit) {
+  def draw[T](a:Indexed2d[T], iRoot:Int, jRoot:Int, draw:(Int,Int,T) => Unit, default: => T) {
     val width = a.cols
     val height = a.rows
     val iView = (xCursor - viewHeight/2).clamp(0, width - viewWidth)
     val jView = (yCursor - viewHeight/2).clamp(0, height - viewHeight)
-    a slice (iView, jView, viewWidth, viewHeight) foreach { case (i, j, tile) =>
+    a.slice(iView, jView, viewWidth, viewHeight, x => x, default) foreach { case (i, j, tile) =>
       val x = iRoot + i
       val y = jRoot + j
-      tile foreach {draw(x, y, _)}
+      draw(x, y, tile)
     }
     if (Game.getFrame % 120 < 100) {
       crosshair.draw(iRoot + xCursor - iView, jRoot + yCursor - jView)
