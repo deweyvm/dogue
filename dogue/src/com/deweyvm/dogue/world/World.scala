@@ -2,15 +2,15 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d, Code}
-import com.deweyvm.dogue.common.procgen.{PoissonRng, MapName, PerlinNoise}
+import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
 import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.graphics.OglRenderer._
-import com.deweyvm.gleany.data.Rectd
 import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.gleany.data.Rectd
 
 
-case class WorldParams(period:Int, octaves:Int, size:Int, seed:Int=0) {
+case class WorldParams(period:Int, octaves:Int, size:Int, seed:Long) {
   val name = new MapName(seed).makeName
 }
 
@@ -19,6 +19,14 @@ class World(val worldParams:WorldParams) {
 
   val border = math.min(cols, rows)/2 - 10
   val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
+
+  val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
+    //VectorField.perlinWind(noise, cols, rows, 1, worldParams.seed).lazyVectors
+    Lazy2d.tabulate(cols, rows) {case (i, j) =>
+      (Point2d.UnitX, Arrow(Point2d.UnitX, 1), Color.Black)
+    }
+  }
+
   val heightMap:Indexed2d[Int] = {
     noise.map({ case (i, j, t) =>
       val xCenter = math.abs(cols/2 - i)
@@ -51,6 +59,8 @@ class World(val worldParams:WorldParams) {
   def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
     val elevation:Int = heightMap.get(i, j).getOrElse(10)
     val region = regionMap.get(i, j).getOrElse(Color.Black)
+    val (_, arr, _) = windMap.get(i, j).getOrElse((Point2d(0,0), Arrow(Point2d.UnitX, 1), Color.Black))
+    val windDir = arr.direction * arr.magnitude
     val color =
       if (elevation <= 0) {
         Color.Blue.dim((1/(1 - math.abs(elevation - 2)/10f)).toFloat)
@@ -71,7 +81,7 @@ class World(val worldParams:WorldParams) {
       } else {
         Color.White
       }
-    new WorldTile(elevation, elevation, region, new Tile(Code.` `, color, Color.White))
+    new WorldTile(elevation, elevation, region, windDir, new Tile(Code.` `, color, Color.White))
   }
 
   def update:World = this

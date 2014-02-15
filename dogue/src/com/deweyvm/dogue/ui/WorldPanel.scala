@@ -34,7 +34,7 @@ object WorldPanel {
   def create(x:Int, y:Int, width:Int, height:Int,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val world = new World(WorldParams(size/4, 22, size))
+    val world = new World(WorldParams(size/4, 22, size, 0))
     val tooltip = InfoPanel.makeNew(1, 1, tooltipWidth, tooltipHeight, bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
@@ -115,7 +115,33 @@ case class WorldPanel(override val x:Int,
     super.draw()
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       t.tile.draw(i, j)
-      //new Tile(Code.` `, t.region, Color.White).draw(i, j)
+      val dir = t.wind.normalize
+      val max = math.max(math.abs(dir.x), math.abs(dir.y))
+      val code =
+        if (math.abs(math.abs(dir.x) - math.abs(dir.y)) > max/2) {
+          if (math.abs(dir.x) > math.abs(dir.y)) {
+            if (dir.x > 0) {
+              Code.→
+            } else {
+              Code.`←`
+            }
+          } else {
+            if (dir.y > 0) {
+              Code.↓
+            } else {
+              Code.↑
+            }
+          }
+        } else {
+          (math.signum(dir.x).toInt, math.signum(dir.y).toInt) match {
+            case (1, -1) => Code./
+            case (-1, 1) => Code./
+            case (1, 1) => Code.\
+            case (-1, -1) => Code.\
+            case _ => Code.`?`
+          }
+        }
+        new Tile(code, t.tile.bgColor, Color.White).draw(i, j)
     }
     state match {
       case Region =>

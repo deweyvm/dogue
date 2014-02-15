@@ -161,7 +161,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       case Connected => Code.☼.unicode + ""
       case Handshaking => "Handshaking..."
       case Connecting =>
-        val codes = Vector(Code./, Code.─, Code.backslash, Code.│)
+        val codes = Vector(Code./, Code.─, Code.\, Code.│)
         "Connecting " + codes((Game.getFrame/10) % codes.length).rawString
       case Disconnected(e) => e match {
         case HostUnreachable(msg) => "Server is down (r)" //todo -- put control widget here

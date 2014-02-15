@@ -18,6 +18,7 @@ import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.gleany.data.Rectd
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.Game
+import com.deweyvm.dogue.input.Controls
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -52,7 +53,8 @@ object OglRenderer {
 
 class OglRenderer(tileset:Tileset) extends Renderer {
   import OglRenderer._
-  val vectorField = VectorField.windSpiral(Game.RenderWidth, Game.RenderHeight, 20)
+  var seed = 0
+  var vectorField = VectorField.perlinWindFix(Game.RenderWidth, Game.RenderHeight, 20, seed)
   val r = new Random()
   val size = vorSize
   val scale = vorScale
@@ -149,12 +151,19 @@ class OglRenderer(tileset:Tileset) extends Renderer {
   }
 
   override def render() {
+
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
     draws foreach {_()}
     draws.clear()
     batch.end()
+
+
+    if (Controls.Space.justPressed) {
+      seed += 1
+      vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
+    }
     camera.zoom(2)
     camera.translate(-Game.RenderWidth/2,-Game.RenderHeight/2)
     shape.setProjectionMatrix(camera.getProjection)
