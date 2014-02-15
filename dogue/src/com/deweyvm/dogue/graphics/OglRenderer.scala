@@ -171,11 +171,11 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     camera.translate(Game.RenderWidth/2,Game.RenderHeight/2)
 
     camera.zoom(1)*/
-    /*camera.translate(-100,-30)
+    camera.translate(-100,-30)
     shape.setProjectionMatrix(camera.getProjection)
     drawRect(0,0,size,size, Color.Black)
     edges foreach { e =>
-      //drawLine(e.vorStart, e.vorEnd, Color.White)
+      drawLine(e.vorStart, e.vorEnd, Color.White)
       //drawLine(e.triStart, e.triEnd, Color.Green)
       drawPoint(e.triStart, Color.Red)
       drawPoint(e.triEnd, Color.Red)
@@ -184,7 +184,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
       drawPolygon(p, c)
     }
 
-    camera.translate(100,30)*/
+    camera.translate(100,30)
 
   }
 
