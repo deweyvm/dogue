@@ -7,7 +7,7 @@ import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.common.data.{Code, Indexed2d}
-import com.deweyvm.dogue.common.procgen.PerlinPoisson
+import com.deweyvm.dogue.common.procgen.{VectorField, PerlinPoisson}
 import com.badlogic.gdx.graphics.{Texture, Pixmap}
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.deweyvm.dogue.entities.Tile
@@ -141,7 +141,7 @@ case class WorldPanel(override val x:Int,
             case _ => Code.`?`
           }
         }
-        new Tile(code, t.tile.bgColor, Color.White).draw(i, j)
+        new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
     }
     state match {
       case Region =>

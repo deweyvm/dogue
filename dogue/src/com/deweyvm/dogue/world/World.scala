@@ -21,10 +21,10 @@ class World(val worldParams:WorldParams) {
   val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
 
   val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
-    //VectorField.perlinWind(noise, cols, rows, 1, worldParams.seed).lazyVectors
-    Lazy2d.tabulate(cols, rows) {case (i, j) =>
+    VectorField.perlinWind(noise, cols, rows, 1, worldParams.seed).lazyVectors
+    /*Lazy2d.tabulate(cols, rows) {case (i, j) =>
       (Point2d.UnitX, Arrow(Point2d.UnitX, 1), Color.Black)
-    }
+    }*/
   }
 
   val heightMap:Indexed2d[Int] = {
