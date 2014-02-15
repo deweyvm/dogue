@@ -5,10 +5,8 @@ import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d, Code}
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
 import com.deweyvm.gleany.data.Point2d
-import com.deweyvm.dogue.graphics.OglRenderer._
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.data.Rectd
-import com.deweyvm.dogue.common
 import com.deweyvm.dogue
 
 
@@ -24,9 +22,6 @@ class World(val worldParams:WorldParams) {
   val roughNoise = noise.cut(4096, 4096, dogue.common.id, 0)
   val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
     VectorField.perlinWind(solidElevation, noise, cols, rows, 1, worldParams.seed).lazyVectors
-    /*Lazy2d.tabulate(cols, rows) {case (i, j) =>
-      (Point2d.UnitX, Arrow(Point2d.UnitX, 1), Color.Black)
-    }*/
   }
 
   val heightMap:Indexed2d[Int] = {
@@ -47,7 +42,7 @@ class World(val worldParams:WorldParams) {
   val regionMap:Indexed2d[Color] = {
     val size = cols
     val regionSize = cols/8
-    val regionCenters = new PoissonRng(size, size, {case (i, j) => regionSize}, regionSize, vorSeed).getPoints
+    val regionCenters = new PoissonRng(size, size, {case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints
     val edges = Voronoi.getEdges(regionCenters, size, size)
     val faces = Voronoi.getFaces(edges, Rectd(0, 0, size, size))
     val colors = (0 until faces.length) map {_ => Color.randomHue()}
@@ -83,7 +78,8 @@ class World(val worldParams:WorldParams) {
       } else {
         Color.White
       }
-    new WorldTile(elevation, elevation, region, windDir, new Tile(Code.intToCode(elevation), color, Color.White))
+    val tile = new Tile(Code.intToCode(elevation), color, Color.White)
+    new WorldTile(elevation, elevation, region, windDir, tile)
   }
 
   def update:World = this

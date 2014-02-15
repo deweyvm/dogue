@@ -45,32 +45,16 @@ class OglTile(tileset:Tileset) {
 
 }
 
-object OglRenderer {
-  val vorSize = 300
-  val vorScale = 30
-  val vorSeed = 1L
-}
-
 class OglRenderer(tileset:Tileset) extends Renderer {
-  import OglRenderer._
-  var seed = 0
-  //var vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
-  val r = new Random()
-  val size = vorSize
-  val scale = vorScale
-  val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints
-  val edges = Voronoi.getEdges(pts, size, size)
-  val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
-    val mapped = p.lines map { _.p }
-    flattenVector(mapped)
-  }
-  val colors = polys map {_ => Color.randomHue()}
+
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
-  private val batch = new SpriteBatch
-  private val shape = new ShapeRenderer
-  private val camera = new Camera
+
+  val batch = new SpriteBatch
+  val shape = new ShapeRenderer
+  val camera = new Camera
+
   private val draws = ArrayBuffer[() => Unit]()
 
   def draw(s:Sprite, x:Float, y:Float) {
@@ -95,41 +79,6 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     shape.end()
   }
 
-  def drawVectorField(v:VectorField, color:Color) {
-
-
-    v.vectors foreach {case (pt, arrow, lineColor) =>
-      val (line, (l1, l2, l3)) = arrow.getShapes(pt)
-      shape.begin(ShapeType.Line)
-      shape.setColor(lineColor.toLibgdxColor)
-
-      shape.line(line.p.x.toFloat, line.p.y.toFloat, line.q.x.toFloat, line.q.y.toFloat)
-      shape.end()
-      shape.begin(ShapeType.Filled)
-      //shape.setColor(color.toLibgdxColor)
-      shape.triangle(
-        l1.p.x.toFloat,
-        l1.p.y.toFloat,
-        l2.q.x.toFloat,
-        l2.q.y.toFloat,
-        l3.p.x.toFloat,
-        l3.p.y.toFloat
-      )
-      shape.end()
-
-    }
-
-
-  }
-
-  def flattenVector(pts:Vector[Point2d]):Array[Float] = {
-    val flat = pts.foldRight(Vector[Float]()){ case (p, acc) =>
-      p.x.toFloat +: (p.y.toFloat +: acc)
-    }
-    Array(flat:_*)
-  }
-
-
   def drawPolygon(pts:Array[Float], color:Color) {
     shape.begin(ShapeType.Line)
     shape.setColor(color.toLibgdxColor)
@@ -151,41 +100,12 @@ class OglRenderer(tileset:Tileset) extends Renderer {
   }
 
   override def render() {
-
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
     draws foreach {_()}
     draws.clear()
     batch.end()
-
-
-    /*if (Controls.Space.justPressed) {
-      seed += 1
-      vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
-    }
-    camera.zoom(2)
-    camera.translate(-Game.RenderWidth/2,-Game.RenderHeight/2)
-    shape.setProjectionMatrix(camera.getProjection)
-    drawVectorField(vectorField, Color.White)
-    camera.translate(Game.RenderWidth/2,Game.RenderHeight/2)
-
-    camera.zoom(1)*/
-    camera.translate(-100,-30)
-    shape.setProjectionMatrix(camera.getProjection)
-    drawRect(0,0,size,size, Color.Black)
-    edges foreach { e =>
-      drawLine(e.vorStart, e.vorEnd, Color.White)
-      //drawLine(e.triStart, e.triEnd, Color.Green)
-      drawPoint(e.triStart, Color.Red)
-      drawPoint(e.triEnd, Color.Red)
-    }
-    polys.zip(colors) foreach { case (p, c) => ()
-      drawPolygon(p, c)
-    }
-
-    camera.translate(100,30)
-
   }
 
 }
