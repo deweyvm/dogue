@@ -8,6 +8,8 @@ import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.graphics.OglRenderer._
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.data.Rectd
+import com.deweyvm.dogue.common
+import com.deweyvm.dogue
 
 
 case class WorldParams(period:Int, octaves:Int, size:Int, seed:Long) {
@@ -16,12 +18,12 @@ case class WorldParams(period:Int, octaves:Int, size:Int, seed:Long) {
 
 class World(val worldParams:WorldParams) {
   val (cols, rows) = (worldParams.size, worldParams.size)
-
+  val solidElevation = 0
   val border = math.min(cols, rows)/2 - 10
   val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
-
+  val roughNoise = noise.cut(4096, 4096, dogue.common.id, 0)
   val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
-    VectorField.perlinWind(noise, cols, rows, 1, worldParams.seed).lazyVectors
+    VectorField.perlinWind(solidElevation, noise, cols, rows, 1, worldParams.seed).lazyVectors
     /*Lazy2d.tabulate(cols, rows) {case (i, j) =>
       (Point2d.UnitX, Arrow(Point2d.UnitX, 1), Color.Black)
     }*/
@@ -62,7 +64,7 @@ class World(val worldParams:WorldParams) {
     val (_, arr, _) = windMap.get(i, j).getOrElse((Point2d(0,0), Arrow(Point2d.UnitX, 1), Color.Black))
     val windDir = arr.direction * arr.magnitude
     val color =
-      if (elevation <= 0) {
+      if (elevation <= solidElevation) {
         Color.Blue.dim((1/(1 - math.abs(elevation - 2)/10f)).toFloat)
       } else if (elevation == 1) {
         Color.Yellow
@@ -81,7 +83,7 @@ class World(val worldParams:WorldParams) {
       } else {
         Color.White
       }
-    new WorldTile(elevation, elevation, region, windDir, new Tile(Code.` `, color, Color.White))
+    new WorldTile(elevation, elevation, region, windDir, new Tile(Code.intToCode(elevation), color, Color.White))
   }
 
   def update:World = this

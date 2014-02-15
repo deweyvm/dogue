@@ -14,7 +14,7 @@ case class WorldTile(height:Double, danger:Double, region:Color, wind:Point2d, t
     "Height %.5f" format height,
     "Danger %.5f" format danger,
     "Region %s" format region,
-    "Wind %s" format wind.magnitude.toString
+    "Wind %.2f" format wind.magnitude
   ))
 
   def regionTooltip:Tooltip = fullTooltip.copy(color = Color.White)

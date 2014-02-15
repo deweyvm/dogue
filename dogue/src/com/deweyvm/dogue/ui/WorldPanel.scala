@@ -13,20 +13,39 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.deweyvm.dogue.entities.Tile
 
 object WorldPanel {
-  trait State {
-    def next:Option[State]
-    def prev:Option[State]
+  trait MapState {
+    def next:MapState
+    def prev:MapState
   }
 
-  case object Region extends State {
+  case object Wind extends MapState {
+    override def next = Elevation
+    override def prev = Biome
+  }
+  case object Elevation extends MapState {
+    override def next = Biome
+    override def prev = Wind
+  }
+  case object Biome extends MapState {
+    override def next = Wind
+    override def prev = Elevation
+  }
+
+
+  trait ZoomState {
+    def next:Option[ZoomState]
+    def prev:Option[ZoomState]
+  }
+
+  case object Region extends ZoomState {
     override def next = None
     override def prev = Full.some
   }
-  case object Full extends State {
+  case object Full extends ZoomState {
     override def next = Region.some
     override def prev = Mini.some
   }
-  case object Mini extends State {
+  case object Mini extends ZoomState {
     override def next = Full.some
     override def prev = None
   }
@@ -38,7 +57,7 @@ object WorldPanel {
     val tooltip = InfoPanel.makeNew(1, 1, tooltipWidth, tooltipHeight, bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(x, y, width, height, bgColor, world, worldViewer, tooltip, minimap, Mini)
+    new WorldPanel(x, y, width, height, bgColor, world, worldViewer, tooltip, minimap, Mini, Wind)
   }
 }
 
@@ -54,7 +73,8 @@ case class WorldPanel(override val x:Int,
                       view:ArrayViewer,
                       tooltip:InfoPanel,
                       minimap:Minimap,
-                      state:WorldPanel.State)
+                      zoomState:WorldPanel.ZoomState,
+                      mapState:WorldPanel.MapState)
   extends Panel(x, y, width, height, bgColor) {
   import WorldPanel._
   val (iSpawn, jSpawn) = (0,0)
@@ -67,12 +87,18 @@ case class WorldPanel(override val x:Int,
   override def update:WorldPanel = {
     val newTooltip = getTooltip
     val newWorld = world.update
-    val newState = if (Controls.Enter.justPressed) {
-      state.next.getOrElse(state)
+    val newZoomState = if (Controls.Enter.justPressed) {
+      zoomState.next.getOrElse(zoomState)
     } else if (Controls.Backspace.justPressed) {
-      state.prev.getOrElse(state)
+      zoomState.prev.getOrElse(zoomState)
     } else {
-      state
+      zoomState
+    }
+
+    val newMapState = if (Controls.Space.justPressed) {
+      mapState.next
+    } else {
+      mapState
     }
 
     val newView = view.update(getTiles, getScale)
@@ -80,17 +106,18 @@ case class WorldPanel(override val x:Int,
     this.copy(world = newWorld,
               view = newView,
               tooltip = newTooltip.update,
-              state = newState)
+              zoomState = newZoomState,
+              mapState = newMapState)
 
   }
 
-  def getScale:Int = state match {
+  def getScale:Int = zoomState match {
     case Region => 1
     case Full => regionDiv
     case Mini => miniDiv
   }
 
-  def getTiles:Indexed2d[WorldTile] = state match {
+  def getTiles:Indexed2d[WorldTile] = zoomState match {
     case Region => world.worldTiles
     case Full => world.worldTiles
     case Mini => world.worldTiles
@@ -98,7 +125,7 @@ case class WorldPanel(override val x:Int,
 
 
   private def getTooltip:InfoPanel =  {
-    def getTooltip(t:WorldTile):Tooltip = state match {
+    def getTooltip(t:WorldTile):Tooltip = zoomState match {
       case Region => t.regionTooltip
       case Full => t.fullTooltip
       case Mini => t.fullTooltip
@@ -114,36 +141,44 @@ case class WorldPanel(override val x:Int,
   override def draw() {
     super.draw()
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
-      t.tile.draw(i, j)
-      val dir = t.wind.normalize
-      val max = math.max(math.abs(dir.x), math.abs(dir.y))
-      val code =
-        if (math.abs(math.abs(dir.x) - math.abs(dir.y)) > max/2) {
-          if (math.abs(dir.x) > math.abs(dir.y)) {
-            if (dir.x > 0) {
-              Code.→
+
+      mapState match {
+        case Elevation =>
+          t.tile.draw(i, j)
+        case Biome =>
+          t.tile.copy(bgColor = t.region, code = Code.` `).draw(i, j)
+        case Wind =>
+          val dir = t.wind.normalize
+          val max = math.max(math.abs(dir.x), math.abs(dir.y))
+          val code =
+            if (math.abs(math.abs(dir.x) - math.abs(dir.y)) > max/2) {
+              if (math.abs(dir.x) > math.abs(dir.y)) {
+                if (dir.x > 0) {
+                  Code.→
+                } else {
+                  Code.`←`
+                }
+              } else {
+                if (dir.y > 0) {
+                  Code.↓
+                } else {
+                  Code.↑
+                }
+              }
             } else {
-              Code.`←`
+              (math.signum(dir.x).toInt, math.signum(dir.y).toInt) match {
+                case (1, -1) => Code./
+                case (-1, 1) => Code./
+                case (1, 1) => Code.\
+                case (-1, -1) => Code.\
+                case _ => Code.`?`
+              }
             }
-          } else {
-            if (dir.y > 0) {
-              Code.↓
-            } else {
-              Code.↑
-            }
-          }
-        } else {
-          (math.signum(dir.x).toInt, math.signum(dir.y).toInt) match {
-            case (1, -1) => Code./
-            case (-1, 1) => Code./
-            case (1, 1) => Code.\
-            case (-1, -1) => Code.\
-            case _ => Code.`?`
-          }
-        }
-        new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
+          new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
+      }
+
     }
-    state match {
+    zoomState match {
       case Region =>
         view.draw(world.worldTiles, x, y, drawWorldTile, WorldTile.Blank)
       case Full =>
