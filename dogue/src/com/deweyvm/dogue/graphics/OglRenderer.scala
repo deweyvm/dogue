@@ -54,7 +54,7 @@ object OglRenderer {
 class OglRenderer(tileset:Tileset) extends Renderer {
   import OglRenderer._
   var seed = 0
-  //var vectorField = VectorField.perlinWindFix(Game.RenderWidth, Game.RenderHeight, 20, seed)
+  var vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
   val r = new Random()
   val size = vorSize
   val scale = vorScale
@@ -160,7 +160,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     batch.end()
 
 
-    /*if (Controls.Space.justPressed) {
+    if (Controls.Space.justPressed) {
       seed += 1
       vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
     }
@@ -170,7 +170,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     drawVectorField(vectorField, Color.White)
     camera.translate(Game.RenderWidth/2,Game.RenderHeight/2)
 
-    camera.zoom(1)*/
+    camera.zoom(1)
     /*camera.translate(-100,-30)
     shape.setProjectionMatrix(camera.getProjection)
     drawRect(0,0,size,size, Color.Black)
