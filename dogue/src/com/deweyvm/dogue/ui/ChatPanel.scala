@@ -8,16 +8,13 @@ import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.protocol.{DogueOps, Command, DogueMessage}
 import com.deweyvm.dogue.common.parsing.CommandParser
 
-case class ChatPanel(override val x:Int,
-                     override val y:Int,
-                     override val width:Int,
-                     override val height:Int,
+case class ChatPanel(override val rect:Recti,
                      bgColor:Color,
                      fgColor:Color,
                      transmitter:Transmitter[DogueMessage],
                      input:TextInput,
                      output:InfoPanel)
-  extends Panel(x, y, width, height, bgColor) {
+  extends Panel(rect, bgColor) {
   val inputHeight = input.height
   val parser = new CommandParser
   override def getRects:Vector[Recti] =

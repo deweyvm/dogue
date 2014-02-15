@@ -3,23 +3,21 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.gleany.data.Recti
 
 object InfoPanel {
-  def makeNew(x:Int, y:Int, width:Int, height:Int, bgColor:Color):InfoPanel = {
-    new InfoPanel(x, y, width, height, bgColor, "", Vector(), new ScrollBar, 0)
+  def makeNew(rect:Recti, bgColor:Color):InfoPanel = {
+    new InfoPanel(rect, bgColor, "", Vector(), new ScrollBar, 0)
   }
 }
 
-case class InfoPanel(override val x:Int,
-                     override val y:Int,
-                     override val width:Int,
-                     override val height:Int,
+case class InfoPanel(override val rect:Recti,
                      bgColor:Color,
                      text:String,
                      lines:Vector[Text],
                      scrollBar:ScrollBar,
                      jView:Int)
-  extends Panel(x, y, width, height, bgColor) {
+  extends Panel(rect, bgColor) {
   private val leftMargin = 0
   private val rightMargin = 1
   private val topMargin = 0

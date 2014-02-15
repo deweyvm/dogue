@@ -1,12 +1,11 @@
 package com.deweyvm.dogue.ui
 
 import com.deweyvm.gleany.graphics.Color
+import com.deweyvm.gleany.data.Recti
 
-class TitlePanel(override val x:Int,
-                 override val y:Int,
-                 override val width:Int,
-                 override val height:Int,
-                 bgColor:Color) extends Panel(x, y, width, height, bgColor) {
+class TitlePanel(override val rect:Recti,
+                 bgColor:Color)
+  extends Panel(rect, bgColor) {
   val title = new Text("Dogue", Color.Black, Color.White)
   override def draw() {
     super.draw()

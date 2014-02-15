@@ -50,24 +50,21 @@ object WorldPanel {
     override def prev = None
   }
 
-  def create(x:Int, y:Int, width:Int, height:Int,
+  def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
     val world = new World(WorldParams(size/4, 22, size, 0))
-    val tooltip = InfoPanel.makeNew(1, 1, tooltipWidth, tooltipHeight, bgColor)
+    val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val minimap = new Minimap(world, 69)
-    val worldViewer = ArrayViewer(width, height, 0, 0, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(x, y, width, height, bgColor, world, worldViewer, tooltip, minimap, Mini, Wind)
+    val worldViewer = ArrayViewer(rect.width, rect.height, 0, 0, Controls.AxisX, Controls.AxisY)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Wind)
   }
 }
 
 
 
 
-case class WorldPanel(override val x:Int,
-                      override val y:Int,
-                      override val width:Int,
-                      override val height:Int,
+case class WorldPanel(override val rect:Recti,
                       bgColor:Color,
                       world:World,
                       view:ArrayViewer,
@@ -75,7 +72,7 @@ case class WorldPanel(override val x:Int,
                       minimap:Minimap,
                       zoomState:WorldPanel.ZoomState,
                       mapState:WorldPanel.MapState)
-  extends Panel(x, y, width, height, bgColor) {
+  extends Panel(rect, bgColor) {
   import WorldPanel._
   val (iSpawn, jSpawn) = (0,0)
   override def getRects:Vector[Recti] = {
@@ -130,7 +127,7 @@ case class WorldPanel(override val x:Int,
       case Full => t.fullTooltip
       case Mini => t.fullTooltip
     }
-    val fresh = InfoPanel.makeNew(1, 1, tooltip.width, tooltip.height, bgColor)
+    val fresh = InfoPanel.makeNew(Recti(1, 1, tooltip.width, tooltip.height), bgColor)
     val (i, j) = (view.xCursor, view.yCursor)
     val tip = getTiles.get(i, j) map getTooltip
     tip.foldLeft(fresh){ case (acc, tt) =>

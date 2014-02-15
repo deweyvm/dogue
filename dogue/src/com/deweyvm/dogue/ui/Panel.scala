@@ -7,11 +7,15 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.dogue.Dogue
 
-class Panel(val x:Int, val y:Int, val width:Int, val height:Int, bgColor:Color) {
+class Panel(val rect:Recti, bgColor:Color) {
+  val x = rect.x
+  val y = rect.y
+  val width = rect.width
+  val height = rect.height
   def contains(i:Int, j:Int):Boolean =
     getRects exists { _.contains(Point2d(i,j)) }
 
-  def getRects:Vector[Recti] = Vector(Recti(x, y, width, height))
+  def getRects:Vector[Recti] = Vector(rect)
   def update:Panel = this
   def draw() {
     getRects foreach {rect =>
@@ -24,10 +28,6 @@ class Panel(val x:Int, val y:Int, val width:Int, val height:Int, bgColor:Color) 
         new Tile(Code.` `, bgColor, bgColor).draw(i, j)
       }
     }
-
-
-
-    //new RectSprite(width*16, height*16, bgColor).draw(x*16, y*16)
   }
 }
 
