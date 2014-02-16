@@ -19,7 +19,7 @@ class VoronoiVisualizer {
     val edges = Voronoi.getEdges(pts, size, size, vorSeed)
     val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
       val mapped = p.lines map { _.p }
-      flattenVector(mapped)
+      flattenVector(mapped.toVector)
     }
     val colors = polys map {_ => Color.randomHue()}
     (edges, polys.zip(colors))
