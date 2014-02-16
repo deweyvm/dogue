@@ -4,9 +4,8 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d, Code}
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import com.deweyvm.gleany.data.Point2d
+import com.deweyvm.gleany.data.{Point2i, Point2d, Rectd}
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.gleany.data.Rectd
 import com.deweyvm.dogue
 
 
@@ -80,7 +79,15 @@ class World(val worldParams:WorldParams) {
       } else {
         Color.White
       }
-    val tile = new Tile(Code.intToCode(elevation), color, Color.White)
+    val testColor =
+      if (false/*edgePixels.contains(Point2i(i, j))*/) {
+        println("%d, %d" format (i, j))
+        Color.White
+      } else {
+        color
+      }
+    val tile = new Tile(Code.intToCode(elevation), testColor, Color.White)
+
     new WorldTile(elevation, elevation, region, windDir, tile)
   }
 
