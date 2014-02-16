@@ -42,13 +42,15 @@ class World(val worldParams:WorldParams) {
   val regionMap:Indexed2d[Color] = {
     val size = cols
     val regionSize = cols/8
-    val regionCenters = new PoissonRng(size, size, {case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints
-    val edges = Voronoi.getEdges(regionCenters, size, size)
-    val faces = Voronoi.getFaces(edges, Rectd(0, 0, size, size))
+    val buffer = size/4
+    val poissonSize = size + buffer*2
+    val regionCenters = new PoissonRng(poissonSize, poissonSize, {case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints
+    val edges = Voronoi.getEdges(regionCenters, poissonSize, poissonSize, worldParams.seed)
+    val faces = Voronoi.getFaces(edges, Rectd(0, 0, poissonSize, poissonSize))
     val colors = (0 until faces.length) map {_ => Color.randomHue()}
     val f = colors zip faces
     Lazy2d.tabulate(cols, rows){ case (i, j) =>
-      f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
+      f.find{case (color, poly) => poly.contains(Point2d(i + buffer, j + buffer))} map {_._1} getOrElse Color.Black
     }
   }
 

@@ -1,24 +1,32 @@
 package com.deweyvm.dogue.graphics.visualizers
 
-import com.deweyvm.dogue.common.procgen.{Polygon, PoissonRng}
+import com.deweyvm.dogue.common.procgen.{PoissonRng, PerlinNoise, Polygon}
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
 import com.deweyvm.gleany.data.{Point2d, Rectd}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.OglRenderer
+import com.deweyvm.dogue.input.Controls
 
 class VoronoiVisualizer {
-  val vorSize = 300
-  val vorScale = 30
-  val vorSeed = 1L
+  val vorSize = 500
+  val vorScale = 50
+  var vorSeed = 37L
   val size = vorSize
   val scale = vorScale
-  val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints
-  val edges = Voronoi.getEdges(pts, size, size)
-  val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
-    val mapped = p.lines map { _.p }
-    flattenVector(mapped)
+
+  def make = {
+    val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints
+    val edges = Voronoi.getEdges(pts, size, size, vorSeed)
+    val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
+      val mapped = p.lines map { _.p }
+      flattenVector(mapped)
+    }
+    val colors = polys map {_ => Color.randomHue()}
+    (edges, polys.zip(colors))
   }
-  val colors = polys map {_ => Color.randomHue()}
+
+  var (edges, polys) = make
+
 
   private def flattenVector(pts:Vector[Point2d]):Array[Float] = {
     val flat = pts.foldRight(Vector[Float]()){ case (p, acc) =>
@@ -29,6 +37,13 @@ class VoronoiVisualizer {
 
   def render(r:OglRenderer) {
 
+    if (Controls.Space.justPressed) {
+      vorSeed += 1
+      val (e, p) = make
+      edges = e
+      polys = p
+    }
+
     r.camera.translate(-100,-30)
     r.shape.setProjectionMatrix(r.camera.getProjection)
     r.drawRect(0,0,size,size, Color.Black)
@@ -38,7 +53,7 @@ class VoronoiVisualizer {
       r.drawPoint(e.triStart, Color.Red)
       r.drawPoint(e.triEnd, Color.Red)
     }
-    polys.zip(colors) foreach { case (p, c) => ()
+    polys foreach { case (p, c) => ()
       r.drawPolygon(p, c)
     }
 

@@ -15,12 +15,10 @@ class Engine {
   val cols = Game.RenderWidth/Dogue.tileSpec.width
   val rows = Game.RenderHeight/Dogue.tileSpec.height
   val factory = new StageFactory(cols, rows)
-  val start = System.nanoTime()
-  val iters = 1
 
   var stage = new StageManager(Pointer.create(
-    factory.create(Stage.Blank),
     factory.create(Stage.World),
+    factory.create(Stage.Blank),
     factory.create(Stage.Title),
     factory.create(Stage.Chat)
 

@@ -7,9 +7,7 @@ import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.common.data.{Code, Indexed2d}
-import com.deweyvm.dogue.common.procgen.{VectorField, PerlinPoisson}
-import com.badlogic.gdx.graphics.{Texture, Pixmap}
-import com.badlogic.gdx.graphics.g2d.Sprite
+import com.deweyvm.dogue.common.procgen.VectorField
 import com.deweyvm.dogue.entities.Tile
 
 object WorldPanel {
@@ -53,11 +51,11 @@ object WorldPanel {
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val world = new World(WorldParams(size/4, 22, size, 0))
+    val world = new World(WorldParams(size/4, 22, size, 4))
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(rect.width, rect.height, 0, 0, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Wind)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Biome)
   }
 }
 

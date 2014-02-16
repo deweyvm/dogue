@@ -19,6 +19,7 @@ import com.deweyvm.gleany.data.Rectd
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.input.Controls
+import com.deweyvm.dogue.graphics.visualizers.VoronoiVisualizer
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -46,7 +47,7 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-
+  //val vis = new VoronoiVisualizer
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
@@ -106,6 +107,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws foreach {_()}
     draws.clear()
     batch.end()
+    //vis.render(this)
   }
 
 }
