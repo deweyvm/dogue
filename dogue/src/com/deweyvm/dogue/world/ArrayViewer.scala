@@ -14,8 +14,10 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
   def update[T](a:Indexed2d[T], scale:Int):ArrayViewer = {
     val width = a.cols
     val height = a.rows
-    this.copy(xCursor = (xCursor + xControl.zip(5,1)*scale).clamp(0, width - 1),
+    val result = this.copy(xCursor = (xCursor + xControl.zip(5,1)*scale).clamp(0, width - 1),
               yCursor = (yCursor + yControl.zip(5,1)*scale).clamp(0, height - 1))
+    //println(result.xCursor)
+    result
   }
 
   def withCursor(x:Int, y:Int) = this.copy(xCursor = x, yCursor = y)
@@ -33,7 +35,9 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
       draw(x, y, tile)
     }
     if (Game.getFrame % 120 < 100) {
-      crosshair.draw(iRoot + xCursor - iView, jRoot + yCursor - jView)
+      val xCrosshair = (iRoot + xCursor - iView).clamp(iRoot, iRoot + viewWidth - 1)
+      val yCrosshair = (jRoot + yCursor - jView).clamp(jRoot, jRoot + viewHeight - 1)
+      crosshair.draw(xCrosshair, yCrosshair)
     }
   }
 }
