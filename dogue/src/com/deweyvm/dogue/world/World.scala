@@ -10,7 +10,6 @@ import com.deweyvm.dogue
 
 
 case class WorldParams(period:Int, octaves:Int, size:Int, seed:Long) {
-  (0 until 100) foreach {_ => println(new MapName(System.nanoTime()).makeName)}
   val name = new MapName(seed).makeName
 }
 
@@ -45,9 +44,9 @@ class World(val worldParams:WorldParams) {
     val regionSize = size/8.0
     val buffer = size/2.0
     val poissonSize = size + buffer*2
-    val regionCenters = new PoissonRng(poissonSize, poissonSize, {case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints map {_ - Point2d(buffer, buffer)}
+    val regionCenters = new PoissonRng(poissonSize, poissonSize, { case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints map {_ - Point2d(buffer, buffer)}
     val edges = Voronoi.getEdges(regionCenters, poissonSize, poissonSize, worldParams.seed)
-    val faces = Voronoi.getFaces(edges, Rectd(-buffer, -buffer,5,5)).map {face =>
+    val faces = Voronoi.getGraph(edges, Rectd(-buffer, -buffer,5,5)).polys map { face =>
       face.scale(scale)
     }
     val colors = (0 until faces.length) map {_ => Color.randomHue()}
