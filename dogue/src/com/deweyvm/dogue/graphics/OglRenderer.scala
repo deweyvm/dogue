@@ -47,7 +47,7 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-  //val vis = new VoronoiVisualizer
+  val vis = new VoronoiVisualizer
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
@@ -107,7 +107,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws foreach {_()}
     draws.clear()
     batch.end()
-    //vis.render(this)
+    vis.render(this)
   }
 
 }

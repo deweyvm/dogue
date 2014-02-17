@@ -17,7 +17,7 @@ class VoronoiVisualizer {
   def make = {
     val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints
     val edges = Voronoi.getEdges(pts, size, size, vorSeed)
-    val polys = Voronoi.getGraph(edges, Rectd(0, 0, size, size)).polys map { p:Polygon =>
+    val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
       val mapped = p.lines map { _.p }
       flattenVector(mapped.toVector)
     }
