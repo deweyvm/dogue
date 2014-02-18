@@ -185,7 +185,13 @@ case class WorldPanel(override val rect:Recti,
 
     tooltip.draw()
     drawName()
+    drawDebug()
     //
+  }
+
+  private def drawDebug() {
+    val s = world.getTimeString
+    new Text(s, Color.Black, Color.White).draw(0, height + 1)
   }
 
   private def drawName() {

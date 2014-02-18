@@ -1,26 +1,28 @@
 package com.deweyvm.dogue.graphics.visualizers
 
 import com.deweyvm.dogue.common.procgen.{PoissonRng, PerlinNoise, Polygon}
-import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import com.deweyvm.gleany.data.{Point2d, Rectd}
+import com.deweyvm.dogue.common.procgen.voronoi.{VoronoiGraph, Voronoi}
+import com.deweyvm.gleany.data.{Time, Point2d, Rectd}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.dogue.input.Controls
 
 class VoronoiVisualizer {
   val vorSize = 500
-  val vorScale = 50
+  val vorScale = 25
   var vorSeed = 37L
   val size = vorSize
   val scale = vorScale
 
   def make = {
     val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints
-    val edges = Voronoi.getEdges(pts, size, size, vorSeed)
-    val polys = Voronoi.getFaces(edges, Rectd(0, 0, size, size)) map { p:Polygon =>
+    val edges = Time.printMillis(() => Voronoi.getEdges(pts, size, size, vorSeed))
+    val faces = Time.printMillis(() => Voronoi.getFaces(edges, Rectd(0, 0, size, size)))
+    val polys = faces map { p:Polygon =>
       val mapped = p.lines map { _.p }
       flattenVector(mapped.toVector)
     }
+    Time.printMillis(() => new VoronoiGraph(faces))
     val colors = polys map {_ => Color.randomHue()}
     (edges, polys.zip(colors))
   }

@@ -4,7 +4,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d, Code}
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import com.deweyvm.gleany.data.{Point2i, Point2d, Rectd}
+import com.deweyvm.gleany.data.{Time, Point2i, Point2d, Rectd}
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue
 
@@ -56,12 +56,37 @@ class World(val worldParams:WorldParams) {
     }
   }
 
-
+  var eTime = 0.0
+  var rTime = 0.0
+  var wTime = 0.0
+  def getElevation(i:Int, j:Int) = {
+    val (h, time) = Time.timer(() => {
+      heightMap.get(i, j).getOrElse(10)
+    })
+    eTime += time
+    h
+  }
+  def getRegion(i:Int, j:Int) = {
+    val (r, time) = Time.timer(() => {
+      regionMap.get(i, j).getOrElse(Color.Black)
+    })
+    rTime += time
+    r
+  }
+  def getWind(i:Int, j:Int) = {
+    val (w, time) = Time.timer(() => {
+      windMap.get(i, j).getOrElse((Point2d(0,0), Arrow(Point2d.UnitX, 1), Color.Black)) match {
+        case (_, arr, _) => arr
+      }
+    })
+    wTime += time
+    w
+  }
   def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
-    val elevation:Int = heightMap.get(i, j).getOrElse(10)
-    val region = regionMap.get(i, j).getOrElse(Color.Black)
-    val (_, arr, _) = windMap.get(i, j).getOrElse((Point2d(0,0), Arrow(Point2d.UnitX, 1), Color.Black))
-    val windDir = arr.direction * arr.magnitude
+    val elevation:Int = getElevation(i, j)
+    val region = getRegion(i, j)
+    val arrow = getWind(i, j)
+    val windDir = arrow.direction * arrow.magnitude
     val color =
       if (elevation <= solidElevation) {
         Color.Blue.dim((1/(1 - math.abs(elevation - 2)/10f)).toFloat)
@@ -94,7 +119,18 @@ class World(val worldParams:WorldParams) {
     new WorldTile(elevation, elevation, region, windDir, tile)
   }
 
-  def update:World = this
+  def getTimeString = {
+
+    val totalTime = rTime + eTime + wTime
+    val r = (rTime/totalTime * 100).toInt
+    val h = (eTime/totalTime * 100).toInt
+    val w = (wTime/totalTime * 100).toInt
+    "wind(%d) height(%d) region(%d)" format (w, h, r)
+  }
+
+  def update:World = {
+    this
+  }
 
 }
 
