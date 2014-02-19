@@ -4,9 +4,11 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d, Code}
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import com.deweyvm.gleany.data.{Time, Point2i, Point2d, Rectd}
+import com.deweyvm.gleany.data._
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue
+import com.deweyvm.dogue.common.procgen.Arrow
+import com.deweyvm.gleany.data.Rectd
 
 
 case class WorldParams(period:Int, octaves:Int, size:Int, seed:Long) {
@@ -39,42 +41,45 @@ class World(val worldParams:WorldParams) {
   }
 
   val regionMap:Indexed2d[Color] = {
-    val size = 1
-    val scale = cols/size
-    val regionSize = size/8.0
+    val size = cols
+    val regionSize = size/50
     val buffer = size/2.0
-    val poissonSize = size + buffer*2
-    val regionCenters = new PoissonRng(poissonSize, poissonSize, { case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints map {_ - Point2d(buffer, buffer)}
-    val edges = Voronoi.getEdges(regionCenters, poissonSize, poissonSize, worldParams.seed)
-    val faces = Voronoi.getFaces(edges, Rectd(-buffer, -buffer,5,5)) map { face =>
-      face.scale(scale)
+    val regionCenters = new PoissonRng(size, size, { case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints.filter{ pt =>
+      heightMap.get(pt.x.toInt, pt.y.toInt) match {
+        case Some(d) => d > 0
+        case None => true
+      }
     }
+    println("world: " + regionCenters.length)
+    val edges = Voronoi.getEdges(regionCenters, size, size, worldParams.seed)
+    val faces = Voronoi.getFaces(edges, Rectd(0, 0,size,size))
     val colors = (0 until faces.length) map {_ => Color.randomHue()}
     val f = colors zip faces
     Lazy2d.tabulate(cols, rows){ case (i, j) =>
-      f.find{case (color, poly) => poly.contains(Point2d(i + buffer, j + buffer))} map {_._1} getOrElse Color.Black
+
+      f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
     }
   }
 
   var eTime = 0.0
   var rTime = 0.0
   var wTime = 0.0
-  def getElevation(i:Int, j:Int) = {
-    val (h, time) = Time.timer(() => {
+  def getElevation(i:Int, j:Int):Int = {
+    val (h, time) = Timer.timer(() => {
       heightMap.get(i, j).getOrElse(10)
     })
     eTime += time
     h
   }
-  def getRegion(i:Int, j:Int) = {
-    val (r, time) = Time.timer(() => {
+  def getRegion(i:Int, j:Int):Color = {
+    val (r, time) = Timer.timer(() => {
       regionMap.get(i, j).getOrElse(Color.Black)
     })
     rTime += time
     r
   }
-  def getWind(i:Int, j:Int) = {
-    val (w, time) = Time.timer(() => {
+  def getWind(i:Int, j:Int):Arrow = {
+    val (w, time) = Timer.timer(() => {
       windMap.get(i, j).getOrElse((Point2d(0,0), Arrow(Point2d.UnitX, 1), Color.Black)) match {
         case (_, arr, _) => arr
       }
@@ -101,20 +106,13 @@ class World(val worldParams:WorldParams) {
       } else if (elevation == 7) {
         Color.Grey
       } else if (elevation == 8){
-        Color.White.dim(1.2f)
+        Color.White.dim(1.3f)
       } else if (elevation == 9) {
+        Color.White.dim(1.2f)
+      } else {
         Color.White.dim(1.1f)
-      } else {
-        Color.White
       }
-    val testColor =
-      if (false/*edgePixels.contains(Point2i(i, j))*/) {
-        println("%d, %d" format (i, j))
-        Color.White
-      } else {
-        color
-      }
-    val tile = new Tile(Code.intToCode(elevation), testColor, Color.White)
+    val tile = new Tile(Code.intToCode(elevation), color, Color.White)
 
     new WorldTile(elevation, elevation, region, windDir, tile)
   }
