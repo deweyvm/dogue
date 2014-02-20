@@ -12,19 +12,27 @@ class HexGridVisualizer {
   val rows = 50 - 1
   val hexes = Array2d.tabulate(cols, rows) { case (i, j) =>
     val size = 10.0
-    val c = math.sqrt(3)/4.0
-    val (xOffset:Double, yOffset:Double) = (j.isOdd, (i).isOdd) match {
-      case (true, true) => (0.0, 0.0)
-      case (true, false) => (0.0, size)
-      case (false, true) => (0.0, 0.0)
-      case (false, false) => (0.0, size)
+    val factor = 4/(math.sqrt(3)/2)
+    val xOffset:Double = (j.isOdd, i.isOdd) match {
+      case (true, true) => size/factor
+      case (true, false) => -size/factor
+      case (false, true) => -size/factor
+      case (false, false) => size/factor
     }
-    Point2d(i*size, j*size)
+    Point2d(i*size + xOffset, j*size)
   }
   val polys: Seq[Option[Array[Float]]] = for (i <- 0 until (cols - 1)*((rows - 1)/2)) yield {
-    val x = i % (cols - 1)
-    val y = (i / (cols - 1)) * 2
-    println("%d, %d" format (x, y))
+
+    val x0 = i % (cols - 1)
+    val y0 = (i / (cols - 1)) * 2
+    val (xOffset:Int, yOffset:Int) = (y0.isOdd, x0.isOdd) match {
+      case (true, true) => (0, 1)
+      case (true, false) => (0, 0)
+      case (false, true) => (0, 1)
+      case (false, false) => (0,0)
+    }
+    val x = x0
+    val y = y0 + yOffset
     for {
       UL <- hexes.get(x, y)
       UR <- hexes.get(x + 1, y)
