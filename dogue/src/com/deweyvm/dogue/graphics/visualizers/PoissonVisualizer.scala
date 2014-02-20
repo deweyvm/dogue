@@ -16,7 +16,7 @@ class PoissonVisualizer {
     val pos = new PoissonRng(size, size, {case(i, j) => space}, maxSpace, seed).getPoints
     val points = pos.filter { pt =>
       noise.get(pt.x.toInt, pt.y.toInt) match {
-        case Some(d) => (d > 0.2)
+        case Some(d) => d > 0.2
         case None => true
       }
     }
@@ -34,11 +34,10 @@ class PoissonVisualizer {
     }
     val x = 50
     val y = 50
-    r.camera.translate(-x, -y)
-    r.shape.setProjectionMatrix(r.camera.getProjection)
-    poisson foreach { pt =>
-      r.drawPoint(pt, Color.White)
+    r.translateShape(x, y){() =>
+      poisson foreach { pt =>
+        r.drawPoint(pt, Color.White)
+      }
     }
-    r.camera.translate(x, y)
   }
 }

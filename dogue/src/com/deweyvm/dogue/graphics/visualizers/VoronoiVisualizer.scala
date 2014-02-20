@@ -56,19 +56,19 @@ class VoronoiVisualizer {
       polys = p
     }
 
-    r.camera.translate(-100,-30)
-    r.shape.setProjectionMatrix(r.camera.getProjection)
-    r.drawRect(0,0,size,size, Color.Black)
-    edges foreach { e =>
+    r.translateShape(100,30) {() =>
+      r.drawRect(0,0,size,size, Color.Black)
+      edges foreach { e =>
       //r.drawLine(e.vorStart, e.vorEnd, Color.White)
-      r.drawLine(e.triStart, e.triEnd, Color.Green)
-      r.drawPoint(e.triStart, Color.Red)
-      r.drawPoint(e.triEnd, Color.Red)
-    }
-    polys foreach { case (p, c) => ()
-      //r.drawPolygon(p, c)
+        r.drawLine(e.triStart, e.triEnd, Color.Green)
+        r.drawPoint(e.triStart, Color.Red)
+        r.drawPoint(e.triEnd, Color.Red)
+      }
+      polys foreach { case (p, c) => ()
+        //r.drawPolygon(p, c)
+      }
     }
 
-    r.camera.translate(100,30)
+
   }
 }

@@ -3,7 +3,7 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Point2d, Recti}
+import com.deweyvm.gleany.data.{Timer, Point2d, Recti, Rectd}
 import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
 import scala.util.Random
 import com.deweyvm.dogue.common.procgen._
-import com.deweyvm.gleany.data.Rectd
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.input.Controls
@@ -47,7 +46,7 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-  val vis = new HexGridVisualizer
+  val vis = Timer.printMillis(() => new HexGridVisualizer)
   //val vis = new VoronoiVisualizer
   //val vis = new PoissonVisualizer
   private val width = tileset.tileWidth
@@ -75,18 +74,24 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   }
 
-  def drawPoint(pt:Point2d, color:Color) {
+  def drawPoint(pt:Point2d, color:Color, size:Int=2) {
     shape.begin(ShapeType.Filled)
     shape.setColor(color.toLibgdxColor)
-    shape.circle(pt.x.toFloat, pt.y.toFloat, 2)
+    shape.circle(pt.x.toFloat, pt.y.toFloat, size)
     shape.end()
   }
 
-  def drawPolygon(pts:Array[Float], color:Color) {
+  def drawPolygonFloat(pts:Array[Float], color:Color) {
     shape.begin(ShapeType.Line)
     shape.setColor(color.toLibgdxColor)
     shape.polygon(pts)
     shape.end()
+  }
+
+  def drawPolygon(poly:Polygon, color:Color) {
+    poly.lines foreach { line =>
+      drawLine(line.p, line.q, color)
+    }
   }
 
   def drawRect(x:Int, y:Int, width:Int, height:Int, color:Color) {
@@ -94,6 +99,14 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     shape.setColor(color.toLibgdxColor)
     shape.rect(x, y, width, height)
     shape.end()
+  }
+
+  def translateShape(x:Int, y:Int)(f:() => Unit) {
+    camera.translate(-x, -y)
+    shape.setProjectionMatrix(camera.getProjection)
+    f()
+    camera.translate(x, y)
+
   }
 
   override def draw(t:Tile, i:Int, j:Int) {
