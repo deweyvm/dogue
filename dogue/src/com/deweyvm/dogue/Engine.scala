@@ -17,8 +17,8 @@ class Engine {
   val factory = new StageFactory(cols, rows)
 
   var stage = new StageManager(Pointer.create(
-    factory.create(Stage.World),
     factory.create(Stage.Blank),
+    factory.create(Stage.World),
     factory.create(Stage.Title),
     factory.create(Stage.Chat)
 

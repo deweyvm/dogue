@@ -20,7 +20,7 @@ class World(val worldParams:WorldParams) {
   val solidElevation = 0
   val border = math.min(cols, rows)/2 - 10
   val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
-  val roughNoise = noise.cut(4096, 4096, dogue.common.id, 0)
+  //val roughNoise = noise.cut(4096, 4096, dogue.common.id, 0)
   val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
     VectorField.perlinWind(solidElevation, noise, cols, rows, 1, worldParams.seed).lazyVectors
   }
@@ -42,22 +42,24 @@ class World(val worldParams:WorldParams) {
 
   val regionMap:Indexed2d[Color] = {
     val size = cols
-    val regionSize = size/50
-    val buffer = size/2.0
+    val regionSize = size/10.0
     val regionCenters = new PoissonRng(size, size, { case (i, j) => regionSize}, regionSize, worldParams.seed).getPoints.filter{ pt =>
       heightMap.get(pt.x.toInt, pt.y.toInt) match {
         case Some(d) => d > 0
         case None => true
       }
     }
-    println("world: " + regionCenters.length)
+
     val edges = Voronoi.getEdges(regionCenters, size, size, worldParams.seed)
     val faces = Voronoi.getFaces(edges, Rectd(0, 0,size,size))
     val colors = (0 until faces.length) map {_ => Color.randomHue()}
     val f = colors zip faces
     Lazy2d.tabulate(cols, rows){ case (i, j) =>
-
-      f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
+      heightMap.get(i, j) match {
+        case Some(d) if d > 0 =>
+          f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
+        case _ => Color.Black
+      }
     }
   }
 

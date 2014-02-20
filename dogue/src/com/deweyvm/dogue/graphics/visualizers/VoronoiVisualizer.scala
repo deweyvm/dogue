@@ -1,34 +1,43 @@
 package com.deweyvm.dogue.graphics.visualizers
 
-import com.deweyvm.dogue.common.procgen.{PerlinNoise, PoissonRng, Polygon}
+import com.deweyvm.dogue.common.procgen.{PolygonUtils, PerlinNoise, PoissonRng, Polygon}
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import com.deweyvm.gleany.data.{Point2d, Rectd}
+import com.deweyvm.gleany.data.{Timer, Point2d, Rectd}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.dogue.input.Controls
 
 class VoronoiVisualizer {
   val vorSize = 500
-  val vorScale = vorSize/50.0
+  val vorScale = vorSize/15.0
   var vorSeed = 37L
   val size = vorSize
   val scale = vorScale
-  def make = {
-    val perlin = new PerlinNoise(1/128.0, 5, size, vorSeed).lazyRender
-    val pts = new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints.filter { pt =>
-      perlin.get(pt.x.toInt, pt.y.toInt) match {
-        case Some(d) => (d > 0.2)
-        case None => true
-      }
-    }
-    println(pts.length)
 
-    val edges = Voronoi.getEdges(pts, size, size, vorSeed)
-    val faces = Voronoi.getFaces(edges, Rectd(0, 0, size, size))
-    val polys = faces map { p:Polygon =>
+  def time[T](s:String, f: () => T) = {
+    val (t, time) = Timer.timer(f)
+    println("%s: %dms" format (s, time/1000000))
+    t
+  }
+
+  def make = {
+    val perlin = time("Perlin noise: ", () => new PerlinNoise(1/128.0, 5, size, vorSeed).render)
+    val pts = time("Generate points: ", () => {
+      new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints.filter { pt =>
+        perlin.get(pt.x.toInt, pt.y.toInt) match {
+          case Some(d) => d > 0.2
+          case None => true
+        }
+        true
+      }
+    })
+
+    val edges = time("Generate Voronoi: ", () => Voronoi.getEdges(pts, size, size, vorSeed))
+    val faces = time("Getting Faces:", () => Voronoi.getFaces(edges, Rectd(0, 0, size, size)))
+    val polys = time("Flatten polys:", () => faces map { p:Polygon =>
       val mapped = p.lines map { _.p }
-      flattenVector(mapped.toVector)
-    }
+      PolygonUtils.flattenVector(mapped.toVector)
+    })
 
     val colors = polys map {_ => Color.randomHue()}
     (edges, polys.zip(colors))
@@ -37,12 +46,6 @@ class VoronoiVisualizer {
   var (edges, polys) = make
 
 
-  private def flattenVector(pts:Vector[Point2d]):Array[Float] = {
-    val flat = pts.foldRight(Vector[Float]()){ case (p, acc) =>
-      p.x.toFloat +: (p.y.toFloat +: acc)
-    }
-    Array(flat:_*)
-  }
 
   def render(r:OglRenderer) {
 
@@ -57,13 +60,13 @@ class VoronoiVisualizer {
     r.shape.setProjectionMatrix(r.camera.getProjection)
     r.drawRect(0,0,size,size, Color.Black)
     edges foreach { e =>
-      r.drawLine(e.vorStart, e.vorEnd, Color.White)
-      //r.drawLine(e.triStart, e.triEnd, Color.Green)
+      //r.drawLine(e.vorStart, e.vorEnd, Color.White)
+      r.drawLine(e.triStart, e.triEnd, Color.Green)
       r.drawPoint(e.triStart, Color.Red)
       r.drawPoint(e.triEnd, Color.Red)
     }
     polys foreach { case (p, c) => ()
-      r.drawPolygon(p, c)
+      //r.drawPolygon(p, c)
     }
 
     r.camera.translate(100,30)
