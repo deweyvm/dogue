@@ -43,15 +43,22 @@ class World(val worldParams:WorldParams) {
 
 
   val regionMap:Indexed2d[Color] = {
-    val hexSize = cols/10
-    val hexGrid = new HexGrid(hexSize, cols/hexSize, rows/hexSize, 0, worldParams.seed)
+    val hexSize = cols/500
+    val hexGrid = Timer.printMillisString("Total: ", () => new HexGrid(hexSize, cols/hexSize, rows/hexSize, 0, worldParams.seed))
+    println("%d %d" format(hexGrid.hexCols, hexGrid.hexRows))
     val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
     val graph = hexGrid.graph
-    val f = colors zip (graph.nodes map {_.self} )
+    val colorMap = (colors zip graph.nodes).map { case (color, poly) =>
+      (poly.self, color)
+    }.toMap
     Lazy2d.tabulate(cols, rows){ case (i, j) =>
       heightMap.get(i, j) match {
         case Some(d) if d > 0 =>
-          f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
+          hexGrid.pointInPoly(i, j) match {
+            case Some(poly) => colorMap(poly)
+            case None => Color.Black
+          }
+          //f.find{case (color, poly) => poly.contains(Point2d(i, j))} map {_._1} getOrElse Color.Black
         case _ => Color.Black
       }
     }
