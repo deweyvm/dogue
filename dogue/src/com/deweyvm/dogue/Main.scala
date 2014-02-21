@@ -19,7 +19,7 @@ object Main {
       head("dogue", Game.globals.Version)
 
       opt[Unit]("test-only") action { (_, c) =>
-        c.copy(testOnly = true)
+        c.copy(testsOnly = true)
       } text "run tests then exit"
 
       opt[Unit]("fail-first") action { (_, c) =>
