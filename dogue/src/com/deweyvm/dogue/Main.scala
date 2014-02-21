@@ -15,9 +15,16 @@ import com.deweyvm.gleany.data.Time
 
 object Main {
   def main(args: Array[String]) {
-    TestManager.runAll(true)
     val parser = new scopt.OptionParser[DogueOptions]("dogue") {
       head("dogue", Game.globals.Version)
+
+      opt[Unit]("test-only") action { (_, c) =>
+        c.copy(testOnly = true)
+      } text "run tests then exit"
+
+      opt[Unit]("fail-first") action { (_, c) =>
+        c.copy(failFirst = true)
+      } text "stop testing after the first failure"
 
       opt[Unit]("debug") action { (_, c) =>
         c.copy(isDebug = true)
@@ -33,6 +40,10 @@ object Main {
     }
 
     parser.parse(args, DogueOptions()) map { c =>
+      TestManager.runAll(c.failFirst)
+      if (c.testsOnly) {
+        sys.exit(0)
+      }
       val s = Game.settings
       Log.initLog(s.logLocation.get, Log.Warn)
       Game.globals.IsDebugMode = c.isDebug
