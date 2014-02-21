@@ -12,7 +12,7 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.Dogue
 
 
-class HexGridVisualizer {
+class HexGridVisualizer extends Visualizer {
   val cols = 5//49
   val rows = 7//49
   var seed = 0
@@ -30,7 +30,7 @@ class HexGridVisualizer {
 
   def makeHexGrid = new HexGrid(hexSize, cols, rows, wiggle, seed)
 
-  def batchDraw(r:OglRenderer) {
+  override def drawBatch(r:OglRenderer) {
     hexGrid.graph.nodes.foreach { node =>
       val poly = node.self
       val centroid = poly.centroid
@@ -42,7 +42,7 @@ class HexGridVisualizer {
     }
   }
 
-  def render(r:OglRenderer) {
+  override def drawShape(r:OglRenderer) {
     cursorX = (cursorX + Controls.AxisX.zip(0, 3)).clamp(0, hexGrid.hexCols)
     cursorY = (cursorY + Controls.AxisY.zip(0, 3)).clamp(0, hexGrid.hexRows)
     if (Controls.Space.justPressed) {

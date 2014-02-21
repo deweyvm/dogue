@@ -6,7 +6,8 @@ import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
-class PoissonVisualizer {
+
+class PoissonVisualizer extends Visualizer {
   val size = 500
   val space = 5
   val maxSpace = space
@@ -26,7 +27,7 @@ class PoissonVisualizer {
   }
   var noise = makePerlin
   var poisson = makePoisson
-  def render(r:OglRenderer) {
+  override def drawShape(r:OglRenderer) {
     if (Controls.Space.justPressed) {
       seed += 1
       noise = makePerlin

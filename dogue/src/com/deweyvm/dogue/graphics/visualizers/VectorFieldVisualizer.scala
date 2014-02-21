@@ -7,11 +7,12 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.graphics.OglRenderer
 
-class VectorFieldVisualizer {
+class VectorFieldVisualizer extends Visualizer {
   var seed = 0L
   var vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
 
-  def render(r:OglRenderer) {
+
+  override def drawShape(r:OglRenderer) {
     val shape = r.shape
     val camera = r.camera
 

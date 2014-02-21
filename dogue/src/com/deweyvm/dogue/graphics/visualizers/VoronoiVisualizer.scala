@@ -7,7 +7,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.dogue.input.Controls
 
-class VoronoiVisualizer {
+class VoronoiVisualizer extends Visualizer {
   val vorSize = 500
   val vorScale = vorSize/15.0
   var vorSeed = 37L
@@ -47,7 +47,7 @@ class VoronoiVisualizer {
 
 
 
-  def render(r:OglRenderer) {
+  override def drawBatch(r:OglRenderer) {
 
     if (Controls.Space.justPressed) {
       vorSeed += 1
