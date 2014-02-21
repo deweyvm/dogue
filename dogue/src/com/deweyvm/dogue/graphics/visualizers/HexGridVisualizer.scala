@@ -27,7 +27,6 @@ class HexGridVisualizer {
 
   def mx:Int = Dogue.gdxInput.map{_.getX}.getOrElse(0) - dx
   def my:Int = Dogue.gdxInput.map{_.getY}.getOrElse(0) - dy
-  def mouse = Point2d(mx*3.25, my*1.20)
 
   def makeHexGrid = new HexGrid(hexSize, cols, rows, wiggle, seed)
 

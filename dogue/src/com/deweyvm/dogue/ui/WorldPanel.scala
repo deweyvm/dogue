@@ -51,7 +51,7 @@ object WorldPanel {
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val world = new World(WorldParams(size/4, 22, size, 0))
+    val world = new World(WorldParams(size/4, 22, size, 5))
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(rect.width, rect.height, 0, 0, Controls.AxisX, Controls.AxisY)

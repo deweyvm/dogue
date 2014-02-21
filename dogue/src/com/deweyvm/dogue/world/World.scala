@@ -127,11 +127,7 @@ class World(val worldParams:WorldParams) {
     val r = (rTime/totalTime * 100).toInt
     val h = (eTime/totalTime * 100).toInt
     val w = (wTime/totalTime * 100).toInt
-    if (Game.getFrame % 180 == 0) {
-      rTime = 0
-      eTime = 0
-      wTime = 0
-    }
+
     "wind(%d) height(%d) region(%d)" format (w, h, r)
 
   }
