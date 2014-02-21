@@ -9,6 +9,7 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue
 import com.deweyvm.dogue.common.procgen.Arrow
 import com.deweyvm.gleany.data.Rectd
+import com.deweyvm.dogue.Game
 
 
 case class WorldParams(period:Int, octaves:Int, size:Int, seed:Long) {
@@ -43,7 +44,7 @@ class World(val worldParams:WorldParams) {
 
 
   val regionMap:Indexed2d[Color] = {
-    val hexSize = cols/500
+    val hexSize = cols/1500
     val hexGrid = Timer.printMillisString("Total: ", () => new HexGrid(hexSize, cols/hexSize, rows/hexSize, 0, worldParams.seed))
     println("%d %d" format(hexGrid.hexCols, hexGrid.hexRows))
     val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
@@ -126,7 +127,13 @@ class World(val worldParams:WorldParams) {
     val r = (rTime/totalTime * 100).toInt
     val h = (eTime/totalTime * 100).toInt
     val w = (wTime/totalTime * 100).toInt
+    if (Game.getFrame % 180 == 0) {
+      rTime = 0
+      eTime = 0
+      wTime = 0
+    }
     "wind(%d) height(%d) region(%d)" format (w, h, r)
+
   }
 
   def update:World = {
