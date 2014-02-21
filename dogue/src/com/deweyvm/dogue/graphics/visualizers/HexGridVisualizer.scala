@@ -1,24 +1,22 @@
 package com.deweyvm.dogue.graphics.visualizers
 
 import com.deweyvm.dogue.graphics.OglRenderer
-import com.deweyvm.dogue.common.data.{Code, Array2d}
+import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
-import scala.util.Random
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.entities.Tile
-import com.badlogic.gdx.Gdx
-import com.deweyvm.dogue.{Dogue, Game}
+import com.deweyvm.dogue.Dogue
 
 
 class HexGridVisualizer {
-  val cols = 49
-  val rows = 49
+  val cols = 5//49
+  val rows = 7//49
   var seed = 0
-  val hexSize = 16
+  val hexSize = 32
   var hexGrid = makeHexGrid
   var cursorX = 0
   var cursorY = 0
@@ -30,18 +28,17 @@ class HexGridVisualizer {
   def my:Int = Dogue.gdxInput.map{_.getY}.getOrElse(0) - dy
   def mouse = Point2d(mx*3.25, my*1.20)
 
-  def makeHexGrid = new HexGrid(hexSize, cols, rows, 0, seed)
+  def makeHexGrid = new HexGrid(hexSize, cols, rows, hexSize/2, seed)
 
   def batchDraw(r:OglRenderer) {
     hexGrid.graph.nodes.foreach { node =>
       val poly = node.self
-      val upLeft = poly.upperLeft
-      upLeft foreach { pt =>
-        val c = getColor(node.getNeighbors.length)
-        val code = Code.unicodeToCode((node.getNeighbors.length + 48).toChar)
-        val tile = new Tile(code, Color.Blank, c)
-        r.drawTileRaw(tile, pt.x + dx - 3, pt.y + dy + 2)
-      }
+      val centroid = poly.centroid
+
+      val c = getColor(node.getNeighbors.length)
+      val code = Code.unicodeToCode((node.getNeighbors.length + 48).toChar)
+      val tile = new Tile(code, Color.Blank, c)
+      r.drawTileRaw(tile, centroid.x + dx - 8, centroid.y + dy - 8)
     }
   }
 
@@ -62,17 +59,8 @@ class HexGridVisualizer {
         val c = getColor(node.getNeighbors.length)
         r.drawPolygon(poly, c)
       }
-      //val m = mouse
-      val x = mx/hexSize
-      val yOffset = x.isOdd.select(-hexSize/2, 0)
-      val y = ((3.0/4.0)*(my + yOffset)/hexSize).toInt
-      val k = Hex.coordsToIndex(x, y, hexGrid.hexCols)
-      //println("(%d, %d) => %d" format (x, y, k))
-      val len = hexGrid.polys.length
-      if (k >= 0 && k <= len - 1) {
-        hexGrid.polys(k).foreach { poly =>
-          r.drawPolygon(poly, Color.White)
-        }
+      hexGrid.pointInPoly(mx, my) foreach { poly =>
+        r.drawPolygon(poly, Color.White)
       }
     }
   }
