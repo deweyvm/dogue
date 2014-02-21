@@ -44,8 +44,8 @@ class World(val worldParams:WorldParams) {
 
 
   val regionMap:Indexed2d[Color] = {
-    val hexSize = cols/1500
-    val hexGrid = Timer.printMillisString("Total: ", () => new HexGrid(hexSize, cols/hexSize, rows/hexSize, 0, worldParams.seed))
+    val hexSize = cols/150
+    val hexGrid = new HexGrid(hexSize, cols/hexSize, rows/hexSize, 0, worldParams.seed)
     println("%d %d" format(hexGrid.hexCols, hexGrid.hexRows))
     val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
     val graph = hexGrid.graph

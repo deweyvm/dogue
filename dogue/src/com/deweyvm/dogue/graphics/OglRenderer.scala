@@ -18,7 +18,7 @@ import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.graphics.visualizers.{HexGridVisualizer, PoissonVisualizer, VoronoiVisualizer}
+import com.deweyvm.dogue.graphics.visualizers.{Visualizer, HexGridVisualizer, PoissonVisualizer, VoronoiVisualizer}
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -46,7 +46,7 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-  //val vis = Timer.printMillis(() => new HexGridVisualizer)
+  val vis:Option[Visualizer] = None//new HexGridVisualizer().some
   //val vis = new VoronoiVisualizer
   //val vis = new PoissonVisualizer
   private val width = tileset.tileWidth
@@ -123,11 +123,11 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
-    //vis.batchDraw(this)
+    vis foreach {_.drawBatch(this)}
     draws foreach {_()}
     draws.clear()
     batch.end()
-    //vis.render(this)
+    vis foreach {_.drawShape(this)}
   }
 
 }
