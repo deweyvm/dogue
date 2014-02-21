@@ -17,6 +17,7 @@ class HexGridVisualizer {
   val rows = 7//49
   var seed = 0
   val hexSize = 32
+  var wiggle = 0
   var hexGrid = makeHexGrid
   var cursorX = 0
   var cursorY = 0
@@ -28,7 +29,7 @@ class HexGridVisualizer {
   def my:Int = Dogue.gdxInput.map{_.getY}.getOrElse(0) - dy
   def mouse = Point2d(mx*3.25, my*1.20)
 
-  def makeHexGrid = new HexGrid(hexSize, cols, rows, hexSize/2, seed)
+  def makeHexGrid = new HexGrid(hexSize, cols, rows, wiggle, seed)
 
   def batchDraw(r:OglRenderer) {
     hexGrid.graph.nodes.foreach { node =>
