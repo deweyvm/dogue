@@ -74,10 +74,7 @@ class HexGridVisualizer {
           r.drawPolygon(poly, Color.White)
         }
       }
-
     }
-
-
   }
 
   def getColor(i:Int) = i match {
