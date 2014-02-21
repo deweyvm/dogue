@@ -46,7 +46,7 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-  //val vis = Timer.printMillis(() => new HexGridVisualizer)
+  val vis = Timer.printMillis(() => new HexGridVisualizer)
   //val vis = new VoronoiVisualizer
   //val vis = new PoissonVisualizer
   private val width = tileset.tileWidth
@@ -123,11 +123,11 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
-    //vis.batchDraw(this)
+    vis.batchDraw(this)
     draws foreach {_()}
     draws.clear()
     batch.end()
-    //vis.render(this)
+    vis.render(this)
   }
 
 }
