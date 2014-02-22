@@ -23,7 +23,7 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
     val windDir = arrow.direction * arrow.magnitude
     val (color, code) = elevation.elevationColor(eco.maxElevation)
     val lat = eco.getLatitude(i, j)
-    val light = cycle.getLight(i, j)
+    val light = cycle.getSunlight(i, j)
     val tile = new Tile(code, color, Color.White)
 
     new WorldTile(elevation, region, lat, windDir, light, tile)

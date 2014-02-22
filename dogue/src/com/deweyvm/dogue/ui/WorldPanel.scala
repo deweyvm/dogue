@@ -62,9 +62,8 @@ object WorldPanel {
              bgColor:Color, size:Int):WorldPanel = {
     val world = World.create(WorldParams(size/4, 22, size, 5))
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
-    val minimap = new Minimap(world, 69)
-    val worldViewer = ArrayViewer(rect.width, rect.height, 0, 0, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Nychthemera)
+    val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, Mini, Nychthemera)
   }
 }
 
@@ -76,7 +75,6 @@ case class WorldPanel(override val rect:Recti,
                       world:World,
                       view:ArrayViewer,
                       tooltip:InfoPanel,
-                      minimap:Minimap,
                       zoomState:WorldPanel.ZoomState,
                       mapState:WorldPanel.MapState)
   extends Panel(rect, bgColor) {

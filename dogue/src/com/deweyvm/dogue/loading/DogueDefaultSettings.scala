@@ -9,5 +9,5 @@ object DogueDefaultSettings extends SettingDefaults {
   override val SfxVolume: Float = 0.05f
   override val MusicVolume: Float = 0.05f
   override val WindowSize: Point2i = new Point2i(Game.Width,Game.Height)
-  override val DisplayMode: Int = Display.Windowed.toInt
+  override val DisplayMode: Int = Display.BorderlessWindow.toInt
 }

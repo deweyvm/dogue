@@ -6,8 +6,8 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
 case class Nychthemera(t:Int, radius:Double) {
-  private val outer = Circle(radius, Point2d(radius, radius))
-  private def shadow = Circle(radius, shadowPos + precessionPos + center)
+  private def outer = Circle(radius, radius.dup + precessionPos)
+  private def shadow = Circle(radius, shadowPos  + outer.center)
   private def precessionPos:Point2d = {
     val period = 500
     val a = t*Angles.Tau/period
@@ -26,14 +26,18 @@ case class Nychthemera(t:Int, radius:Double) {
     Point2d(x, y)
   }
 
-  def getLight(i:Int, j:Int):Double = {
+  def getSunlight(i:Int, j:Int):Double = {
     val p = Point2d(i, j)
     if ((p - (precessionPos + center)).magnitude < 4098/8) {
       0.25
     } else {
-      (shadow.contains(Point2d(i, j)) && outer.contains(Point2d(i, j))).select(1,0)
+      (shadow.contains(p) && outer.contains(p)).select(1,0)
     }
 
+  }
+
+  def getSunHeat(i:Int, j:Int):Double = {
+    0
   }
 
   def update = Nychthemera(t + 1, radius)
