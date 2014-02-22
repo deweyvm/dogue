@@ -21,12 +21,16 @@ object WorldPanel {
     override def prev = Biome
   }
   case object Elevation extends MapState {
-    override def next = Biome
+    override def next = Latitude
     override def prev = Wind
+  }
+  case object Latitude extends MapState {
+    override def next = Biome
+    override def prev = Elevation
   }
   case object Biome extends MapState {
     override def next = Wind
-    override def prev = Elevation
+    override def prev = Latitude
   }
 
 
@@ -55,7 +59,7 @@ object WorldPanel {
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(rect.width, rect.height, 0, 0, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Biome)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Elevation)
   }
 }
 
@@ -138,6 +142,8 @@ case class WorldPanel(override val rect:Recti,
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
 
       mapState match {
+        case Latitude =>
+          t.tile.copy(bgColor = t.latitude.color).draw(i, j)
         case Elevation =>
           t.tile.draw(i, j)
         case Biome =>

@@ -6,14 +6,14 @@ import com.deweyvm.dogue.ui.Tooltip
 import com.deweyvm.gleany.data.Point2d
 
 object WorldTile {
-  val Blank = WorldTile(0, 0, Color.Pink, Point2d.UnitX, Tile.Blank)
+  val Blank = WorldTile(0, Color.Pink, Polar, Point2d.UnitX, Tile.Blank)
 }
 
-case class WorldTile(height:Double, danger:Double, region:Color, wind:Point2d, tile:Tile) {
+case class WorldTile(height:Double, region:Color, latitude:LatitudinalRegion, wind:Point2d, tile:Tile) {
   def fullTooltip:Tooltip = Tooltip(Color.Red, Vector(
-    "Height %.5f" format height,
-    "Danger %.5f" format danger,
-    "Region %s" format region,
+    "Height %.2f" format height,
+    "Region %d" format region.toLibgdxColor.toIntBits,
+    "Latitude %s" format latitude,
     "Wind %.2f" format wind.magnitude
   ))
 

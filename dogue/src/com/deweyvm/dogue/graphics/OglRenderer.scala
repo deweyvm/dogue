@@ -106,7 +106,6 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     shape.setProjectionMatrix(camera.getProjection)
     f()
     camera.translate(x, y)
-
   }
 
   override def draw(t:Tile, i:Int, j:Int) {
