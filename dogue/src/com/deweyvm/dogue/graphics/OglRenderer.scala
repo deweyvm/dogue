@@ -3,7 +3,7 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Timer, Point2d, Recti, Rectd}
+import com.deweyvm.gleany.data.{Point2d, Recti}
 import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
@@ -12,13 +12,9 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
-import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import scala.util.Random
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.graphics.visualizers.{Visualizer, HexGridVisualizer, PoissonVisualizer, VoronoiVisualizer}
+import com.deweyvm.dogue.graphics.visualizers._
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -46,9 +42,11 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-  val vis:Option[Visualizer] = None//new HexGridVisualizer().some
-  //val vis = new VoronoiVisualizer
-  //val vis = new PoissonVisualizer
+  val vis:Option[Visualizer] = None
+  //val vis:Option[Visualizer] = None//new HexGridVisualizer().some
+  //val vis:Option[Visualizer] = new PerlinVisualizer().some
+  //val vis:Option[Visualizer] = new VoronoiVisualizer().some
+  //val vis:Option[Visualizer] = new PoissonVisualizer().some
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)
@@ -121,9 +119,17 @@ class OglRenderer(tileset:Tileset) extends Renderer {
   override def render() {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
+    vis foreach {v =>
+      camera.zoom(v.zoom)
+      (camera.translate _).tupled(v.translation)
+    }
     batch.setProjectionMatrix(camera.getProjection)
     vis foreach {_.drawBatch(this)}
     draws foreach {_()}
+    vis foreach {v =>
+      camera.zoom(1)
+      camera.translate(-v.translation._1, -v.translation._2)
+    }
     draws.clear()
     batch.end()
     vis foreach {_.drawShape(this)}

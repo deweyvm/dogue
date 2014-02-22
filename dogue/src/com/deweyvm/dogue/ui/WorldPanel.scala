@@ -12,25 +12,30 @@ import com.deweyvm.dogue.entities.Tile
 
 object WorldPanel {
   trait MapState {
-    def next:MapState
     def prev:MapState
+    def next:MapState
   }
 
   case object Wind extends MapState {
-    override def next = Elevation
     override def prev = Biome
+    override def next = Elevation
   }
   case object Elevation extends MapState {
-    override def next = Latitude
     override def prev = Wind
+    override def next = Latitude
   }
   case object Latitude extends MapState {
-    override def next = Biome
     override def prev = Elevation
+    override def next = Biome
   }
   case object Biome extends MapState {
-    override def next = Wind
     override def prev = Latitude
+    override def next = Nychthemera
+  }
+
+  case object Nychthemera extends MapState {
+    override def prev = Biome
+    override def next = Wind
   }
 
 
@@ -55,11 +60,11 @@ object WorldPanel {
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val world = new World(WorldParams(size/4, 22, size, 5))
+    val world = World.create(WorldParams(size/4, 22, size, 5))
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val minimap = new Minimap(world, 69)
     val worldViewer = ArrayViewer(rect.width, rect.height, 0, 0, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Elevation)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, minimap, Mini, Nychthemera)
   }
 }
 
@@ -81,7 +86,7 @@ case class WorldPanel(override val rect:Recti,
     super.getRects ++ tooltip.getRects
   }
   val regionSize = 16
-  val miniDiv = world.cols/minimap.div //(4096*16)/69
+  val miniDiv = world.cols/69//minimap.div //(4096*16)/69
   val regionDiv = 16
   override def update:WorldPanel = {
     val newTooltip = getTooltip
@@ -142,6 +147,9 @@ case class WorldPanel(override val rect:Recti,
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
 
       mapState match {
+        case Nychthemera =>
+          val light = Color.fromHsb(t.daylight.toFloat/2)
+          t.tile.copy(bgColor = light).draw(i, j)
         case Latitude =>
           t.tile.copy(bgColor = t.latitude.color).draw(i, j)
         case Elevation =>
@@ -179,13 +187,14 @@ case class WorldPanel(override val rect:Recti,
       }
 
     }
+    val tiles = world.worldTiles
     zoomState match {
       case Region =>
         view.draw(world.worldTiles, x, y, drawWorldTile, WorldTile.Blank)
       case Full =>
         view.scaled(regionDiv).draw(world.worldTiles.sample(regionDiv), x, y, drawWorldTile, WorldTile.Blank)
       case Mini =>
-        view.scaled(miniDiv).draw(minimap.sampled, x, y, drawWorldTile, WorldTile.Blank)
+        view.scaled(miniDiv).draw(world.worldTiles.sample(miniDiv), x, y, drawWorldTile, WorldTile.Blank)
     }
 
 
@@ -196,7 +205,7 @@ case class WorldPanel(override val rect:Recti,
   }
 
   private def drawDebug() {
-    val s = world.getTimeString
+    val s = world.eco.getTimeString
     new Text(s, Color.Black, Color.White).draw(0, height + 1)
   }
 

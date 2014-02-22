@@ -10,4 +10,7 @@ trait Visualizer {
   def drawBatch(ogl:OglRenderer) {
 
   }
+
+  def zoom = 1.0
+  def translation = (0, 0)
 }
