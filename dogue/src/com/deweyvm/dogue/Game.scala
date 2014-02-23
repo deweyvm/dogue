@@ -8,6 +8,7 @@ import com.deweyvm.dogue.common.logging.Log
 import com.badlogic.gdx.Gdx
 import java.util.concurrent.{TimeUnit, Callable, Executors}
 import java.util
+import com.deweyvm.dogue.common.protocol.{DogueOps, Command}
 
 object Game {
   val Zoom = 1
@@ -33,8 +34,8 @@ object Game {
   private def cleanup() {
     Log.info("Closing game")
     Log.flush()
-    Client.instance.kill()
     Client.instance.disconnect(Client.State.Closed)
+    Client.instance.kill()
   }
 }
 

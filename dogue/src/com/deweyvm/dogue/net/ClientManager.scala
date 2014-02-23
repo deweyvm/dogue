@@ -6,7 +6,7 @@ import com.deweyvm.dogue.common.logging.Log
 import java.io.IOException
 import java.net.{SocketException, UnknownHostException}
 import com.deweyvm.dogue.common.Implicits._
-import com.deweyvm.dogue.common.protocol.DogueMessage
+import com.deweyvm.dogue.common.protocol.{DogueOps, Command, DogueMessage}
 import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.procgen.Name
 import com.deweyvm.dogue.ui.TextInput
@@ -117,7 +117,6 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
   override def dequeue:Vector[DogueMessage] = {
     map {_.dequeue} getOrElse Vector()
   }
-
 
   def disconnect(reason:ClientState) {
     delete(reason)
