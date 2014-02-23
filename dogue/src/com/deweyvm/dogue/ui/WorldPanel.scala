@@ -9,6 +9,7 @@ import Implicits._
 import com.deweyvm.dogue.common.data.{Code, Indexed2d}
 import com.deweyvm.dogue.common.procgen.VectorField
 import com.deweyvm.dogue.entities.Tile
+import com.deweyvm.dogue.Game
 
 object WorldPanel {
   trait MapState {
@@ -60,7 +61,7 @@ object WorldPanel {
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val date = DateConstants()
+    val date = DateConstants(framesPerDay = 60*60*24*60)
     val params = WorldParams(69, size/4, 22, size, date, 5)
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
@@ -218,8 +219,8 @@ case class WorldPanel(override val rect:Recti,
   }
 
   private def drawTime() {
-    val time = world.cycle.date.getString
+    val time = world.celestial.date.getString
     val xName = x + (width - time.length)/2
-    new Text(time, Color.Black, Color.White).draw(xName, width - time.length)
+    new Text(time, Color.Black, Color.White).draw(xName, height)
   }
 }

@@ -1,12 +1,7 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.data.Code
-import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.procgen.Arrow
-import com.deweyvm.gleany.data.{Timer, Point2d}
+import com.deweyvm.gleany.data.Timer
 import com.deweyvm.dogue.common.threading.DogueFuture
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
 
 object EcosphereLoader {
 

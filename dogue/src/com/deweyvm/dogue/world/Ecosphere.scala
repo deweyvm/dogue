@@ -119,8 +119,8 @@ object Ecosphere {
     private val latRegions:Indexed2d[LatitudinalRegion] = {
       val max = cols/2
       Lazy2d.tabulate(cols, rows){ case (i, j) =>
-        val x = cols/2 - i
-        val y = rows/2 - j
+        val x = (cols/2 - i).toDouble
+        val y = (rows/2 - j).toDouble
         val lat = (x*x + y*y).sqrt/max
         LatitudinalRegion.getRegion(lat)
       }

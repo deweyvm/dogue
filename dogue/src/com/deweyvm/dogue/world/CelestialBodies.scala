@@ -26,6 +26,7 @@ case object Spring extends Season {
 case class DateConstants(framesPerDay:Int = 60*24,
                          daysPerYear:Int = 400,
                          monthsPerYear:Int = 10) {
+  val startTime:Long = daysPerYear*framesPerDay*100
 
 }
 
@@ -42,10 +43,9 @@ case class Date(bodies:CelestialBodies, c:DateConstants) {
   }
 
   def getString:String =  {
-    val fps = Game.fps
     val year = t / framesPerYear
     val month = (t % framesPerYear)/framesPerMonth
-    val day = t / framesPerDay
+    val day = (t % framesPerYear) / framesPerDay
     val dayFrames = t % framesPerDay
     val framesPerHour = framesPerDay / 100.0
     val framesPerMinute = framesPerDay / (100.0 * 100.0)
@@ -54,7 +54,7 @@ case class Date(bodies:CelestialBodies, c:DateConstants) {
     val hours = ((dayFrames / framesPerHour) % 100).toInt
     val minutes = ((dayFrames / framesPerMinute) % 100).toInt
     val seconds = ((dayFrames / framesPerSecond) % 100).toInt
-    "%dY %s %d %02d:%02d:%02d %s" format (year, months(month.toInt), day, seconds, minutes, hours, bodies.getSeason.name)
+    "%dY %s %3d  %02d:%02d:%02d  %s" format (year, months(month.toInt), day + 1, seconds, minutes, hours, bodies.getSeason.name)
 
   }
 
@@ -128,7 +128,4 @@ case class CelestialBodies(t:Long, worldRadius:Double, c:DateConstants) {
     light + d
   }
 
-
-
-  def update = this.copy(t = t + 1)
 }
