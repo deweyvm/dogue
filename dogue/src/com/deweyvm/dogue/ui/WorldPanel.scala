@@ -60,7 +60,8 @@ object WorldPanel {
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val params = WorldParams(69, size/4, 22, size, 5)
+    val date = DateConstants()
+    val params = WorldParams(69, size/4, 22, size, date, 5)
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
@@ -201,6 +202,7 @@ case class WorldPanel(override val rect:Recti,
     tooltip.draw()
     drawName()
     drawDebug()
+    drawTime()
     //
   }
 
@@ -213,5 +215,11 @@ case class WorldPanel(override val rect:Recti,
     val name = world.worldParams.name
     val xName = x + (width - name.length)/2
     new Text(name, Color.Black, Color.White).draw(xName,0)
+  }
+
+  private def drawTime() {
+    val time = world.cycle.date.getString
+    val xName = x + (width - time.length)/2
+    new Text(time, Color.Black, Color.White).draw(xName, width - time.length)
   }
 }

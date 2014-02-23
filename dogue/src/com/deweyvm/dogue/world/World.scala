@@ -8,12 +8,12 @@ import com.deweyvm.dogue.entities.Tile
 object World {
   def create(params:WorldParams):World = {
     val eco = EcosphereLoader.create(params)
-    val cycle = Nychthemera(0, params.size/2)
+    val cycle = CelestialBodies(0, params.size/2, params.date)
     World(params, eco, cycle)
   }
 }
 
-case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
+case class World(worldParams:WorldParams, eco:Ecosphere, cycle:CelestialBodies) {
   val cols = eco.cols
   val rows = eco.rows
   def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
