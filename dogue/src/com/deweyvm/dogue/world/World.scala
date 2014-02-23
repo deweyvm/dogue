@@ -7,7 +7,7 @@ import com.deweyvm.dogue.entities.Tile
 
 object World {
   def create(params:WorldParams):World = {
-    val eco = new Ecosphere(params)
+    val eco = Ecosphere.create(params)
     val cycle = Nychthemera(0, params.size/2)
     World(params, eco, cycle)
   }
@@ -17,16 +17,17 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
   val cols = eco.cols
   val rows = eco.rows
   def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
-    val elevation = eco.getElevation(i, j)
     val region = eco.getRegion(i, j)
     val arrow = eco.getWind(i, j)
     val windDir = arrow.direction * arrow.magnitude
-    val (color, code) = elevation.elevationColor(eco.maxElevation)
+    val (elevation, color, code) = eco.getElevation(i, j)
     val lat = eco.getLatitude(i, j)
     val light = cycle.getSunlight(i, j)
+    val season = cycle.getSeason
+    val sunTemp = cycle.getSunHeat(i, j)
     val tile = new Tile(code, color, Color.White)
 
-    new WorldTile(elevation, region, lat, windDir, light, tile)
+    new WorldTile(elevation, region, lat, windDir, light, sunTemp, season, tile)
   }
 
   def update:World = {
