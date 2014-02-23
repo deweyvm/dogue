@@ -52,7 +52,7 @@ class ClientManager(port:Int, host:String) extends Task with Transmitter[DogueMe
       if (state == Client.State.Connecting) {
         val s = "Attempting to establish a connection to %s" format host
         Log.info(s)
-        TextInput.putCommand(TextInput.chat, "/local \"%s\"" format s)
+        TextInput.prependCommand(TextInput.chat, "/local \"%s\"" format s)
         ClientManager.num += 1
         killHandshake = DogueHandshake.begin(host, port, success, fail).some
         state = Client.State.Handshaking

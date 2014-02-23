@@ -61,6 +61,11 @@ object TextInput {
     commandQueue(id) = newVect
   }
 
+  def prependCommand(id:String, string:String):Unit = synchronized {
+    val newVect:Vector[String] = string +: commandQueue(id)
+    commandQueue(id) = newVect
+  }
+
   def getCommands(id:String, transmitter:Transmitter[DogueMessage]):(Vector[DogueMessage]) = synchronized {
     val result = (commandQueue(id).toVector map lineToCommands(transmitter)).flatten
     commandQueue(id) = Vector()
