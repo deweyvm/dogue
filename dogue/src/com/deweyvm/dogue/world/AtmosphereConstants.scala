@@ -25,6 +25,7 @@ case object AtmosphereConstants {
   /**
    * sensical results require h to be negative
    * @param h height *above* sea level
+   * @return pressure in atmospheres
    */
   def waterPressure(h:Meters) = {
     -h.d*waterPressurePerDepth + 1//atm
