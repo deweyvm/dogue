@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.data.{Code, Meters}
+import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.procgen.Arrow
 import com.deweyvm.gleany.data.Point2d

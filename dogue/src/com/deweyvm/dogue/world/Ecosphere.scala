@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.procgen._
-import com.deweyvm.dogue.common.data.{Code, Indexed2d, Lazy2d, Meters}
+import com.deweyvm.dogue.common.data.{Code, Indexed2d, Lazy2d}
 import com.deweyvm.gleany.data.{Rectd, Timer, Point2d}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
