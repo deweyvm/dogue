@@ -1,11 +1,11 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.Implicits.Meters
+import com.deweyvm.dogue.common.Implicits._
 
 case object AtmosphereConstants {
   val elrRate = 6.49/1000 //K m-1
   val waterPressurePerDepth = 0.1//atm m-1
-  def airPressure(h:Meters) = {
+  def airPressure(h:Meters):Pressure = {
     //pressure at sea level
     val p0 = 1//atm
     //temperature at sea level
@@ -27,7 +27,7 @@ case object AtmosphereConstants {
    * @param h height *above* sea level
    * @return pressure in atmospheres
    */
-  def waterPressure(h:Meters) = {
-    -h.d*waterPressurePerDepth + 1//atm
+  def waterPressure(h:Meters):Pressure = {
+    (-h.d*waterPressurePerDepth + 1).atm
   }
 }

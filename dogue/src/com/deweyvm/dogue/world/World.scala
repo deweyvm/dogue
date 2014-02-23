@@ -20,6 +20,7 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
     val region = eco.getRegion(i, j)
     val arrow = eco.getWind(i, j)
     val windDir = arrow.direction * arrow.magnitude
+    val pressure = eco.getPressure(i, j)
     val (elevation, color, code) = eco.getElevation(i, j)
     val lat = eco.getLatitude(i, j)
     val light = cycle.getSunlight(i, j)
@@ -27,7 +28,7 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
     val sunTemp = cycle.getSunHeat(i, j)
     val tile = new Tile(code, color, Color.White)
 
-    new WorldTile(elevation, region, lat, windDir, light, sunTemp, season, tile)
+    new WorldTile(elevation, pressure, region, lat, windDir, light, sunTemp, season, tile)
   }
 
   def update:World = {

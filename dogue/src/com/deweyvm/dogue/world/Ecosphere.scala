@@ -2,12 +2,15 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.data.{Code, Indexed2d, Lazy2d}
-import com.deweyvm.gleany.data.{Rectd, Timer, Point2d}
+import com.deweyvm.gleany.data.{Timer, Point2d}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+import com.deweyvm.dogue.world.AtmosphereConstants._
 import com.deweyvm.dogue.common.procgen.Arrow
+import com.deweyvm.dogue.common.Implicits.Pressure
 import scala.Some
+import com.deweyvm.dogue.common.Implicits.Meters
 
 object Ecosphere {
   def create(worldParams:WorldParams):Ecosphere = {
@@ -22,9 +25,10 @@ object Ecosphere {
 
       override def getWind(i:Int, j:Int):Arrow = {
         val (w, time) = Timer.timer(() => {
-          windMap.get(i, j).getOrElse((Point2d(0,0), Arrow(Point2d.UnitX, 1), Color.Black)) match {
-            case (_, arr, _) => arr
-          }
+          (windMap.get(i, j) match {
+            case Some((_, arr, _)) => arr.some
+            case _ => None
+          }).getOrElse(super.getWind(i, j))
         })
         wTime += time
         w
@@ -39,22 +43,19 @@ object Ecosphere {
       }
 
       override def getLatitude(i:Int, j:Int):LatitudinalRegion = {
-        latRegions.get(i, j).getOrElse(Polar)
+        latRegions.get(i, j).getOrElse(super.getLatitude(i, j))
       }
 
       override def getRegion(i:Int, j:Int):Color = {
         val (r, time) = Timer.timer(() => {
-          regionMap.get(i, j).getOrElse(Color.Black)
+          regionMap.get(i, j).getOrElse(super.getRegion(i, j))
         })
         rTime += time
         r
       }
 
-      override def view(i:Int, j:Int) {
-        getWind(i, j).ignore()
-        getElevation(i, j).ignore()
-        getLatitude(i, j).ignore()
-        getRegion(i, j).ignore()
+      override def getPressure(i:Int, j:Int):Pressure = {
+        atmosphereMap.get(i, j).getOrElse(super.getPressure(i, j))
       }
 
       private var eTime = 0.0
@@ -106,6 +107,13 @@ object Ecosphere {
           }
           d * 10000 m
         })
+      }
+
+      private val atmosphereMap:Indexed2d[Pressure] = {
+        heightMap.map{case (i, j, h) =>
+          val f = (h < 0) select (waterPressure _, airPressure _)
+          f(h)
+        }
       }
 
       private val latRegions:Indexed2d[LatitudinalRegion] = {
@@ -170,15 +178,22 @@ object Ecosphere {
 trait Ecosphere {
   val cols:Int
   val rows:Int
-  def getLatitude(i:Int, j:Int):LatitudinalRegion
-  def getElevation(i:Int, j:Int):(Meters, Color, Code)
-  def getWind(i:Int, j:Int):Arrow
-  def getRegion(i:Int, j:Int):Color
+  def getLatitude(i:Int, j:Int):LatitudinalRegion = Polar
+  def getElevation(i:Int, j:Int):(Meters, Color, Code) = (0.m, Color.Black, Code.` `)
+  def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
+  def getRegion(i:Int, j:Int):Color = Color.Black
+  def getPressure(i:Int, j:Int):Pressure = 0.atm
 
   /**
    * force the area at (i, j) to be calculated so there is not a loading delay
    */
-  def view(i:Int, j:Int)
+  final def view(i:Int, j:Int) {
+    getWind(i, j).ignore()
+    getElevation(i, j).ignore()
+    getLatitude(i, j).ignore()
+    getRegion(i, j).ignore()
+    getPressure(i, j).ignore()
+  }
   def getTimeString:String
   def update:Ecosphere
 }

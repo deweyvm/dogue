@@ -28,14 +28,6 @@ object EcosphereLoader {
     override val rows: Int = worldParams.size
     override val cols: Int = worldParams.size
 
-    override def getWind(i: Int, j: Int): Arrow = new Arrow(Point2d.UnitX, 0)
-
-    override def getRegion(i: Int, j: Int): Color = Color.Black
-
-    override def getElevation(i: Int, j: Int): (Meters, Color, Code) = (0.m, Color.Black, Code.` `)
-
-    override def getLatitude(i: Int, j: Int): LatitudinalRegion = Polar
-
     override def view(i:Int, j:Int) = {}
 
     override def getTimeString: String = "Loading..."
