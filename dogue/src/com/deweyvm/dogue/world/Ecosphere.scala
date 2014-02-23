@@ -8,15 +8,17 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.common.procgen.Arrow
 import scala.Some
-import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
 
 object Ecosphere {
   def create(worldParams:WorldParams):Ecosphere = {
+    AtmosphereConstants.airPressure(3000).println()
     new Ecosphere {
       override val cols = worldParams.size
       override val rows = worldParams.size
 
-      override def update = this
+      override def update = {
+        this
+      }
 
       override def getWind(i:Int, j:Int):Arrow = {
         val (w, time) = Timer.timer(() => {
@@ -46,6 +48,13 @@ object Ecosphere {
         })
         rTime += time
         r
+      }
+
+      override def view(i:Int, j:Int) {
+        getWind(i, j).ignore()
+        getElevation(i, j).ignore()
+        getLatitude(i, j).ignore()
+        getRegion(i, j).ignore()
       }
 
       private var eTime = 0.0
@@ -165,6 +174,11 @@ trait Ecosphere {
   def getElevation(i:Int, j:Int):(Meters, Color, Code)
   def getWind(i:Int, j:Int):Arrow
   def getRegion(i:Int, j:Int):Color
+
+  /**
+   * force the area at (i, j) to be calculated so there is not a loading delay
+   */
+  def view(i:Int, j:Int)
   def getTimeString:String
   def update:Ecosphere
 }

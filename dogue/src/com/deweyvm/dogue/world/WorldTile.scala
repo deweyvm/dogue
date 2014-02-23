@@ -20,9 +20,16 @@ case class WorldTile(height:Meters, region:Color, latitude:LatitudinalRegion, wi
     "Wind %.2f" format wind.magnitude,
     "Daylight %.2f" format daylight,
     "Sun Temp %.2f" format sunTemp,
+    pressureString,
     "",
     "Season: %s" format season.toString
   ))
+
+  private def pressureString = {
+    import AtmosphereConstants._
+    val f = (height < 0) select (waterPressure _, airPressure _)
+    "Pressure %.2f" format f(height)
+  }
 
   def regionTooltip:Tooltip = fullTooltip.copy(color = Color.White)
 }

@@ -7,7 +7,7 @@ import com.deweyvm.dogue.entities.Tile
 
 object World {
   def create(params:WorldParams):World = {
-    val eco = Ecosphere.create(params)
+    val eco = EcosphereLoader.create(params)
     val cycle = Nychthemera(0, params.size/2)
     World(params, eco, cycle)
   }
@@ -31,7 +31,7 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
   }
 
   def update:World = {
-    this.copy(cycle = cycle.update)
+    this.copy(cycle = cycle.update, eco = eco.update)
   }
 }
 

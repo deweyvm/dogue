@@ -60,10 +60,11 @@ object WorldPanel {
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
              bgColor:Color, size:Int):WorldPanel = {
-    val world = World.create(WorldParams(size/4, 22, size, 5))
+    val params = WorldParams(69, size/4, 22, size, 5)
+    val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, Mini, Nychthemera)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, Mini, Nychthemera)
   }
 }
 
@@ -75,6 +76,7 @@ case class WorldPanel(override val rect:Recti,
                       world:World,
                       view:ArrayViewer,
                       tooltip:InfoPanel,
+                      minimapSize:Int,
                       zoomState:WorldPanel.ZoomState,
                       mapState:WorldPanel.MapState)
   extends Panel(rect, bgColor) {
@@ -84,7 +86,7 @@ case class WorldPanel(override val rect:Recti,
     super.getRects ++ tooltip.getRects
   }
   val regionSize = 16
-  val miniDiv = world.cols/69//minimap.div //(4096*16)/69
+  val miniDiv = world.cols/minimapSize//minimap.div //(4096*16)/69
   val regionDiv = 16
   override def update:WorldPanel = {
     val newTooltip = getTooltip
