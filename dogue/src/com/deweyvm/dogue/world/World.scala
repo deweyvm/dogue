@@ -17,7 +17,7 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
   val cols = eco.cols
   val rows = eco.rows
   def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
-    val region = eco.getRegion(i, j)
+    val (regionIndex, regionColor) = eco.getRegion(i, j)
     val arrow = eco.getWind(i, j)
     val windDir = arrow.direction * arrow.magnitude
     val pressure = eco.getPressure(i, j)
@@ -28,7 +28,7 @@ case class World(worldParams:WorldParams, eco:Ecosphere, cycle:Nychthemera) {
     val sunTemp = cycle.getSunHeat(i, j)
     val tile = new Tile(code, color, Color.White)
 
-    new WorldTile(elevation, pressure, region, lat, windDir, light, sunTemp, season, tile)
+    new WorldTile(elevation, pressure, regionIndex, regionColor, lat, windDir, light, sunTemp, season, tile)
   }
 
   def update:World = {

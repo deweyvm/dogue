@@ -155,7 +155,7 @@ case class WorldPanel(override val rect:Recti,
         case Elevation =>
           t.tile.draw(i, j)
         case Biome =>
-          t.tile.copy(bgColor = t.region, code = Code.` `).draw(i, j)
+          t.tile.copy(bgColor = t.regionColor, code = Code.` `).draw(i, j)
         case Wind =>
           val dir = t.wind.normalize
           val max = math.max(math.abs(dir.x), math.abs(dir.y))

@@ -27,9 +27,7 @@ object EcosphereLoader {
     private val innerEco = DogueFuture.createAndRun(() => makeEcosphere(worldParams))
     override val rows: Int = worldParams.size
     override val cols: Int = worldParams.size
-
-    override def view(i:Int, j:Int) = {}
-
+    
     override def getTimeString: String = "Loading..."
 
     override def update: Ecosphere = innerEco.getResult.getOrElse(this)

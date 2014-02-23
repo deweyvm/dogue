@@ -46,7 +46,7 @@ object Ecosphere {
         latRegions.get(i, j).getOrElse(super.getLatitude(i, j))
       }
 
-      override def getRegion(i:Int, j:Int):Color = {
+      override def getRegion(i:Int, j:Int):(Int, Color) = {
         val (r, time) = Timer.timer(() => {
           regionMap.get(i, j).getOrElse(super.getRegion(i, j))
         })
@@ -55,6 +55,7 @@ object Ecosphere {
       }
 
       override def getPressure(i:Int, j:Int):Pressure = {
+        //atmosphereic pressure based on height only for now
         atmosphereMap.get(i, j).getOrElse(super.getPressure(i, j))
       }
 
@@ -102,7 +103,7 @@ object Ecosphere {
           } else if (d1 < inner) {
             h
           } else {
-            val bowl = 0//(d1-inner)/(1 - inner - mring)
+            val bowl = (d1-inner)/(1 - inner - mring)
             (bowl + h).clamp(-1, 1)
           }
           d * 10000 m
@@ -126,22 +127,22 @@ object Ecosphere {
         }
       }
 
-      private val regionMap:Indexed2d[Color] = {
+      private val regionMap:Indexed2d[(Int, Color)] = {
         val hexSize = cols/150
         val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, worldParams.seed)
         val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
         val graph = hexGrid.graph
-        val colorMap = (colors zip graph.nodes).map { case (color, poly) =>
-          (poly.self, color)
+        val colorMap = (colors.zipWithIndex zip graph.nodes).map { case ((color, index), poly) =>
+          (poly.self, (index, color))
         }.toMap
         Lazy2d.tabulate(cols, rows){ case (i, j) =>
           heightMap.get(i, j) match {
             case Some(d) if d > 0  =>
               hexGrid.pointInPoly(i, j) match {
                 case Some(poly) => colorMap(poly)
-                case None => Color.Black
+                case None => (0, Color.Black)
               }
-            case _ => Color.Black
+            case _ => (0, Color.Black)
           }
         }
       }
@@ -181,8 +182,8 @@ trait Ecosphere {
   def getLatitude(i:Int, j:Int):LatitudinalRegion = Polar
   def getElevation(i:Int, j:Int):(Meters, Color, Code) = (0.m, Color.Black, Code.` `)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
-  def getRegion(i:Int, j:Int):Color = Color.Black
-  def getPressure(i:Int, j:Int):Pressure = 0.atm
+  def getRegion(i:Int, j:Int):(Int, Color) = (0,Color.Black)
+  def getPressure(i:Int, j:Int):Pressure = 1.atm
 
   /**
    * force the area at (i, j) to be calculated so there is not a loading delay
