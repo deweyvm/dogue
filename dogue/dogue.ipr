@@ -1,32 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ArtifactManager">
-    <artifact name="dogue-common:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/dogue_common_jar</output-path>
-      <root id="root">
-        <element id="archive" name="dogue-common.jar">
-          <element id="module-output" name="dogue-common" />
-          <element id="module-output" name="gleany" />
-        </element>
-        <element id="library" level="application" name="scopt_2.10-3.2.0" />
-        <element id="library" level="project" name="libs" />
-        <element id="library" level="application" name="scala-library" />
-      </root>
-    </artifact>
-    <artifact name="dogue:jar">
-      <output-path>$PROJECT_DIR$/out/artifacts/dogue_jar</output-path>
-      <root id="root">
-        <element id="archive" name="dogue.jar">
-          <element id="module-output" name="dogue" />
-          <element id="module-output" name="gleany" />
-          <element id="module-output" name="dogue-common" />
-        </element>
-        <element id="library" level="application" name="scala-compiler" />
-        <element id="library" level="application" name="scopt_2.10-3.2.0" />
-        <element id="library" level="project" name="libs" />
-        <element id="library" level="application" name="scala-library" />
-      </root>
-    </artifact>
     <artifact name="raven:jar">
       <output-path>$PROJECT_DIR$/out/artifacts/raven_jar</output-path>
       <root id="root">
@@ -52,6 +26,34 @@
         <element id="library" level="application" name="scopt_2.10-3.2.0" />
         <element id="library" level="project" name="libs" />
         <element id="library" level="application" name="scala-library" />
+      </root>
+    </artifact>
+    <artifact name="dogue-common:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/dogue_common_jar</output-path>
+      <root id="root">
+        <element id="archive" name="dogue-common.jar">
+          <element id="module-output" name="dogue-common" />
+          <element id="module-output" name="gleany" />
+        </element>
+        <element id="library" level="application" name="scala-library" />
+        <element id="library" level="application" name="scalacheck_2.10-1.11.3" />
+        <element id="library" level="project" name="libs" />
+        <element id="library" level="application" name="scopt_2.10-3.2.0" />
+      </root>
+    </artifact>
+    <artifact name="dogue:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/dogue_jar</output-path>
+      <root id="root">
+        <element id="archive" name="dogue.jar">
+          <element id="module-output" name="dogue" />
+          <element id="module-output" name="gleany" />
+          <element id="module-output" name="dogue-common" />
+        </element>
+        <element id="library" level="application" name="scala-library" />
+        <element id="library" level="application" name="scalacheck_2.10-1.11.3" />
+        <element id="library" level="project" name="libs" />
+        <element id="library" level="application" name="scala-compiler" />
+        <element id="library" level="application" name="scopt_2.10-3.2.0" />
       </root>
     </artifact>
   </component>

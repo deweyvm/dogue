@@ -38,10 +38,6 @@ case class Date(bodies:CelestialBodies, c:DateConstants) {
   private val framesPerMonth = framesPerDay * (daysPerYear / monthsPerYear)
   private val framesPerYear = framesPerDay * daysPerYear
 
-  def getTimeZone(i:Int, j:Int):Int = {
-    0
-  }
-
   def getString:String =  {
     val year = t / framesPerYear
     val month = (t % framesPerYear)/framesPerMonth

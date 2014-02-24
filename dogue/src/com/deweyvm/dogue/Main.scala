@@ -5,7 +5,7 @@ import com.deweyvm.gleany.files.PathResolver
 import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.dogue.input.DogueControls
 import com.deweyvm.dogue.loading.DogueDefaultSettings
-import com.deweyvm.dogue.common.logging.Log
+import com.deweyvm.dogue.common.logging.{LogLevel, Log}
 import com.badlogic.gdx.Gdx
 import com.deweyvm.dogue.common.testing.TestManager
 import com.deweyvm.gleany.graphics.ImageUtils
@@ -21,6 +21,10 @@ object Main {
       opt[Unit]("test-only") action { (_, c) =>
         c.copy(testsOnly = true)
       } text "run tests then exit"
+
+      opt[String]("log-level") action { (v, c) =>
+        c.copy(logLevel = v)
+      } text ("log level = {%s}" format Log.levels.map{_.toString.toLowerCase}.mkString(","))
 
       opt[Unit]("fail-first") action { (_, c) =>
         c.copy(failFirst = true)
@@ -45,7 +49,8 @@ object Main {
         sys.exit(0)
       }
       val s = Game.settings
-      Log.initLog(s.logLocation.get, Log.Warn)
+      val logLevel = LogLevel.fromString(c.logLevel)
+      Log.initLog(s.logLocation.get, logLevel)
       Game.globals.IsDebugMode = c.isDebug
       Game.globals.IsHeadless = c.headless
       if (c.version) {
