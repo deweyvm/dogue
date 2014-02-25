@@ -59,8 +59,8 @@ class VoronoiVisualizer extends Visualizer {
     r.translateShape(100,30) {() =>
       r.drawRect(0,0,size,size, Color.Black)
       edges foreach { e =>
-      //r.drawLine(e.vorStart, e.vorEnd, Color.White)
-        r.drawLine(e.triStart, e.triEnd, Color.Green)
+        r.drawLine(e.vorStart, e.vorEnd, Color.White)
+        //r.drawLine(e.triStart, e.triEnd, Color.Green)
         r.drawPoint(e.triStart, Color.Red)
         r.drawPoint(e.triEnd, Color.Red)
       }
