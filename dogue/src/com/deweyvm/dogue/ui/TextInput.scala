@@ -147,8 +147,8 @@ case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Co
   }
 
   def draw(iRoot:Int, jRoot:Int) {
-    val iStart = scala.math.max(0, text.length - height)
-    val end = scala.math.min(text.length, height)
+    val iStart = math.max(0, text.length - height)
+    val end = math.min(text.length, height)
     for (i <- 0 until end) {
       text(i + iStart).draw(iRoot, jRoot + i)
     }
