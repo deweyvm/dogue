@@ -2,7 +2,7 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.data.{Code, Indexed2d, Lazy2d}
-import com.deweyvm.gleany.data.{Timer, Point2d}
+import com.deweyvm.gleany.data._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
@@ -14,7 +14,7 @@ import com.deweyvm.dogue.common.Implicits.Meters
 
 object Ecosphere {
   def create(worldParams:WorldParams):Ecosphere = new Ecosphere {
-
+    val seed = worldParams.seed
     override val cols = worldParams.size
     override val rows = worldParams.size
 
@@ -74,10 +74,11 @@ object Ecosphere {
     private val solidTier = solidElevation.d/maxElevation.d - 1
 
     private val border = math.min(cols, rows)/2 - 10
-    private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, worldParams.seed).lazyRender
+    private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).lazyRender
 
     private val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
-      VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, worldParams.seed).lazyVectors
+      //VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
+      VectorField.simpleSpiral(cols, rows).lazyVectors
     }
 
     private def perlinToHeight(t:Double) = {
@@ -128,7 +129,7 @@ object Ecosphere {
 
     private val regionMap:Indexed2d[(Int, Color)] = {
       val hexSize = cols/150
-      val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, worldParams.seed)
+      val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
       val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
       val graph = hexGrid.graph
       val colorMap = (colors.zipWithIndex zip graph.nodes).map { case ((color, index), poly) =>
@@ -162,7 +163,7 @@ object Ecosphere {
           (Color.DarkGrey, Code.▲)
         } else if (h < 7000.m) {
           (Color.Grey, Code.▲)
-        } else if (h < 8000.m){
+        } else if (h < 8000.m) {
           (Color.White.dim(1.3f), Code.▲)
         } else if (h < 9000.m) {
           (Color.White.dim(1.2f), Code.▲)
@@ -183,7 +184,6 @@ trait Ecosphere {
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
   def getRegion(i:Int, j:Int):(Int, Color) = (0,Color.Black)
   def getPressure(i:Int, j:Int):Pressure = 1.atm
-
   /**
    * force the area at (i, j) to be calculated so there is not a loading delay
    */

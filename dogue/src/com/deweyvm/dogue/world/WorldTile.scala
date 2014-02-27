@@ -8,13 +8,14 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
 object WorldTile {
-  val Blank = WorldTile(0 m, 1 atm, 0, Color.Pink, Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
+  val Blank = WorldTile(0 m, 1 atm, 0, Color.Pink, Color.Black, Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
 }
 
 case class WorldTile(height:Meters,
                      pressure:Pressure,
                      regionIndex:Int,
                      regionColor:Color,
+                     plateColor:Color,
                      latitude:LatitudinalRegion,
                      wind:Point2d,
                      daylight:Double,

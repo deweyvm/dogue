@@ -6,40 +6,27 @@ import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
-import com.deweyvm.dogue.common.data.{Code, Indexed2d}
+import com.deweyvm.dogue.common.data.{Pointer, Code, Indexed2d}
 import com.deweyvm.dogue.common.procgen.VectorField
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.dogue.Game
+import com.deweyvm.dogue.world.WorldParams
+import com.deweyvm.dogue.world.ArrayViewer
+import com.deweyvm.dogue.world.DateConstants
+
+trait MapState
+
+object MapState {
+  case object Wind extends MapState
+  case object Elevation extends MapState
+  case object Latitude extends MapState
+  case object Biome extends MapState
+  case object Nychthemera extends MapState
+  case object Tectonics extends MapState
+  val All = Vector(Wind, Elevation, Latitude, Biome, Nychthemera, Tectonics)
+  def getPointer:Pointer[MapState] = Pointer.create(All, 5)
+}
 
 object WorldPanel {
-  trait MapState {
-    def prev:MapState
-    def next:MapState
-  }
-
-  case object Wind extends MapState {
-    override def prev = Biome
-    override def next = Elevation
-  }
-  case object Elevation extends MapState {
-    override def prev = Wind
-    override def next = Latitude
-  }
-  case object Latitude extends MapState {
-    override def prev = Elevation
-    override def next = Biome
-  }
-  case object Biome extends MapState {
-    override def prev = Latitude
-    override def next = Nychthemera
-  }
-
-  case object Nychthemera extends MapState {
-    override def prev = Biome
-    override def next = Wind
-  }
-
-
   trait ZoomState {
     def next:Option[ZoomState]
     def prev:Option[ZoomState]
@@ -66,7 +53,7 @@ object WorldPanel {
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, Mini, Nychthemera)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, Mini, MapState.getPointer)
   }
 }
 
@@ -80,7 +67,7 @@ case class WorldPanel(override val rect:Recti,
                       tooltip:InfoPanel,
                       minimapSize:Int,
                       zoomState:WorldPanel.ZoomState,
-                      mapState:WorldPanel.MapState)
+                      mapState:Pointer[MapState])
   extends Panel(rect, bgColor) {
   import WorldPanel._
   val (iSpawn, jSpawn) = (0,0)
@@ -102,7 +89,7 @@ case class WorldPanel(override val rect:Recti,
     }
 
     val newMapState = if (Controls.Space.justPressed) {
-      mapState.next
+      mapState.updated(1)
     } else {
       mapState
     }
@@ -147,8 +134,10 @@ case class WorldPanel(override val rect:Recti,
   override def draw() {
     super.draw()
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
-
-      mapState match {
+      import MapState._
+      mapState.get match {
+        case Tectonics =>
+          t.tile.copy(bgColor = t.plateColor).draw(i, j)
         case Nychthemera =>
           val light = Color.fromHsb(t.daylight.toFloat/2)
           t.tile.copy(bgColor = light).draw(i, j)
