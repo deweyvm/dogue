@@ -6,18 +6,18 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.graphics.OglRenderer
+import com.deweyvm.gleany.data.Point2d
 
 class VectorFieldVisualizer extends Visualizer {
   var seed = 0L
-  var vectorField = VectorField.perlinWindOrig(Game.RenderWidth, Game.RenderHeight, 20, seed)
-
+  var vectorField = VectorField.simpleSpiral(Game.RenderWidth, Game.RenderHeight)//, 20, seed)
 
   override def drawShape(r:OglRenderer) {
     val shape = r.shape
     val camera = r.camera
 
     camera.zoom(2)
-    r.translateShape(Game.RenderWidth/2,Game.RenderHeight/2) {() =>
+    r.translateShape(Game.RenderWidth/2, Game.RenderHeight/2) {() =>
       vectorField.vectors foreach {case (pt, arrow, lineColor) =>
         val (line, (l1, l2, l3)) = arrow.getShapes(pt)
         shape.begin(ShapeType.Line)

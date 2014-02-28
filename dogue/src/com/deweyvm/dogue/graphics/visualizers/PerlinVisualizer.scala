@@ -16,7 +16,6 @@ class PerlinVisualizer extends Visualizer {
   val size = 256
   val noise = new PerlinNoise(1/32f, 5, size, 0).render
   val start = noise.find{_ > 0}.map {case (i, j, t) => (i, j)}.getOrElse(throw new RuntimeException)
-  println(start)
   val flood = new FloodFiller[Double](noise, _ > 0, start._1, start._2)
   val floodPoints = flood.fill(15,15,5)
   val newNoise = noise.map{ case (i, j, t) =>

@@ -77,8 +77,9 @@ object Ecosphere {
     private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).lazyRender
 
     private val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
-      //VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
-      VectorField.simpleSpiral(cols, rows).lazyVectors
+      VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
+
+      //VectorField.simpleSpiral(cols, rows).lazyVectors
     }
 
     private def perlinToHeight(t:Double) = {

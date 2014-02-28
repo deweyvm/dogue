@@ -21,7 +21,6 @@ class PoissonVisualizer extends Visualizer {
         case None => true
       }
     }
-    println(points.length)
     points
 
   }

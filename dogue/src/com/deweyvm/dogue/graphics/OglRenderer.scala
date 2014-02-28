@@ -42,11 +42,12 @@ class OglTile(tileset:Tileset) {
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
-  val vis:Option[Visualizer] = None
+//  val vis:Option[Visualizer] = None
+  val vis:Option[Visualizer] = new VectorFieldVisualizer().some
   //val vis:Option[Visualizer] = new HexGridVisualizer().some
   //val vis:Option[Visualizer] = new PerlinVisualizer().some
   //val vis:Option[Visualizer] = new VoronoiVisualizer().some
-  //val vis:Option[Visualizer] = new PoissonVisualizer().some
+//  val vis:Option[Visualizer] = new PoissonVisualizer().some
   private val width = tileset.tileWidth
   private val height = tileset.tileHeight
   private val oglTile = new OglTile(tileset)

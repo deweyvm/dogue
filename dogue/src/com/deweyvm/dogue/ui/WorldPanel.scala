@@ -12,6 +12,7 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
+import com.deweyvm.dogue.ui.ZoomState.{Mini, Full}
 
 trait MapState
 
@@ -21,29 +22,21 @@ object MapState {
   case object Latitude extends MapState
   case object Biome extends MapState
   case object Nychthemera extends MapState
-  case object Tectonics extends MapState
-  val All = Vector(Wind, Elevation, Latitude, Biome, Nychthemera, Tectonics)
-  def getPointer:Pointer[MapState] = Pointer.create(All, 5)
+  val All = Vector(Wind, Elevation, Latitude, Biome, Nychthemera)
+  def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
 
+trait ZoomState
+object ZoomState {
+  case object Region extends ZoomState
+  case object Full extends ZoomState
+  case object Mini extends ZoomState
+  val All = Vector(Region, Full, Mini)
+  def getPointer:Pointer[ZoomState] = Pointer.create(All, 0)
+}
 object WorldPanel {
-  trait ZoomState {
-    def next:Option[ZoomState]
-    def prev:Option[ZoomState]
-  }
 
-  case object Region extends ZoomState {
-    override def next = None
-    override def prev = Full.some
-  }
-  case object Full extends ZoomState {
-    override def next = Region.some
-    override def prev = Mini.some
-  }
-  case object Mini extends ZoomState {
-    override def next = Full.some
-    override def prev = None
-  }
+
 
   def create(rect:Recti,
              tooltipWidth:Int, tooltipHeight:Int,
@@ -53,12 +46,9 @@ object WorldPanel {
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, Mini, MapState.getPointer)
+    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, ZoomState.getPointer, MapState.getPointer)
   }
 }
-
-
-
 
 case class WorldPanel(override val rect:Recti,
                       bgColor:Color,
@@ -66,7 +56,7 @@ case class WorldPanel(override val rect:Recti,
                       view:ArrayViewer,
                       tooltip:InfoPanel,
                       minimapSize:Int,
-                      zoomState:WorldPanel.ZoomState,
+                      zoomState:Pointer[ZoomState],
                       mapState:Pointer[MapState])
   extends Panel(rect, bgColor) {
   import WorldPanel._
@@ -80,13 +70,14 @@ case class WorldPanel(override val rect:Recti,
   override def update:WorldPanel = {
     val newTooltip = getTooltip
     val newWorld = world.update
-    val newZoomState = if (Controls.Enter.justPressed) {
-      zoomState.next.getOrElse(zoomState)
+    val incr = if (Controls.Enter.justPressed) {
+      1
     } else if (Controls.Backspace.justPressed) {
-      zoomState.prev.getOrElse(zoomState)
+      -1
     } else {
-      zoomState
+      0
     }
+    val newZoomState = zoomState.updated(incr)
 
     val newMapState = if (Controls.Space.justPressed) {
       mapState.updated(1)
@@ -104,24 +95,24 @@ case class WorldPanel(override val rect:Recti,
 
   }
 
-  def getScale:Int = zoomState match {
-    case Region => 1
-    case Full => regionDiv
-    case Mini => miniDiv
+  def getScale:Int = zoomState.get match {
+    case ZoomState.Region => 1
+    case ZoomState.Full => regionDiv
+    case ZoomState.Mini => miniDiv
   }
 
-  def getTiles:Indexed2d[WorldTile] = zoomState match {
-    case Region => world.worldTiles
-    case Full => world.worldTiles
-    case Mini => world.worldTiles
+  def getTiles:Indexed2d[WorldTile] = zoomState.get match {
+    case ZoomState.Region => world.worldTiles
+    case ZoomState.Full => world.worldTiles
+    case ZoomState.Mini => world.worldTiles
   }
 
 
   private def getTooltip:InfoPanel =  {
-    def getTooltip(t:WorldTile):Tooltip = zoomState match {
-      case Region => t.regionTooltip
-      case Full => t.fullTooltip
-      case Mini => t.fullTooltip
+    def getTooltip(t:WorldTile):Tooltip = zoomState.get match {
+      case ZoomState.Region => t.regionTooltip
+      case ZoomState.Full => t.fullTooltip
+      case ZoomState.Mini => t.fullTooltip
     }
     val fresh = InfoPanel.makeNew(Recti(1, 1, tooltip.width, tooltip.height), bgColor)
     val (i, j) = (view.xCursor, view.yCursor)
@@ -136,8 +127,6 @@ case class WorldPanel(override val rect:Recti,
     def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
       import MapState._
       mapState.get match {
-        case Tectonics =>
-          t.tile.copy(bgColor = t.plateColor).draw(i, j)
         case Nychthemera =>
           val light = Color.fromHsb(t.daylight.toFloat/2)
           t.tile.copy(bgColor = light).draw(i, j)
@@ -179,12 +168,12 @@ case class WorldPanel(override val rect:Recti,
 
     }
     val tiles = world.worldTiles
-    zoomState match {
-      case Region =>
+    zoomState.get match {
+      case ZoomState.Region =>
         view.draw(world.worldTiles, x, y, drawWorldTile, WorldTile.Blank)
-      case Full =>
+      case ZoomState.Full =>
         view.scaled(regionDiv).draw(world.worldTiles.sample(regionDiv), x, y, drawWorldTile, WorldTile.Blank)
-      case Mini =>
+      case ZoomState.Mini =>
         view.scaled(miniDiv).draw(world.worldTiles.sample(miniDiv), x, y, drawWorldTile, WorldTile.Blank)
     }
 
