@@ -12,9 +12,9 @@ object TitleMenu {
     val control = () => Controls.Space.justPressed
     val buttons = ButtonFactory.create(control, 10, 5)(
       "World Viewer", f
-    ).add(
+    )(
       "New Game", f
-    ).add(
+    )(
       "Exit", () => throw new Exception()
     ).create
     new TitleMenu(f, buttons)

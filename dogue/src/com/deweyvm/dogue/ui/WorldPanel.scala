@@ -39,10 +39,13 @@ object WorldPanel {
 
 
   def create(rect:Recti,
-             tooltipWidth:Int, tooltipHeight:Int,
-             bgColor:Color, size:Int):WorldPanel = {
+             tooltipWidth:Int,
+             tooltipHeight:Int,
+             minimapSize:Int,
+             bgColor:Color,
+             size:Int):WorldPanel = {
     val date = DateConstants(framesPerDay = 60*60*24*60)
-    val params = WorldParams(69, size/4, 22, size, date, 5)
+    val params = WorldParams(minimapSize, size/4, 22, size, date, 5)
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)

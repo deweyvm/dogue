@@ -13,7 +13,7 @@ import com.deweyvm.dogue.common.protocol.{DogueOps, Command}
 object Game {
   val Zoom = 1
   private val factor = 2
-  val Width = 32*16*factor
+  val Width = 32*16*factor// + 16*40
   val Height = 32*9*factor
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom

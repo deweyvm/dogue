@@ -5,11 +5,6 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.gleany.data.Recti
 
-trait StageType {
-  def next:StageType
-}
-
-
 class StageFactory(cols:Int, rows:Int) {
   val serverText = Text.create(Color.Black, Color.White)
   val bgColor = Color.Blue
@@ -40,8 +35,9 @@ class StageFactory(cols:Int, rows:Int) {
       case World =>
         val controlsHeight = 8
         val sideWidth = scala.math.min(cols/2 - 1, 24)
+        val minimapSize = 69
         val loc = Recti(sideWidth + 2, 1, cols - sideWidth - 3, rows - 1 - 1)
-        val worldPanel = WorldPanel.create(loc, sideWidth, rows - controlsHeight - 1, bgColor, 4096*16)
+        val worldPanel = WorldPanel.create(loc, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, 4096*16)
         val controlRect = Recti(1, rows - controlsHeight + 1, sideWidth, controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)
         makeStage(worldPanel, controlPanel)

@@ -12,19 +12,13 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.Dogue
 
+trait StageType
+
 object Stage {
-  case object Blank extends StageType {
-    override def next = Title
-  }
-  case object Title extends StageType {
-    override def next = Chat
-  }
-  case object Chat extends StageType {
-    override def next = World
-  }
-  case object World extends StageType {
-    override def next = Blank
-  }
+  case object Blank extends StageType
+  case object Title extends StageType
+  case object Chat extends StageType
+  case object World extends StageType
 }
 
 case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
