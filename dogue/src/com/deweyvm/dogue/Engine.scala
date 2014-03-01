@@ -9,12 +9,13 @@ import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.dogue.common.procgen.{MapName, PerlinNoise}
 import com.deweyvm.gleany.graphics.ImageUtils
 import com.deweyvm.dogue.graphics.OglRenderer
+import com.deweyvm.gleany.graphics.display.Display
 
 
 class Engine {
   TextInput.addListener()//put this somewhere more reasonable
-  val cols = Game.RenderWidth/Dogue.tileSpec.width
-  val rows = Game.RenderHeight/Dogue.tileSpec.height
+  def cols = Game.RenderWidth/Dogue.tileSpec.width
+  def rows = Game.RenderHeight/Dogue.tileSpec.height
   val factory = new StageFactory(cols, rows)
 
   var stage = makeStage
@@ -27,7 +28,7 @@ class Engine {
         )
       case _ =>
         Pointer.create(
-          factory.create(Stage.Title),
+          factory.create(Stage.World),
           factory.create(Stage.Chat)
         )
     }
@@ -40,6 +41,15 @@ class Engine {
     Controls.update()
     if (Controls.Escape.justPressed) {
       Game.shutdown()
+    }
+
+    Controls.AxisX.justPressed match {
+      case 0 => ()
+      case x => Display.resize(16*x, 0)
+    }
+    Controls.AxisY.justPressed match {
+      case 0 => ()
+      case y => Display.resize(0, 16*y)
     }
   }
 

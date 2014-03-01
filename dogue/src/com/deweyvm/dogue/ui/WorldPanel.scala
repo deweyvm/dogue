@@ -31,7 +31,7 @@ object ZoomState {
   case object Region extends ZoomState
   case object Full extends ZoomState
   case object Mini extends ZoomState
-  val All = Vector(Region, Full, Mini)
+  val All = Vector(Mini, Full, Region)
   def getPointer:Pointer[ZoomState] = Pointer.create(All, 0)
 }
 object WorldPanel {

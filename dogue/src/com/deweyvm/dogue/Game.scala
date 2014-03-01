@@ -2,18 +2,15 @@ package com.deweyvm.dogue
 
 import com.deweyvm.gleany.{Glean, GleanyInitializer, GleanyGame}
 import com.deweyvm.dogue.net.Client
-import com.deweyvm.dogue.common.threading.ThreadManager
-import com.deweyvm.dogue.loading.{DogueSettings, RawDogueSettings}
+import com.deweyvm.dogue.loading.DogueSettings
 import com.deweyvm.dogue.common.logging.Log
-import com.badlogic.gdx.Gdx
 import java.util.concurrent.{TimeUnit, Callable, Executors}
 import java.util
-import com.deweyvm.dogue.common.protocol.{DogueOps, Command}
 
 object Game {
   val Zoom = 1
   private val factor = 2
-  val Width = 32*16*factor// + 16*40
+  val Width = 32*16*factor
   val Height = 32*9*factor
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom

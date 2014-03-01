@@ -11,6 +11,7 @@ import com.deweyvm.gleany.data.{Point2d, Point2f, Recti}
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.Dogue
+import com.badlogic.gdx.Gdx
 
 trait StageType
 
@@ -37,7 +38,6 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   }
 
   def draw() {
-
     borders foreach { case (i, j, tile) =>
       tile foreach { _.draw(i, j) }
     }

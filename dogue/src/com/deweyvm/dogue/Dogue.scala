@@ -25,4 +25,5 @@ object Dogue {
 
   def gdxApp = Option(Gdx.app)
   def gdxInput = Option(Gdx.input)
+  def gdxGraphics = Option(Gdx.graphics)
 }

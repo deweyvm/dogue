@@ -4,6 +4,8 @@ import com.deweyvm.dogue.ui._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.gleany.data.Recti
+import com.deweyvm.dogue.common.Implicits
+import Implicits._
 
 class StageFactory(cols:Int, rows:Int) {
   val serverText = Text.create(Color.Black, Color.White)
@@ -34,10 +36,17 @@ class StageFactory(cols:Int, rows:Int) {
         makeStage(chatPanel)
       case World =>
         val controlsHeight = 8
-        val sideWidth = scala.math.min(cols/2 - 1, 24)
+        val minSideWidth = 24
         val minimapSize = 69
-        val loc = Recti(sideWidth + 2, 1, cols - sideWidth - 3, rows - 1 - 1)
-        val worldPanel = WorldPanel.create(loc, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, 4096*16)
+        val maxMinimapPanelSize = minimapSize + 3
+        val (sideWidth, mapWidth) =
+          if (cols > minSideWidth + maxMinimapPanelSize) {
+            (cols - maxMinimapPanelSize, maxMinimapPanelSize)
+          } else {
+            (minSideWidth, cols - minSideWidth)
+          }
+        val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, rows - 2)
+        val worldPanel = WorldPanel.create(mapRect, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, 4096*16)
         val controlRect = Recti(1, rows - controlsHeight + 1, sideWidth, controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)
         makeStage(worldPanel, controlPanel)
