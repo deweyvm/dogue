@@ -35,8 +35,11 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   val borders = calculateBorders
 
   def update:Stage = {
-    this.copy(panels = panels map (_.update),
-              serverStatus = serverStatus.setString(Client.instance.getStatus))
+    val updated = this.copy(panels = panels map (_.update),
+                            serverStatus = serverStatus.setString(Client.instance.getStatus))
+    //fixme #238 -- arbitrary stage is chosen
+    val newStages = panels.map {_.requestStage}.flatten
+    newStages.headOption.getOrElse(updated)
   }
 
   def draw() {

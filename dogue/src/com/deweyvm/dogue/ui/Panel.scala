@@ -6,6 +6,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.dogue.Dogue
+import com.deweyvm.dogue.world.Stage
 
 class Panel(val rect:Recti, bgColor:Color) {
   val x = rect.x
@@ -16,6 +17,7 @@ class Panel(val rect:Recti, bgColor:Color) {
     getRects exists { _.contains(Point2d(i,j)) }
 
   def getRects:Vector[Recti] = Vector(rect)
+  def requestStage:Option[Stage] = None
   def update:Panel = this
   def draw() {
     getRects foreach {rect =>

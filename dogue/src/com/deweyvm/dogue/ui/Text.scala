@@ -13,7 +13,7 @@ object Text {
 
 }
 
-class Text(text:String, bgColor:Color, fgColor:Color) {
+case class Text(text:String, bgColor:Color, fgColor:Color) {
   private val letters = text map { c =>
     Tile(Code.unicodeToCode(c), bgColor, fgColor)
   }

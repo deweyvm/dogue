@@ -25,7 +25,7 @@ class StageFactory(cols:Int, rows:Int) {
         makeStage(new Panel(blankRect, Color.Black))
       case Title =>
         val titleRect = Recti(1, 1, cols - 2, rows - 2)
-        val titlePanel = new TitlePanel(titleRect, bgColor)
+        val titlePanel = TitlePanel.create(titleRect, this, bgColor)
         makeStage(titlePanel)
       case Chat =>
         val inputHeight = 3

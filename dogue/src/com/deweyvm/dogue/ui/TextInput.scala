@@ -36,7 +36,6 @@ object TextInput {
               strings(id) = ""
             } else if (code > 31){
               strings(id) += char
-              //println("here <%s>".format(char.toInt.toString))
             }
           }
           false

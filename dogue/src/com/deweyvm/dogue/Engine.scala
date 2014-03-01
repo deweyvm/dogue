@@ -27,7 +27,6 @@ class Engine {
         )
       case _ =>
         Pointer.create(
-          factory.create(Stage.World),
           factory.create(Stage.Title),
           factory.create(Stage.Chat)
         )
