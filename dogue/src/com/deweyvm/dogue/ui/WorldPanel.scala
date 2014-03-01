@@ -187,18 +187,18 @@ case class WorldPanel(override val rect:Recti,
 
   private def drawDebug() {
     val s = world.eco.getTimeString
-    new Text(s, Color.Black, Color.White).draw(0, height + 1)
+    Text.fromString(s, Color.Black, Color.White).draw(0, height + 1)
   }
 
   private def drawName() {
     val name = world.worldParams.name
     val xName = x + (width - name.length)/2
-    new Text(name, Color.Black, Color.White).draw(xName,0)
+    Text.fromString(name, Color.Black, Color.White).draw(xName,0)
   }
 
   private def drawTime() {
     val time = world.celestial.date.getString
     val xName = x + (width - time.length)/2
-    new Text(time, Color.Black, Color.White).draw(xName, height)
+    Text.fromString(time, Color.Black, Color.White).draw(xName, height)
   }
 }

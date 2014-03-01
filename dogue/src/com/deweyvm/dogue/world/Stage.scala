@@ -31,7 +31,7 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   val rect = Recti(0, 0, cols, rows)
 
   val rightPartition = 32
-  val testText = new Text("this is a test", Color.Blue, Color.White)
+  val testText = Text.fromString("this is a test", Color.Blue, Color.White)
   val borders = calculateBorders
 
   def update:Stage = {

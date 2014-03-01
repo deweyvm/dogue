@@ -5,27 +5,42 @@ import com.deweyvm.dogue.graphics.Renderer
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.dogue.Dogue
+import scala.collection.immutable.IndexedSeq
 
 object Text {
   def create(bgColor:Color, fgColor:Color):Text = {
-    new Text("", bgColor, fgColor)
+    fromString("", bgColor, fgColor)
+  }
+
+  def fromString(s:String, bgColor:Color, fgColor:Color):Text = {
+    val letters = stringToLetters(s, bgColor, fgColor)
+
+    new Text(letters, bgColor, fgColor)
+  }
+
+  def stringToLetters(s:String, bgColor:Color, fgColor:Color) = {
+    s map { c =>
+      Tile(Code.unicodeToCode(c), bgColor, fgColor)
+    }
   }
 
 }
 
-case class Text(text:String, bgColor:Color, fgColor:Color) {
-  private val letters = text map { c =>
-    Tile(Code.unicodeToCode(c), bgColor, fgColor)
-  }
-
+class Text(letters:IndexedSeq[Tile], bgColor:Color, fgColor:Color) {
   def width = letters.length
 
   def append(s:String):Text = {
-    new Text(text + s, bgColor, fgColor)
+    val newLetters = letters ++ Text.stringToLetters(s, bgColor, fgColor)
+    new Text(newLetters, bgColor, fgColor)
+  }
+
+  def setBg(color:Color):Text = {
+    val newLetters = letters map {_.copy(bgColor = color)}
+    new Text(newLetters, color, fgColor)
   }
 
   def setString(s:String):Text = {
-    new Text(s, bgColor, fgColor)
+    Text.fromString(s, bgColor, fgColor)
   }
 
   def draw(i:Int, j:Int) {

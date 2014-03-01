@@ -25,7 +25,7 @@ case class InfoPanel(override val rect:Recti,
 
   def addText(string:String, bgColor:Color, fgColor:Color):InfoPanel = {
     val addedLines = string.toLines(textWidth) map { s =>
-      new Text(s, bgColor, fgColor)
+      Text.fromString(s, bgColor, fgColor)
     }
 
     val newjView = if (!atBottom) {

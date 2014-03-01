@@ -16,7 +16,7 @@ case class TitlePanel(override val rect:Recti,
                       bgColor:Color,
                       menu:Menu[Stage])
   extends Panel(rect, bgColor) {
-  val title = new Text("Dogue", Color.Black, Color.White)
+  val title = Text.fromString("Dogue", Color.Black, Color.White)
   override def requestStage:Option[Stage] = {
     menu.getResult
   }

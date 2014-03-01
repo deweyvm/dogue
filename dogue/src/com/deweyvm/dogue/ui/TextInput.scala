@@ -131,7 +131,7 @@ case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Co
   TextInput.inputs(id) = this
 
   private def makeText(s:String) = {
-    new Text(s, bgColor, fgColor)
+    Text.fromString(s, bgColor, fgColor)
   }
 
 
