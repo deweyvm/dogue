@@ -193,14 +193,7 @@ case class WorldPanel(override val rect:Recti,
 
   override def draw() {
     super.draw()
-    val (_, drawTime) = Timer.timer(() => {
-      drawTiles()
-    })
-    t += drawTime
-    if (Game.getFrame % 180 == 0) {
-      println("WorldPanel.draw %dms" format ((t/180)/1000000L))
-      t = 0L
-    }
+    drawTiles()
     tooltip.draw()
     drawName()
     drawDebug()

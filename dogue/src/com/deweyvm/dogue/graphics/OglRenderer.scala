@@ -17,20 +17,26 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.graphics.visualizers._
 import com.deweyvm.dogue.Game
 
+case class OglSprite(t:TextureRegion, color:Color) {
+  def draw(batch:SpriteBatch, x:Int, y:Int) {
+    batch.setColor(color.toLibgdxColor)
+    batch.draw(t, x, y)
+  }
+}
+
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
   val width = tileset.tileWidth
   val height = tileset.tileHeight
   val texture = tileset.texture
-  val rect = new RectSprite(width, height, Color.White)
 
   private def makeSprite(index:Int, color:Color, texture:Texture) = {
     val x = index % rows
     val y = index / rows
-    val region = AssetLoader.makeTextureRegion(texture,Recti(x * width, y * height, width, height).some)
-    val sprite = new Sprite(region)
-    sprite.setColor(color.toLibgdxColor)
-    sprite
+    val region = tileset.getRegion(x, y).getOrElse(
+      AssetLoader.makeTextureRegion(texture,Recti(x * width, y * height, width, height).some)
+    )
+    OglSprite(region, color)
   }
 
   def getSprites(code:Code, fgColor:Color, bgColor:Color) = {
@@ -40,22 +46,7 @@ class OglTile(tileset:Tileset) {
   }
 }
 
-class Scene(cols:Int, rows:Int) {
-  val array = Array.tabulate[Option[Tile]](cols*rows) {_ => None}
-  def set(i:Int, j:Int, t:Tile) {
-    val k = Array2d.coordsToIndex(i, j, cols)
-    array(k) = t.some
-  }
 
-  def foreach(f:(Int, Int, Tile) => Unit) {
-    for (k <- 0 until rows*cols) {
-      val (i, j) = Array2d.indexToCoords(k, cols)
-      val tile = array(k)
-      tile foreach {f(i, j, _)}
-    }
-  }
-
-}
 
 class OglRenderer(tileset:Tileset) extends Renderer {
   val vis:Option[Visualizer] = None
@@ -70,15 +61,14 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   val batch = new SpriteBatch
   val shape = new ShapeRenderer
-  val scene = new Scene(Game.RenderWidth/width, Game.RenderHeight/height)
+  val scene = new Scene(Game.Width/width, Game.Height/height)
   val camera = new Camera(Game.RenderWidth, Game.RenderHeight)
 
   private val draws = ArrayBuffer[() => Unit]()
 
-  def drawSprite(s:Sprite, x:Float, y:Float) {
+  def drawOglSprite(s:OglSprite, x:Int, y:Int) {
     draws.append(() => {
-      s.setPosition(x, y)
-      s.draw(batch)
+      s.draw(batch, x, y)
     })
   }
 
@@ -130,8 +120,8 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   def drawTileRaw(t:Tile, x:Double, y:Double) {
     val (fg, bg) = oglTile.getSprites(t.code, t.fgColor, t.bgColor)
-    drawSprite(bg, x.toFloat, y.toFloat)
-    drawSprite(fg, x.toFloat, y.toFloat)
+    drawOglSprite(bg, x.toInt, y.toInt)
+    drawOglSprite(fg, x.toInt, y.toInt)
   }
 
   private def drawVisualization() {
@@ -148,7 +138,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     }
 
   }
-
+  var t = 0L
   override def render() {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
@@ -156,7 +146,12 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     scene.foreach {case(i, j, t) =>
       drawTileRaw(t, i*width, j*height)
     }
-    draws foreach {_()}
+    val (_, time) = Timer.timer(() => draws foreach {_()})
+    t += time
+    if (Game.getFrame % 60 == 0) {
+      println((t/60)/1000 + "us")
+      t = 0
+    }
     draws.clear()
     batch.end()
     drawVisualization()

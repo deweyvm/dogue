@@ -6,11 +6,8 @@ import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.data.Pointer
-import com.deweyvm.dogue.common.procgen.{MapName, PerlinNoise}
-import com.deweyvm.gleany.graphics.ImageUtils
+import com.deweyvm.dogue.common.procgen.MapName
 import com.deweyvm.dogue.graphics.OglRenderer
-import com.deweyvm.gleany.graphics.display.Display
-import com.deweyvm.gleany.data.Timer
 
 
 class Engine {
