@@ -15,13 +15,13 @@ object LatitudinalRegion {
       Tropical
     } else if (k < 15) {
       Subtropical
-    } else if (k < 45) {
+    } else if (k < 35) {
       WarmTemperate
-    } else if (k < 70) {
+    } else if (k < 60) {
       CoolTemperate
-    } else if (k < 85) {
+    } else if (k < 75) {
       Boreal
-    } else if (k < 95) {
+    } else if (k < 85) {
       Subpolar
     } else {
       Polar
