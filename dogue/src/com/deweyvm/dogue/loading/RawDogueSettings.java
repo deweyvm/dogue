@@ -18,6 +18,7 @@ public class RawDogueSettings {
     public String logLocation;
     public int width;
     public int height;
+    public int tileSize;
     public RawDogueSettings() {
 
     }

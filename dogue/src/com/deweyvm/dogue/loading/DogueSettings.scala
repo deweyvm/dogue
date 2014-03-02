@@ -110,14 +110,16 @@ class DogueSettings(private val raw:RawDogueSettings) {
   )
 
   val width = Setting.intSetting(raw, "width", 64, 32, 64*3)(
-    "The width of the game window in tiles"
+    "The width of the game window in tiles."
   )
 
   val height = Setting.intSetting(raw, "height", 36, 16, 64*3)(
-    "The height of the game window in tiles"
+    "The height of the game window in tiles."
   )
 
-
+  val tileSize = Setting.intSetting(raw, "tileSize", 16, 1, 4096)(
+    "The size of each tile in pixels."
+  )
 
   private def flush() {
     raw.username = username.get
@@ -130,6 +132,7 @@ class DogueSettings(private val raw:RawDogueSettings) {
     raw.logLocation = logLocation.get
     raw.width = width.get
     raw.height = height.get
+    raw.tileSize = tileSize.get
     raw.flush()
   }
 

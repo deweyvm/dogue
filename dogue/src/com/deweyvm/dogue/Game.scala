@@ -11,8 +11,8 @@ object Game {
   val Zoom = 1
   val globals = new Globals
   val settings = DogueSettings.load()
-  val Width = settings.width.get*16
-  val Height = settings.height.get*16
+  val Width = settings.width.get*settings.tileSize.get
+  val Height = settings.height.get*settings.tileSize.get
   val RenderWidth = Width/Zoom
   val RenderHeight = Height/Zoom
   DogueSettings.flush()

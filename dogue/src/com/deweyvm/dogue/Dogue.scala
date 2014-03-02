@@ -10,7 +10,7 @@ import com.deweyvm.dogue.loading.TileSpec
 object Dogue {
   private var r:Option[Renderer] = None
 
-  val tileSpec = TileSpec(16, 16)
+  val tileSpec = TileSpec(16, 16, Game.settings.tileSize.get, Game.settings.tileSize.get)
 
   def behead() {
     r = new NullRenderer().some

@@ -61,8 +61,8 @@ object Main {
       val iconPath = "sprites/icon.gif"
       val settings = new Settings(DogueControls, DogueDefaultSettings)
       //fixme issue #239
-      settings.raw.width = s.width.get*16
-      settings.raw.height = s.height.get*16
+      settings.raw.width = s.width.get*s.tileSize.get
+      settings.raw.height = s.height.get*s.tileSize.get
       val config = new GleanyConfig(settings, "Dogue", Some(iconPath))
       val pathResolver = new PathResolver(
         "fonts",
