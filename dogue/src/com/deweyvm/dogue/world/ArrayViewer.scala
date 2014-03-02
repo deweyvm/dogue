@@ -20,7 +20,7 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
 
   def scaled(div:Int) = this.copy(xCursor = xCursor/div, yCursor = yCursor/div)
 
-  def draw[T](a:Indexed2d[T], iRoot:Int, jRoot:Int, draw:(Int,Int,T) => Unit, default: => T) {
+  def draw[T](a:Indexed2d[T], iRoot:Int, jRoot:Int, draw:(T,Int,Int) => Unit, default: => T) {
     val width = a.cols
     val height = a.rows
     val iView = (xCursor - viewHeight/2).clamp(0, width - viewWidth)
@@ -28,7 +28,7 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
     a.slice(iView, jView, viewWidth, viewHeight, x => x, default) foreach { case (i, j, tile) =>
       val x = iRoot + i
       val y = jRoot + j
-      draw(x, y, tile)
+      draw(tile, x, y)
     }
     if (Game.getFrame % 120 < 100) {
       //prevents scrolling off the edge for non-evenly dividing scales

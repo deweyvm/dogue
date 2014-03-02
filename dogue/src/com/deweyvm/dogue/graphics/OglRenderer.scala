@@ -134,31 +134,32 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     drawSprite(fg, x.toFloat, y.toFloat)
   }
 
-  override def render() {
-    Timer.printMillis(() => {
-    Gdx.gl.glClearColor(0,0,0,1)
-    batch.begin()
-    vis foreach {v =>
+  private def drawVisualization() {
+    vis foreach { v =>
+      batch.begin()
       camera.zoom(v.zoom)
       (camera.translate _).tupled(v.translation)
+      batch.setProjectionMatrix(camera.getProjection)
+      v.drawBatch(this)
+      camera.zoom(1)
+      camera.translate(-v.translation._1, -v.translation._2)
+      batch.end()
+      v.drawShape(this)
     }
+
+  }
+
+  override def render() {
+    Gdx.gl.glClearColor(0,0,0,1)
+    batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
-    vis foreach {_.drawBatch(this)}
-
-
     scene.foreach {case(i, j, t) =>
       drawTileRaw(t, i*width, j*height)
     }
     draws foreach {_()}
-
-    vis foreach {v =>
-      camera.zoom(1)
-      camera.translate(-v.translation._1, -v.translation._2)
-    }
     draws.clear()
     batch.end()
-    vis foreach {_.drawShape(this)}
-    })
+    drawVisualization()
   }
 
 }

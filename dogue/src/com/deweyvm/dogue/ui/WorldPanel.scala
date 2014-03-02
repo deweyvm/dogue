@@ -12,15 +12,65 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
+import com.deweyvm.dogue.Game
 
-trait MapState
+trait MapState {
+  def draw(t:WorldTile, i:Int, j:Int):Unit
+}
 
 object MapState {
-  case object Wind extends MapState
-  case object Elevation extends MapState
-  case object Latitude extends MapState
-  case object Biome extends MapState
-  case object Nychthemera extends MapState
+  case object Wind extends MapState {
+    def draw(t:WorldTile, i:Int, j:Int) {
+      val dir = t.wind.normalize
+      val max = math.max(math.abs(dir.x), math.abs(dir.y))
+      val code =
+        if (math.abs(math.abs(dir.x) - math.abs(dir.y)) > max/2) {
+          if (math.abs(dir.x) > math.abs(dir.y)) {
+            if (dir.x > 0) {
+              Code.→
+            } else {
+              Code.`←`
+            }
+          } else {
+            if (dir.y > 0) {
+              Code.↓
+            } else {
+              Code.↑
+            }
+          }
+        } else {
+          (math.signum(dir.x).toInt, math.signum(dir.y).toInt) match {
+            case (1, -1) => Code./
+            case (-1, 1) => Code./
+            case (1, 1) => Code.\
+            case (-1, -1) => Code.\
+            case _ => Code.`?`
+          }
+        }
+      new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
+    }
+  }
+  case object Elevation extends MapState {
+    def draw(t:WorldTile, i:Int, j:Int) {
+      t.tile.draw(i, j)
+    }
+  }
+  case object Latitude extends MapState {
+    def draw(t:WorldTile, i:Int, j:Int) {
+      t.tile.copy(bgColor = t.latitude.color).draw(i, j)
+    }
+  }
+  case object Biome extends MapState {
+    def draw(t:WorldTile, i:Int, j:Int) {
+      t.tile.copy(bgColor = t.regionColor, code = Code.` `).draw(i, j)
+    }
+  }
+  case object Nychthemera extends MapState {
+    def draw(t:WorldTile, i:Int, j:Int) {
+      val light = Color.fromHsb(t.daylight.toFloat/2)
+      t.tile.copy(bgColor = light).draw(i, j)
+    }
+  }
   val All = Vector(Wind, Elevation, Latitude, Biome, Nychthemera)
   def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
@@ -34,7 +84,7 @@ object ZoomState {
   def getPointer:Pointer[ZoomState] = Pointer.create(All, 0)
 }
 object WorldPanel {
-
+  var t  = 0L
 
 
   def create(rect:Recti,
@@ -124,67 +174,38 @@ case class WorldPanel(override val rect:Recti,
     }
   }
 
-  override def draw() {
-    super.draw()
-    def drawWorldTile(i:Int, j:Int, t:WorldTile) = {
-      import MapState._
-      mapState.get match {
-        case Nychthemera =>
-          val light = Color.fromHsb(t.daylight.toFloat/2)
-          t.tile.copy(bgColor = light).draw(i, j)
-        case Latitude =>
-          t.tile.copy(bgColor = t.latitude.color).draw(i, j)
-        case Elevation =>
-          t.tile.draw(i, j)
-        case Biome =>
-          t.tile.copy(bgColor = t.regionColor, code = Code.` `).draw(i, j)
-        case Wind =>
-          val dir = t.wind.normalize
-          val max = math.max(math.abs(dir.x), math.abs(dir.y))
-          val code =
-            if (math.abs(math.abs(dir.x) - math.abs(dir.y)) > max/2) {
-              if (math.abs(dir.x) > math.abs(dir.y)) {
-                if (dir.x > 0) {
-                  Code.→
-                } else {
-                  Code.`←`
-                }
-              } else {
-                if (dir.y > 0) {
-                  Code.↓
-                } else {
-                  Code.↑
-                }
-              }
-            } else {
-              (math.signum(dir.x).toInt, math.signum(dir.y).toInt) match {
-                case (1, -1) => Code./
-                case (-1, 1) => Code./
-                case (1, 1) => Code.\
-                case (-1, -1) => Code.\
-                case _ => Code.`?`
-              }
-            }
-          new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
-      }
 
-    }
+
+  private def drawTiles() {
+    val draw = mapState.get.draw _
+
     val tiles = world.worldTiles
     zoomState.get match {
       case ZoomState.Region =>
-        view.draw(world.worldTiles, x, y, drawWorldTile, WorldTile.Blank)
+        view.draw(tiles, x, y, draw, WorldTile.Blank)
       case ZoomState.Full =>
-        view.scaled(regionDiv).draw(world.worldTiles.sample(regionDiv), x, y, drawWorldTile, WorldTile.Blank)
+        view.scaled(regionDiv).draw(tiles.sample(regionDiv), x, y, draw, WorldTile.Blank)
       case ZoomState.Mini =>
-        view.scaled(miniDiv).draw(world.worldTiles.sample(miniDiv), x, y, drawWorldTile, WorldTile.Blank)
+        view.scaled(miniDiv).draw(tiles.sample(miniDiv), x, y, draw, WorldTile.Blank)
     }
+  }
 
 
+  override def draw() {
+    super.draw()
+    val (_, drawTime) = Timer.timer(() => {
+      drawTiles()
+    })
+    t += drawTime
+    if (Game.getFrame % 180 == 0) {
+      println("WorldPanel.draw %dms" format ((t/180)/1000000L))
+      t = 0L
+    }
     tooltip.draw()
     drawName()
     drawDebug()
-    drawTime()
-    //
+    drawDate()
+
   }
 
   private def drawDebug() {
@@ -198,7 +219,7 @@ case class WorldPanel(override val rect:Recti,
     Text.fromString(name, Color.Black, Color.White).draw(xName,0)
   }
 
-  private def drawTime() {
+  private def drawDate() {
     val time = world.celestial.date.getString
     val xName = x + (width - time.length)/2
     Text.fromString(time, Color.Black, Color.White).draw(xName, height)
