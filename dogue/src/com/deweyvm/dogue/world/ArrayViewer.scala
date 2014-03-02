@@ -25,7 +25,7 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
     val height = a.rows
     val iView = (xCursor - viewHeight/2).clamp(0, width - viewWidth)
     val jView = (yCursor - viewHeight/2).clamp(0, height - viewHeight)
-    a.slice(iView, jView, viewWidth, viewHeight, x => x, default) foreach { case (i, j, tile) =>
+    a.slice(iView, jView, viewWidth, viewHeight, default) foreach { case (i, j, tile) =>
       val x = iRoot + i
       val y = jRoot + j
       draw(tile, x, y)

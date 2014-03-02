@@ -29,7 +29,6 @@ case class DateConstants(framesPerDay:Long = 60*24,
   val startTime:Long = {
     val startYear = 100
     val startDays = daysPerYear*startYear
-    println("days " + startDays * framesPerDay)
     startDays*framesPerDay
   }
 
