@@ -2,7 +2,8 @@ package com.deweyvm.dogue.loading
 
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.logging.Log
-
+import com.deweyvm.dogue.common.Implicits
+import Implicits._
 
 object DogueSettings {
   def load():DogueSettings = {
@@ -58,6 +59,7 @@ class IntVerifier(idName:String, default:Int, min:Int, max:Int) extends Verifier
       max
     } else {
       input
+
     }
   }
 
@@ -107,6 +109,14 @@ class DogueSettings(private val raw:RawDogueSettings) {
     "The location of runtime logs."
   )
 
+  val width = Setting.intSetting(raw, "width", 64, 32, 64*3)(
+    "The width of the game window in tiles"
+  )
+
+  val height = Setting.intSetting(raw, "height", 36, 16, 64*3)(
+    "The height of the game window in tiles"
+  )
+
 
 
   private def flush() {
@@ -117,6 +127,9 @@ class DogueSettings(private val raw:RawDogueSettings) {
     raw.pingFrequency = pingFrequency.get
     raw.pingCheckFrequency = pingCheckFrequency.get
     raw.maxPongWait = maxPongWait.get
+    raw.logLocation = logLocation.get
+    raw.width = width.get
+    raw.height = height.get
     raw.flush()
   }
 

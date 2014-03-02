@@ -3,9 +3,9 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Point2d, Recti}
-import com.badlogic.gdx.graphics.g2d.{SpriteBatch, Sprite}
-import com.deweyvm.dogue.common.data.Code
+import com.deweyvm.gleany.data.{Timer, Point2d, Recti}
+import com.badlogic.gdx.graphics.g2d.{TextureRegion, SpriteBatch, Sprite}
+import com.deweyvm.dogue.common.data.{Array2d, Code}
 import com.badlogic.gdx.Gdx
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.Implicits
@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.graphics.visualizers._
+import com.deweyvm.dogue.Game
 
 class OglTile(tileset:Tileset) {
   val rows = tileset.rows
@@ -34,9 +35,26 @@ class OglTile(tileset:Tileset) {
 
   def getSprites(code:Code, fgColor:Color, bgColor:Color) = {
     val fg = makeSprite(code.index, fgColor, texture)
-    val bg = new RectSprite(width, height, bgColor).sprite
+    val bg = makeSprite(Code.█.index, bgColor, texture)
     (fg, bg)
   }
+}
+
+class Scene(cols:Int, rows:Int) {
+  val array = Array.tabulate[Option[Tile]](cols*rows) {_ => None}
+  def set(i:Int, j:Int, t:Tile) {
+    val k = Array2d.coordsToIndex(i, j, cols)
+    array(k) = t.some
+  }
+
+  def foreach(f:(Int, Int, Tile) => Unit) {
+    for (k <- 0 until rows*cols) {
+      val (i, j) = Array2d.indexToCoords(k, cols)
+      val tile = array(k)
+      tile foreach {f(i, j, _)}
+    }
+  }
+
 }
 
 class OglRenderer(tileset:Tileset) extends Renderer {
@@ -52,7 +70,8 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   val batch = new SpriteBatch
   val shape = new ShapeRenderer
-  val camera = new Camera
+  val scene = new Scene(Game.RenderWidth/width, Game.RenderHeight/height)
+  val camera = new Camera(Game.RenderWidth, Game.RenderHeight)
 
   private val draws = ArrayBuffer[() => Unit]()
 
@@ -106,7 +125,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
   }
 
   override def draw(t:Tile, i:Int, j:Int) {
-    drawTileRaw(t, i*width, j*height)
+    scene.set(i, j, t)
   }
 
   def drawTileRaw(t:Tile, x:Double, y:Double) {
@@ -116,6 +135,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
   }
 
   override def render() {
+    Timer.printMillis(() => {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     vis foreach {v =>
@@ -124,7 +144,13 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     }
     batch.setProjectionMatrix(camera.getProjection)
     vis foreach {_.drawBatch(this)}
+
+
+    scene.foreach {case(i, j, t) =>
+      drawTileRaw(t, i*width, j*height)
+    }
     draws foreach {_()}
+
     vis foreach {v =>
       camera.zoom(1)
       camera.translate(-v.translation._1, -v.translation._2)
@@ -132,6 +158,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     draws.clear()
     batch.end()
     vis foreach {_.drawShape(this)}
+    })
   }
 
 }

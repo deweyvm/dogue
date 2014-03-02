@@ -16,6 +16,8 @@ public class RawDogueSettings {
     public int pingCheckFrequency;
     public int maxPongWait;
     public String logLocation;
+    public int width;
+    public int height;
     public RawDogueSettings() {
 
     }

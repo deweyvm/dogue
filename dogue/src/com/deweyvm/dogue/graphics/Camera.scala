@@ -3,10 +3,10 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.deweyvm.dogue.Game
 
-class Camera {
+class Camera(width:Int, height:Int) {
   private val cam = {
     val c = new OrthographicCamera(1,1)
-    c.setToOrtho(true, Game.RenderWidth, Game.RenderHeight)
+    c.setToOrtho(true, width, height)
     c
   }
 

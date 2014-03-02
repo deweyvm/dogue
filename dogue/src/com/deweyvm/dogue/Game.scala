@@ -9,13 +9,12 @@ import java.util
 
 object Game {
   val Zoom = 1
-  private val factor = 2
-  val Width = 32*16*factor
-  val Height = 32*9*factor
-  val RenderWidth = Width/Zoom
-  val RenderHeight = Height/Zoom
   val globals = new Globals
   val settings = DogueSettings.load()
+  val Width = settings.width.get*16
+  val Height = settings.height.get*16
+  val RenderWidth = Width/Zoom
+  val RenderHeight = Height/Zoom
   DogueSettings.flush()
   val fps = 60
 
@@ -23,7 +22,7 @@ object Game {
   def getFrame = frame
 
   def shutdown() {
-    //cleanup()
+    cleanup()
     Dogue.gdxApp foreach {_.exit()}
     System.exit(0)
   }

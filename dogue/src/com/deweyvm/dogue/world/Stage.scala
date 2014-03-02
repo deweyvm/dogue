@@ -7,7 +7,7 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.data.{Code, Array2d}
 import com.deweyvm.dogue.graphics.{OglRenderer, Renderer}
-import com.deweyvm.gleany.data.{Point2d, Point2f, Recti}
+import com.deweyvm.gleany.data.{Timer, Point2d, Point2f, Recti}
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.dogue.Dogue
@@ -43,7 +43,6 @@ case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
     }
     panels foreach { _.draw() }
     serverStatus.draw(cols - serverStatus.width, rows - 1)
-
   }
 
   def calculateBorders:Array2d[Option[Tile]] = {

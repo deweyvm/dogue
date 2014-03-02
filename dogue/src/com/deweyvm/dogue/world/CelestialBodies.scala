@@ -23,33 +23,40 @@ case object Spring extends Season {
   override def name = "Sur"
 }
 
-case class DateConstants(framesPerDay:Int = 60*24,
-                         daysPerYear:Int = 400,
-                         monthsPerYear:Int = 10) {
-  val startTime:Long = daysPerYear*framesPerDay*100
+case class DateConstants(framesPerDay:Long = 60*24,
+                         daysPerYear:Long = 400,
+                         monthsPerYear:Long = 10) {
+  val startTime:Long = {
+    val startYear = 100
+    val startDays = daysPerYear*startYear
+    println("days " + startDays * framesPerDay)
+    startDays*framesPerDay
+  }
 
 }
 
 case class Date(bodies:CelestialBodies, c:DateConstants) {
   private val t = bodies.t
-  private val framesPerDay = 60*24
-  private val daysPerYear = 400
-  private val monthsPerYear = 10
+  private val framesPerDay = c.framesPerDay
+  private val daysPerYear = c.daysPerYear
+  private val monthsPerYear = c.monthsPerYear
   private val framesPerMonth = framesPerDay * (daysPerYear / monthsPerYear)
   private val framesPerYear = framesPerDay * daysPerYear
-
+  private val hoursPerDay = 100
+  private val minutesPerHour = 100
+  private val secondsPerMinute = 100
   def getString:String =  {
     val year = t / framesPerYear
     val month = (t % framesPerYear)/framesPerMonth
     val day = (t % framesPerYear) / framesPerDay
     val dayFrames = t % framesPerDay
-    val framesPerHour = framesPerDay / 100.0
-    val framesPerMinute = framesPerDay / (100.0 * 100.0)
-    val framesPerSecond = framesPerDay / (100.0 * 100.0 * 100.0)
+    val framesPerHour = framesPerDay / hoursPerDay
+    val framesPerMinute = framesPerDay / (hoursPerDay * minutesPerHour)
+    val framesPerSecond = framesPerDay / (hoursPerDay * minutesPerHour * secondsPerMinute)
 
-    val hours = ((dayFrames / framesPerHour) % 100).toInt
-    val minutes = ((dayFrames / framesPerMinute) % 100).toInt
-    val seconds = ((dayFrames / framesPerSecond) % 100).toInt
+    val hours = ((dayFrames / framesPerHour) % secondsPerMinute).toInt
+    val minutes = ((dayFrames / framesPerMinute) % minutesPerHour).toInt
+    val seconds = ((dayFrames / framesPerSecond) % hoursPerDay).toInt
     "%dY %s %3d  %02d:%02d:%02d  %s" format (year, months(month.toInt), day + 1, seconds, minutes, hours, bodies.getSeason.name)
 
   }

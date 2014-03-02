@@ -2,7 +2,7 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.world._
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.gleany.data.Recti
+import com.deweyvm.gleany.data.{Timer, Recti}
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
@@ -12,7 +12,6 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
-import com.deweyvm.dogue.ui.ZoomState.{Mini, Full}
 
 trait MapState
 
