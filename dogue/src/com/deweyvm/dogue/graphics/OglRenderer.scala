@@ -66,6 +66,13 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   private val draws = ArrayBuffer[() => Unit]()
 
+  def drawSprite(s:Sprite, x:Int, y:Int) {
+    draws.append(() => {
+      s.setPosition(x, y)
+      s.draw(batch)
+    })
+  }
+
   def drawOglSprite(s:OglSprite, x:Int, y:Int) {
     draws.append(() => {
       s.draw(batch, x, y)
@@ -138,7 +145,6 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     }
 
   }
-  var t = 0L
   override def render() {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
@@ -146,12 +152,7 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     scene.foreach {case(i, j, t) =>
       drawTileRaw(t, i*width, j*height)
     }
-    val (_, time) = Timer.timer(() => draws foreach {_()})
-    t += time
-    if (Game.getFrame % 60 == 0) {
-      println((t/60)/1000 + "us")
-      t = 0
-    }
+    draws foreach {_()}
     draws.clear()
     batch.end()
     drawVisualization()
