@@ -1,9 +1,6 @@
 package com.deweyvm.dogue.loading
 
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.logging.Log
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
 
 object DogueSettings {
   def load():DogueSettings = {
