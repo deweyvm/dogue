@@ -9,3 +9,5 @@ import com.deweyvm.gleany.graphics.Color
 class Moisture(height:Indexed2d[Meters], wind:Lazy2d[Arrow]) {
 
 }
+
+class Particle(i:Int, j:Int, maxHeight:Meters)
