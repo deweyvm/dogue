@@ -58,6 +58,7 @@ object Ecosphere {
       atmosphereMap.get(i, j).getOrElse(super.getPressure(i, j))
     }
 
+
     private var eTime = 0.0
     private var rTime = 0.0
     private var wTime = 0.0
@@ -77,9 +78,9 @@ object Ecosphere {
     private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).lazyRender
 
     private val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
-      VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
+      //VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
 
-      //VectorField.simpleSpiral(cols, rows).lazyVectors
+      VectorField.simpleSpiral(cols, rows).lazyVectors
     }
 
     private def perlinToHeight(t:Double) = {
@@ -148,6 +149,10 @@ object Ecosphere {
       }
     }
 
+    val moisture = new Moisture(cols, rows, heightMap, windMap.map{case (i, j,(_,a,_)) => a}, 3,50)
+    override def getMoisture(i:Int, j:Int):Double = moisture.map.get(i, j).getOrElse(super.getMoisture(i, j))
+
+
     private def getElevationTriple(i:Int, j:Int):(Meters, Color, Code) = {
       val h = heightMap.get(i, j).getOrElse(maxElevation)
       val (color, code) =
@@ -185,6 +190,7 @@ trait Ecosphere {
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
   def getRegion(i:Int, j:Int):(Int, Color) = (0,Color.Black)
   def getPressure(i:Int, j:Int):Pressure = 1.atm
+  def getMoisture(i:Int, j:Int):Double = 0
   /**
    * force the area at (i, j) to be calculated so there is not a loading delay
    */
@@ -194,6 +200,7 @@ trait Ecosphere {
     getLatitude(i, j).ignore()
     getRegion(i, j).ignore()
     getPressure(i, j).ignore()
+    getMoisture(i, j).ignore()
   }
   def getTimeString:String
   def update:Ecosphere

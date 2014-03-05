@@ -71,7 +71,14 @@ object MapState {
       t.tile.copy(bgColor = light).draw(i, j)
     }
   }
-  val All = Vector(Wind, Elevation, Latitude, Biome, Nychthemera)
+
+  case object Moisture extends MapState {
+    def draw(t:WorldTile, i:Int, j:Int) {
+      val c = Color.fromHsb(t.moisture.toFloat % 1)
+      t.tile.copy(bgColor = c).draw(i, j)
+    }
+  }
+  val All = Vector(Moisture, Wind, Elevation, Latitude, Biome, Nychthemera)
   def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
 
@@ -133,6 +140,8 @@ case class WorldPanel(override val rect:Recti,
 
     val newMapState = if (Controls.Space.justPressed) {
       mapState.updated(1)
+    } else if (Controls.Shift.justPressed) {
+      mapState.updated(-1)
     } else {
       mapState
     }

@@ -8,11 +8,12 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
 object WorldTile {
-  val Blank = WorldTile(0 m, 1 atm, 0, Color.Pink, Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
+  val Blank = WorldTile(0 m, 1 atm, 0, 0, Color.Pink, Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
 }
 
 case class WorldTile(height:Meters,
                      pressure:Pressure,
+                     moisture:Double,
                      regionIndex:Int,
                      regionColor:Color,
                      latitude:LatitudinalRegion,
@@ -29,6 +30,7 @@ case class WorldTile(height:Meters,
     "Daylight %.2f" format daylight,
     "Sun Temp %.2f" format sunTemp,
     "Pressure %.2f" format pressure.d,
+    "Moisture %.2f" format moisture,
     "",
     "Season: %s" format season.toString
   ))

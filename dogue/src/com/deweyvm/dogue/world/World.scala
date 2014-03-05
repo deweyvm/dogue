@@ -26,11 +26,12 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, celestial:Celes
     val (elevation, color, code) = eco.getElevation(i, j)
     val lat = eco.getLatitude(i, j)
     val light = celestial.getSunlight(i, j)
+    val moisture = eco.getMoisture(i, j)
     val season = celestial.getSeason
     val sunTemp = celestial.getSunHeat(i, j)
     val tile = new Tile(code, color, Color.White)
 
-    new WorldTile(elevation, pressure, regionIndex, regionColor, lat, windDir, light, sunTemp, season, tile)
+    new WorldTile(elevation, pressure, moisture, regionIndex, regionColor, lat, windDir, light, sunTemp, season, tile)
   }
 
   def update:World = {
