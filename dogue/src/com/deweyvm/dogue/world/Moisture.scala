@@ -24,11 +24,15 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[
     if (depthLeft <= 0) {
       v
     } else {
-      //println(depthLeft)
-      traceWind(ni, nj, depthLeft - 1, v)
+      val newDepth = if (h > mountainHeight) {
+        2*depthLeft/3 - 1
+      } else {
+        depthLeft - 1
+      }
+      traceWind(ni, nj, newDepth, v)
     }
   }
-  val oobHeight = 10000 m
+  val mountainHeight = 1000 m
   /**
    * depth required for the tile to count as a moisture producing tile
    */
@@ -43,7 +47,7 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[
       if (index < 0) {
         0
       } else {
-        index/steps.toDouble/2
+        (index/steps.toDouble)/2
       }
     }
   }

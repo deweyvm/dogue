@@ -149,7 +149,7 @@ object Ecosphere {
       }
     }
 
-    val moisture = new Moisture(cols, rows, heightMap, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,500)
+    val moisture = new Moisture(cols, rows, heightMap, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,350)
     override def getMoisture(i:Int, j:Int):Double = moisture.map.get(i, j).getOrElse(super.getMoisture(i, j))
 
 
