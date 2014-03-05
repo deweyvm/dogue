@@ -18,19 +18,19 @@ class PerlinVisualizer extends Visualizer {
   val start = noise.find{_ > 0}.map {case (i, j, t) => (i, j)}.getOrElse(throw new RuntimeException)
   val flood = new FloodFiller[Double](noise, _ > 0, start._1, start._2)
   val floodPoints = flood.fill(15,15,5)
-  val newNoise = noise.map{ case (i, j, t) =>
+  val newNoise = noise.view.map{ case (i, j, t) =>
     if (floodPoints.contains((i, j))) {
       10
     } else {
       t
     }
   }
-  val raw = Array2d.unsafeGetElements(newNoise) map {
-    d => math.abs(d) - 1.0
-  }
-  val texture = ImageUtils.makeGreyscaleTexture(raw, size, size)
+  val mapped = newNoise map { case (i, j, d) =>
+    math.abs(d) - 1.0
+  }//fixme issue #254
+  //val texture = ImageUtils.makeGreyscaleTexture(raw.toVector, size, size)
   override def drawBatch(ogl:OglRenderer) = {
-    ogl.drawSprite(new Sprite(texture), 10, 10)
+    //ogl.drawSprite(new Sprite(texture), 10, 10)
   }
 }
 

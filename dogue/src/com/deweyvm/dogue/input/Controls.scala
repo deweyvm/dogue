@@ -16,12 +16,12 @@ object Controls {
   val Backspace = makeControl(Input.Keys.BACKSPACE)
   val Tab = makeControl(Input.Keys.TAB)
   val Escape = makeControl(Input.Keys.ESCAPE)
-  val Shift = makeControl(Input.Keys.SHIFT_LEFT)
-
+  val LShift = makeControl(Input.Keys.SHIFT_LEFT)
+  val RShift = makeControl(Input.Keys.SHIFT_RIGHT)
   val AxisX = new AxisControl(Left, Right)
   val AxisY = new AxisControl(Up, Down)
 
-  val All = Vector(Up, Down, Right, Left, Enter, Backspace, Space, Tab, Escape, Shift)
+  val All = Vector(Up, Down, Right, Left, Enter, Backspace, Space, Tab, Escape, LShift, RShift)
 
   def makeControl(key:Int) = {
     if (Game.globals.IsHeadless) {

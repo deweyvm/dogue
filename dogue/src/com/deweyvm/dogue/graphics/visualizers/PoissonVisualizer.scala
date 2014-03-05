@@ -12,7 +12,7 @@ class PoissonVisualizer extends Visualizer {
   val space = 5
   val maxSpace = space
   var seed = 0L
-  def makePerlin = new PerlinNoise(1/128.0, 5, size, seed).lazyRender
+  def makePerlin = new PerlinNoise(1/128.0, 5, size, seed).render
   def makePoisson = {
     val pos = new PoissonRng(size, size, {case(i, j) => space}, maxSpace, seed).getPoints
     val points = pos.filter { pt =>

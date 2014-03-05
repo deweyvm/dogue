@@ -7,17 +7,7 @@ object EcosphereLoader {
 
   private def makeEcosphere(worldParams:WorldParams) = {
     Timer.printMillisString("Loading map: ", () => {
-      val cols = worldParams.minimapSize
-      val rows = worldParams.minimapSize
-      val div = worldParams.size/worldParams.minimapSize
-      val minimapTiles = for (i <- 0 until cols; j <- 0 until rows) yield {
-        (i*div, j*div)
-      }
-      val eco = Ecosphere.create(worldParams)
-      minimapTiles.foreach { case (i, j) =>
-        eco.view(i, j)
-      }
-      eco
+      Ecosphere.create(worldParams)
     })
 
   }

@@ -1,9 +1,8 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.data.{Lazy2d, Indexed2d}
+import com.deweyvm.dogue.common.data.{Array2dView, Array2d}
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.gleany.data.Point2d
 
 
 object World {
@@ -14,30 +13,37 @@ object World {
   }
 }
 
-case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, celestial:CelestialBodies) {
+case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:CelestialBodies) {
+  outer =>
   val cols = eco.cols
   val rows = eco.rows
 
-  def worldTiles:Indexed2d[WorldTile] = Lazy2d.tabulate(cols, rows){ case (i, j) =>
-    val (regionIndex, regionColor) = eco.getRegion(i, j)
-    val arrow = eco.getWind(i, j)
-    val windDir = arrow.direction * arrow.magnitude
-    val pressure = eco.getPressure(i, j)
-    val (elevation, color, code) = eco.getElevation(i, j)
-    val lat = eco.getLatitude(i, j)
-    val light = celestial.getSunlight(i, j)
-    val moisture = eco.getMoisture(i, j)
-    val season = celestial.getSeason
-    val sunTemp = celestial.getSunHeat(i, j)
-    val tile = new Tile(code, color, Color.White)
+  def worldTiles:Array2dView[WorldTile] = new Array2dView[WorldTile] {
+    val cols = outer.cols
+    val rows = outer.rows
+    def get(i:Int, j:Int) = {
+      val (regionIndex, regionColor) = eco.getRegion(i, j)
+      val arrow = eco.getWind(i, j)
+      val windDir = arrow.direction * arrow.magnitude
+      val pressure = eco.getPressure(i, j)
+      val (elevation, color, code) = eco.getElevation(i, j)
+      val lat = eco.getLatitude(i, j)
+      val light = cycle.getSunlight(i, j)
+      val moisture = eco.getMoisture(i, j)
+      val season = cycle.getSeason
+      val sunTemp = cycle.getSunHeat(i, j)
+      val tile = new Tile(code, color, Color.White)
 
-    new WorldTile(elevation, pressure, moisture, regionIndex, regionColor, lat, windDir, light, sunTemp, season, tile)
+      new WorldTile(elevation, pressure, moisture, regionIndex, regionColor, lat, windDir, light, sunTemp, season, tile)
+    }
+
   }
 
   def update:World = {
     val newT = t + 1
-    val newCycle = celestial.copy(t = newT)
-    this.copy(celestial = newCycle, eco = eco.update, t = newT)
+    val newCycle = cycle.copy(t = newT)
+    val newEco = eco.update
+    this.copy(cycle = newCycle, eco = newEco, t = newT)
   }
 }
 

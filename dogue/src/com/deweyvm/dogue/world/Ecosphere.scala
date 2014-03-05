@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.procgen._
-import com.deweyvm.dogue.common.data.{Code, Indexed2d, Lazy2d}
+import com.deweyvm.dogue.common.data.{Array2dView, Array2d, Code}
 import com.deweyvm.gleany.data._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
@@ -47,7 +47,7 @@ object Ecosphere {
 
     override def getRegion(i:Int, j:Int):(Int, Color) = {
       val (r, time) = Timer.timer(() => {
-        regionMap.get(i, j).getOrElse(super.getRegion(i, j))
+        regionMap.get(i, j)//.getOrElse(super.getRegion(i, j))
       })
       rTime += time
       r
@@ -55,7 +55,7 @@ object Ecosphere {
 
     override def getPressure(i:Int, j:Int):Pressure = {
       //atmosphereic pressure based on height only for now
-      atmosphereMap.get(i, j).getOrElse(super.getPressure(i, j))
+      atmosphereMap.get(i, j)//.getOrElse(super.getPressure(i, j))
     }
 
 
@@ -75,12 +75,12 @@ object Ecosphere {
     private val solidTier = solidElevation.d/maxElevation.d - 1
 
     private val border = math.min(cols, rows)/2 - 10
-    private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).lazyRender
+    private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).render
 
-    private val windMap: Lazy2d[(Point2d, Arrow, Color)] = {
-      //VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
+    private val windMap:Array2d[(Point2d, Arrow, Color)] = {
+      VectorField.perlinWind(solidElevation.d, noise, cols, rows, 1, seed).lazyVectors
 
-      VectorField.simpleSpiral(cols, rows).lazyVectors
+      //VectorField.simpleSpiral(cols, rows).lazyVectors
     }
 
     private def perlinToHeight(t:Double) = {
@@ -89,8 +89,8 @@ object Ecosphere {
       tm*tm*sign
     }
 
-    private val heightMap:Indexed2d[Meters] = {
-      noise.map({ case (i, j, p) =>
+    private val heightMap:Array2dView[Meters] = {
+      noise.view.map({ case (i, j, p) =>
         val h = perlinToHeight(p)
         val x = (cols/2 - i).toDouble
         val y = (rows/2 - j).toDouble
@@ -112,16 +112,16 @@ object Ecosphere {
       })
     }
 
-    private val atmosphereMap:Indexed2d[Pressure] = {
+    private val atmosphereMap:Array2dView[Pressure] = {
       heightMap.map{case (i, j, h) =>
         val f = (h < 0) select (waterPressure _, airPressure _)
         f(h)
       }
     }
 
-    private val latRegions:Indexed2d[LatitudinalRegion] = {
+    private val latRegions:Array2d[LatitudinalRegion] = {
       val max = cols/2
-      Lazy2d.tabulate(cols, rows){ case (i, j) =>
+      Array2d.tabulate(cols, rows){ case (i, j) =>
         val x = (cols/2 - i).toDouble
         val y = (rows/2 - j).toDouble
         val lat = (x*x + y*y).sqrt/max
@@ -129,32 +129,32 @@ object Ecosphere {
       }
     }
 
-    private val regionMap:Indexed2d[(Int, Color)] = {
-      val hexSize = cols/150
+    private val regionMap:Array2dView[(Int, Color)] = {
+      val hexSize = cols/50
       val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
       val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
       val graph = hexGrid.graph
       val colorMap = (colors.zipWithIndex zip graph.nodes).map { case ((color, index), poly) =>
         (poly.self, (index, color))
       }.toMap
-      Lazy2d.tabulate(cols, rows){ case (i, j) =>
-        heightMap.get(i, j) match {
-          case Some(d) if d > 0  =>
-            hexGrid.pointInPoly(i, j) match {
-              case Some(poly) => colorMap(poly)
-              case None => (0, Color.Black)
-            }
-          case _ => (0, Color.Black)
+      heightMap.map {case (i, j, h) =>
+        if (h > 0) {
+          hexGrid.pointInPoly(i, j) match {
+            case Some(poly) => colorMap(poly)
+            case None => (0, Color.Black)
+          }
+        } else {
+          (0, Color.Black)
         }
       }
     }
 
-    val moisture = new Moisture(cols, rows, heightMap, windMap.map{case (i, j,(_,a,_)) => a}, 1,200)
+    val moisture = new Moisture(cols, rows, heightMap, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,500)
     override def getMoisture(i:Int, j:Int):Double = moisture.map.get(i, j).getOrElse(super.getMoisture(i, j))
 
 
     private def getElevationTriple(i:Int, j:Int):(Meters, Color, Code) = {
-      val h = heightMap.get(i, j).getOrElse(maxElevation)
+      val h = heightMap.get(i, j)//.getOrElse(maxElevation)
       val (color, code) =
         if (h <= 0.m) {
           val cr = Color.Blue.dim((math.abs(h.d)/maxElevation.d).toFloat)

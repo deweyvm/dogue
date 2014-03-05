@@ -2,17 +2,16 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.world._
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.gleany.data.{Timer, Recti}
+import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
-import com.deweyvm.dogue.common.data.{Pointer, Code, Indexed2d}
+import com.deweyvm.dogue.common.data.{Array2dView, Array2d, Pointer, Code}
 import com.deweyvm.dogue.common.procgen.VectorField
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
-import com.deweyvm.dogue.Game
+import com.deweyvm.dogue.common.Implicits
+import Implicits._
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -84,10 +83,9 @@ object MapState {
 
 trait ZoomState
 object ZoomState {
-  case object Region extends ZoomState
   case object Full extends ZoomState
   case object Mini extends ZoomState
-  val All = Vector(Mini, Full, Region)
+  val All = Vector(Mini, Full)
   def getPointer:Pointer[ZoomState] = Pointer.create(All, 0)
 }
 object WorldPanel {
@@ -118,18 +116,16 @@ case class WorldPanel(override val rect:Recti,
                       zoomState:Pointer[ZoomState],
                       mapState:Pointer[MapState])
   extends Panel(rect, bgColor) {
-  import WorldPanel._
   val (iSpawn, jSpawn) = (0,0)
   override def getRects:Vector[Recti] = {
     super.getRects ++ tooltip.getRects
   }
   val regionSize = 16
   val miniDiv = world.cols/minimapSize//minimap.div //(4096*16)/69
-  val regionDiv = 16
   override def update:WorldPanel = {
     val newTooltip = getTooltip
     val newWorld = world.update
-    val incr = if (Controls.Enter.justPressed) {
+    val incr = if (Controls.RShift.justPressed) {
       1
     } else if (Controls.Backspace.justPressed) {
       -1
@@ -140,7 +136,7 @@ case class WorldPanel(override val rect:Recti,
 
     val newMapState = if (Controls.Space.justPressed) {
       mapState.updated(1)
-    } else if (Controls.Shift.justPressed) {
+    } else if (Controls.LShift.justPressed) {
       mapState.updated(-1)
     } else {
       mapState
@@ -157,13 +153,11 @@ case class WorldPanel(override val rect:Recti,
   }
 
   def getScale:Int = zoomState.get match {
-    case ZoomState.Region => 1
-    case ZoomState.Full => regionDiv
+    case ZoomState.Full => 1
     case ZoomState.Mini => miniDiv
   }
 
-  def getTiles:Indexed2d[WorldTile] = zoomState.get match {
-    case ZoomState.Region => world.worldTiles
+  def getTiles:Array2dView[WorldTile] = zoomState.get match {
     case ZoomState.Full => world.worldTiles
     case ZoomState.Mini => world.worldTiles
   }
@@ -171,13 +165,12 @@ case class WorldPanel(override val rect:Recti,
 
   private def getTooltip:InfoPanel =  {
     def getTooltip(t:WorldTile):Tooltip = zoomState.get match {
-      case ZoomState.Region => t.regionTooltip
-      case ZoomState.Full => t.fullTooltip
+      case ZoomState.Full => t.regionTooltip
       case ZoomState.Mini => t.fullTooltip
     }
     val fresh = InfoPanel.makeNew(Recti(1, 1, tooltip.width, tooltip.height), bgColor)
     val (i, j) = (view.xCursor, view.yCursor)
-    val tip = getTiles.get(i, j) map getTooltip
+    val tip = getTooltip(getTiles.get(i, j)).some
     tip.foldLeft(fresh){ case (acc, tt) =>
       acc.addLines(tt.lines, bgColor, tt.color)
     }
@@ -190,12 +183,10 @@ case class WorldPanel(override val rect:Recti,
 
     val tiles = world.worldTiles
     zoomState.get match {
-      case ZoomState.Region =>
-        view.draw(tiles, x, y, draw, WorldTile.Blank)
       case ZoomState.Full =>
-        view.scaled(regionDiv).draw(tiles.sample(regionDiv), x, y, draw, WorldTile.Blank)
+        view.draw(tiles, x, y, draw)
       case ZoomState.Mini =>
-        view.scaled(miniDiv).draw(tiles.sample(miniDiv), x, y, draw, WorldTile.Blank)
+        view.scaled(miniDiv).draw(tiles.sample(miniDiv), x, y, draw)
     }
   }
 
@@ -222,7 +213,7 @@ case class WorldPanel(override val rect:Recti,
   }
 
   private def drawDate() {
-    val time = world.celestial.date.getString
+    val time = world.cycle.date.getString
     val xName = x + (width - time.length)/2
     Text.fromString(time, Color.Black, Color.White).draw(xName, height)
   }
