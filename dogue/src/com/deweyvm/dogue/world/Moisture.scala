@@ -46,8 +46,7 @@ class Moisture(cols:Int, rows:Int, height:Indexed2d[Meters], wind:Lazy2d[Arrow],
       if (index < 0) {
         0
       } else {
-        0.5//(1 - index/steps.toDouble)/2
-
+        index/steps.toDouble/2
       }
     }
   }
