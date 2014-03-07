@@ -8,14 +8,13 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
 object WorldTile {
-  val Blank = WorldTile(0 m, 1 atm, 0, 0, Color.Pink, Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
+  val Blank = WorldTile(0 m, 1 atm, 0, Biome.Void, Latitude.Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
 }
 
 case class WorldTile(height:Meters,
                      pressure:Pressure,
                      moisture:Double,
-                     regionIndex:Int,
-                     regionColor:Color,
+                     biome:Biome,
                      latitude:LatitudinalRegion,
                      wind:Point2d,
                      daylight:Double,
@@ -24,7 +23,7 @@ case class WorldTile(height:Meters,
                      tile:Tile) {
   def fullTooltip:Tooltip = Tooltip(Color.Red, Vector(
     "Height %.2f" format height.d,
-    "Region %d" format regionIndex,
+    "Region %s" format biome,
     "Latitude %s" format latitude,
     "Wind %.2f" format wind.magnitude,
     "Daylight %.2f" format daylight,

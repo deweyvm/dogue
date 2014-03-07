@@ -61,7 +61,7 @@ object MapState {
   }
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      t.tile.copy(bgColor = t.regionColor, code = Code.` `).draw(i, j)
+      t.tile.copy(bgColor = t.biome.mapColor, code = Code.` `).draw(i, j)
     }
   }
   case object Nychthemera extends MapState {
@@ -77,7 +77,7 @@ object MapState {
       t.tile.copy(bgColor = c).draw(i, j)
     }
   }
-  val All = Vector(Moisture, Wind, Elevation, Latitude, Biome, Nychthemera)
+  val All = Vector(Elevation, Moisture, Wind, Latitude, Biome, Nychthemera)
   def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
 

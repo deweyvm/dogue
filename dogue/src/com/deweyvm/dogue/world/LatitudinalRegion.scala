@@ -3,15 +3,27 @@ package com.deweyvm.dogue.world
 import com.deweyvm.gleany.graphics.Color
 
 
-object LatitudinalRegion {
+object Latitude {
+
+  val Polar = LatitudinalRegion(Color.Blue)
+  val Subpolar = LatitudinalRegion(Color.Cyan)
+  val Boreal = LatitudinalRegion(Color.Teal)
+  val CoolTemperate = LatitudinalRegion(Color.DarkGreen)
+  val WarmTemperate = LatitudinalRegion(Color.Green)
+  val Subtropical = LatitudinalRegion(Color.Yellow)
+  val Tropical = LatitudinalRegion(Color.Orange)
+  val SuperTropical = LatitudinalRegion(Color.Red)
   val All = Vector(Polar, Subpolar, Boreal, CoolTemperate, WarmTemperate, Subtropical, Tropical)
+
 
   /**
    * radius on 0..1
    */
   def getRegion(r:Double):LatitudinalRegion = {
     val k = (r * 100).toInt
-    if (k < 5) {
+    if (k < 1) {
+      SuperTropical
+    } else if (k < 5) {
       Tropical
     } else if (k < 15) {
       Subtropical
@@ -30,26 +42,5 @@ object LatitudinalRegion {
 }
 
 //http://en.wikipedia.org/wiki/File:Lifezones_Pengo.svg
-trait LatitudinalRegion { def color:Color }
+case class LatitudinalRegion(color:Color)
 
-case object Polar extends LatitudinalRegion {
-  def color = Color.Blue
-}
-case object Subpolar extends LatitudinalRegion  {
-  def color = Color.Cyan
-}
-case object Boreal extends LatitudinalRegion {
-  def color = Color.Teal
-}
-case object CoolTemperate extends LatitudinalRegion {
-  def color = Color.DarkGreen
-}
-case object WarmTemperate extends LatitudinalRegion {
-  def color = Color.Green
-}
-case object Subtropical extends LatitudinalRegion {
-  def color = Color.Yellow
-}
-case object Tropical extends LatitudinalRegion {
-  def color = Color.Orange
-}

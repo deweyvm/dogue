@@ -22,7 +22,6 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:Celestial
     val cols = outer.cols
     val rows = outer.rows
     def get(i:Int, j:Int) = {
-      val (regionIndex, regionColor) = eco.getRegion(i, j)
       val arrow = eco.getWind(i, j)
       val windDir = arrow.direction * arrow.magnitude
       val pressure = eco.getPressure(i, j)
@@ -33,8 +32,8 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:Celestial
       val season = cycle.getSeason
       val sunTemp = cycle.getSunHeat(i, j)
       val tile = new Tile(code, color, Color.White)
-
-      new WorldTile(elevation, pressure, moisture, regionIndex, regionColor, lat, windDir, light, sunTemp, season, tile)
+      val biome = eco.getBiome(i, j)
+      new WorldTile(elevation, pressure, moisture, biome, lat, windDir, light, sunTemp, season, tile)
     }
 
   }

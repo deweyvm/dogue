@@ -403,6 +403,7 @@
     <dictionary name="M">
       <words>
         <w>aansa</w>
+        <w>biome</w>
         <w>cooldown</w>
         <w>coord</w>
         <w>coords</w>
@@ -432,6 +433,7 @@
         <w>ponger</w>
         <w>ponyti</w>
         <w>prerendered</w>
+        <w>rainforest</w>
         <w>recti</w>
         <w>rects</w>
         <w>redux</w>
@@ -440,6 +442,7 @@
         <w>scannable</w>
         <w>scannables</w>
         <w>screenshot</w>
+        <w>scrubland</w>
         <w>sensical</w>
         <w>sigil</w>
         <w>spawner</w>
@@ -451,6 +454,7 @@
         <w>tuples</w>
         <w>updatable</w>
         <w>vert</w>
+        <w>xeric</w>
       </words>
     </dictionary>
   </component>
