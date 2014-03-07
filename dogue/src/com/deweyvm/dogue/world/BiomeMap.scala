@@ -12,7 +12,9 @@ case class Biome(name:String,
                  region:DogueRange[LatitudinalRegion],
                  moisture:DogueRange[Double],
                  temperature:DogueRange[Double],
-                 height:DogueRange[AltitudinalRegion])
+                 height:DogueRange[AltitudinalRegion]) {
+  override def toString = name
+}
 
 object Biome {
   val Void = Biome("Void", Color.Black, Latitude.Polar <=> Latitude.SuperTropical, 0.0 <=> 1.0, -273.0 <=> 1000.0, Altitude.Abyss <=> Altitude.SuperAlpine)

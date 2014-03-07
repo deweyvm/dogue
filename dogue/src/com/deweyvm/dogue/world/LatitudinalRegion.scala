@@ -5,14 +5,14 @@ import com.deweyvm.gleany.graphics.Color
 
 object Latitude {
 
-  val Polar = LatitudinalRegion(Color.Blue)
-  val Subpolar = LatitudinalRegion(Color.Cyan)
-  val Boreal = LatitudinalRegion(Color.Teal)
-  val CoolTemperate = LatitudinalRegion(Color.DarkGreen)
-  val WarmTemperate = LatitudinalRegion(Color.Green)
-  val Subtropical = LatitudinalRegion(Color.Yellow)
-  val Tropical = LatitudinalRegion(Color.Orange)
-  val SuperTropical = LatitudinalRegion(Color.Red)
+  val Polar         = LatitudinalRegion("Polar", Color.Blue)
+  val Subpolar      = LatitudinalRegion("Subpolar", Color.Cyan)
+  val Boreal        = LatitudinalRegion("Boreal", Color.Teal)
+  val CoolTemperate = LatitudinalRegion("Cool Temperate", Color.DarkGreen)
+  val WarmTemperate = LatitudinalRegion("Warm Temperate", Color.Green)
+  val Subtropical   = LatitudinalRegion("Subtropical", Color.Yellow)
+  val Tropical      = LatitudinalRegion("Tropical", Color.Orange)
+  val SuperTropical = LatitudinalRegion("Super Tropical", Color.Red)
   val All = Vector(Polar, Subpolar, Boreal, CoolTemperate, WarmTemperate, Subtropical, Tropical)
 
 
@@ -42,5 +42,7 @@ object Latitude {
 }
 
 //http://en.wikipedia.org/wiki/File:Lifezones_Pengo.svg
-case class LatitudinalRegion(color:Color)
+case class LatitudinalRegion(name:String, color:Color) {
+  override def toString = name
+}
 

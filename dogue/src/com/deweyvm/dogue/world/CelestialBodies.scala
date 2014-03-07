@@ -89,7 +89,7 @@ case class CelestialBodies(t:Long, worldRadius:Double, c:DateConstants) {
 
   def getSunlight(i:Int, j:Int):Double = {
     val p = Point2d(i, j)
-    if ((p - outer.center).magnitude < 4096/8) {
+    if ((p - outer.center).magnitude < worldRadius/16) {
       0.25
     } else {
       if (!cover.contains(p) && shadow.contains(p)) {

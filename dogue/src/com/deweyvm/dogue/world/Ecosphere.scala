@@ -155,7 +155,15 @@ object Ecosphere {
         val cols = outer.cols
         val rows = outer.rows
         def get(i:Int, j:Int) = {
-          Biome.Void
+          hexGrid.pointInPoly(i, j) match {
+            case Some(poly) =>
+              val center = poly.centroid.toPoint2i
+              val moisture = moistureMap.get(i, j)
+              val height = heightMap.get(i, j)
+              Biome.Void
+              //colorMap(poly)
+            case None => Biome.Void
+          }
         }
       }
       /*heightMap.map {case (i, j, h) =>
