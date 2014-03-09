@@ -21,11 +21,11 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[
     }
     val h = height.get(ni.toInt, nj.toInt)
     val v = h +: current
-    if (depthLeft <= 0) {
+    if (depthLeft <= 0 || h < moistureSpawnDepth) {
       v
     } else {
       val newDepth = if (h > mountainHeight) {
-        depthLeft - 5
+        depthLeft - 1//5
       } else {
         depthLeft - 1
       }
@@ -51,7 +51,7 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[
       if (index < 0) {
         0
       } else {
-        (index/steps.toDouble)/2
+        1 - path.length/steps.toDouble
       }
     }
   }

@@ -133,11 +133,14 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   private def drawVisualization() {
     vis foreach { v =>
+
       batch.begin()
       camera.zoom(v.zoom)
       (camera.translate _).tupled(v.translation)
       batch.setProjectionMatrix(camera.getProjection)
       v.drawBatch(this)
+      draws foreach {_()}
+      draws.clear()
       camera.zoom(1)
       camera.translate(-v.translation._1, -v.translation._2)
       batch.end()

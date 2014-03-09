@@ -83,12 +83,23 @@ object Ecosphere {
     private def perlinToHeight(t:Double) = {
       val tm = 1 - t
       val sign = math.signum(t)
-      1 - math.pow(tm, 3)//*sign
+      1 - math.pow(tm, 0.1)
     }
 
+    private val mountains = new Mountains(Mountains.mountain3, 50, worldParams.size, worldParams.period, worldParams.octaves, worldParams.seed)
+
+    private val lakes = new Mountains(Mountains.lake, 10, worldParams.size, 64, worldParams.octaves, worldParams.seed)
+
     private val heightMap:Array2dView[Meters] = {
-      noise.view.map({ case (i, j, p) =>
-        val h = perlinToHeight(p)
+      noise.map({ case (i, j, p) =>
+        val base = perlinToHeight(p)
+        val m = mountains.get(i, j)
+        val mm = if (m > 0) {
+          (base + m)/2
+        } else {
+          base
+        }
+        val h = mm - lakes.get(i, j)
         val x = (cols/2 - i).toDouble
         val y = (rows/2 - j).toDouble
         val dist = math.sqrt(x*x + y*y)
@@ -106,7 +117,7 @@ object Ecosphere {
           (bowl + h).clamp(-1, 1)
         }
         d * 10000 m
-      })
+      }).view
     }
 
     private val windMap:Array2d[(Point2d, Arrow, Color)] = {
@@ -136,11 +147,11 @@ object Ecosphere {
         val x = (cols/2 - i).toDouble
         val y = (rows/2 - j).toDouble
         val lat = (x*x + y*y).sqrt/max
-        Latitude.getRegion(lat)
+        Latitude.getLatitude(lat)
       }
     }
 
-    val moistureMap = new Moisture(cols, rows, heightMap, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,500)
+    val moistureMap = new Moisture(cols, rows, heightMap, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,20)
     override def getMoisture(i:Int, j:Int):Double = moistureMap.get(i, j)
 
     private val regionMap:Array2dView[Biome] = {
@@ -148,9 +159,6 @@ object Ecosphere {
       val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
       val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
       val graph = hexGrid.graph
-      val colorMap = (colors.zipWithIndex zip graph.nodes).map { case ((color, index), poly) =>
-        (poly.self, (index, color))
-      }.toMap
       new Array2dView[Biome] {
         val cols = outer.cols
         val rows = outer.rows
@@ -166,48 +174,13 @@ object Ecosphere {
           }
         }
       }
-      /*heightMap.map {case (i, j, h) =>
-        if (h > 0) {
-          hexGrid.pointInPoly(i, j) match {
-            case Some(poly) =>
-              val center = poly.centroid.toPoint2i
-              val moisture = moistureMap.get(i, j)
-              val height = heightMap.get(i, j)
-              colorMap(poly)
-            case None => (0, Color.Black)
-          }
-        } else {
-          (0, Color.Black)
-        }
-      }*/
     }
 
-
-
-
     private def getElevationTriple(i:Int, j:Int):(Meters, Color, Code) = {
-      val h = heightMap.get(i, j)//.getOrElse(maxElevation)
-      val (color, code) =
-        if (h <= 0.m) {
-          val cr = Color.Blue.dim((math.abs(h.d)/maxElevation.d).toFloat)
-          (cr, Code.≈)
-        } else if (h < 50.m) {
-          (Color.Yellow, Code.`.`)
-        } else if (h < 750.m) {
-          (Color.Green, Code.`"`)
-        } else if (h < 5000.m) {
-          (Color.DarkGreen, Code.♠)
-        } else if (h < 6000.m) {
-          (Color.DarkGrey, Code.▲)
-        } else if (h < 7000.m) {
-          (Color.Grey, Code.▲)
-        } else if (h < 8000.m) {
-          (Color.White.dim(1.3f), Code.▲)
-        } else if (h < 9000.m) {
-          (Color.White.dim(1.2f), Code.▲)
-        } else {
-          (Color.White.dim(1.1f), Code.▲)
-        }
+      val h = heightMap.get(i, j)
+      val altitude = Altitude.fromHeight(h)
+      val code = altitude.code
+      val color = altitude.color
       (h, color, code)
     }
 

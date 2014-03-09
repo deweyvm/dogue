@@ -12,7 +12,7 @@ import com.deweyvm.dogue.common.testing.TestManager
 object Main {
   def main(args: Array[String]) {
     val c = OptParser.getOptions(args)
-    TestManager.runAll(c.failFirst)
+    //TestManager.runAll(c.failFirst)
     if (c.testsOnly) {
       sys.exit(0)
     }

@@ -1,0 +1,123 @@
+package com.deweyvm.dogue.world
+
+import com.deweyvm.dogue.common.procgen.PerlinNoise
+import com.deweyvm.dogue.common.data.Array2dView
+import com.deweyvm.gleany.graphics.Color
+import com.deweyvm.dogue.common.Implicits
+import Implicits._
+
+object Mountains {
+  def river(d:Double) = math.abs(d) - 0.15//32, 6, 256
+  def mountain(d:Double) = (1 - math.abs(d)) - 0.95//32, 6, 256
+  def mountain2(d:Double) = math.pow(d, 0.1) - 0.85//16, 6, 256
+  def mountain3(d:Double) = {
+    val h = 1 - (d - 0.3).clamp(0, 1)
+    1 - math.pow(h, 3)
+  }
+  def lake(d:Double) = {
+    val h = 1 - (d - 0.5).clamp(0, 1)
+    (1 - math.pow(h, 3))/2
+  }
+}
+
+class Mountains(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int, seed:Long) {
+  val rows = size
+  val cols = size
+
+  val noise = new PerlinNoise(1 / period.toDouble, octaves, size, seed).render.view.map { case (i, j, d) =>
+    f(d)
+  }
+
+  val all:Set[(Int,Int)] = {
+    val points = for (i <- 0 until cols; j <- 0 until rows) yield {
+      (i, j)
+    }
+    val solid = points.filter{ case (i, j) => noise.get(i, j) > 0 }
+    Set(solid:_*)
+  }
+
+  val extracted:Vector[Set[(Int,Int)]] = extract(count.some, noise, all, (x:Double) => x > 0.0)
+
+  def get(i:Int, j:Int):Double = {
+    view.get(i, j)
+  }
+
+  val view = noise.map {case (i, j, d) =>
+    if (extracted.exists{_.contains((i, j))}) {
+      d
+    } else {
+      0
+    }
+    //
+  }
+
+  def getNoise:Array2dView[Color] = noise.map {case (i, j, d) =>
+    if (extracted.exists{_.contains((i, j))}) {
+      val c = d.toFloat
+      Color(c, c, c, 1)
+    } else {
+      Color.Black
+    }
+    //
+  }
+
+  type Points = Set[(Int,Int)]
+  def extract[T](limit:Option[Int], v:Array2dView[T], solid:Points, f:T=>Boolean) = {
+    val (regions, _) = extractHelper(limit.getOrElse(Int.MaxValue), v, f, solid, Vector())
+    regions
+  }
+
+  def extractHelper[T](limit:Int, v:Array2dView[T], f:T=>Boolean, solid:Points, current:Vector[Points]):(Vector[Points], Points) = {
+    solid.headOption match {
+      case Some(root) if limit > 0 =>
+        println(root)
+        val filled = new FloodFiller(v, f, root._1, root._2).fill(v.cols, v.rows, 1)
+        extractHelper(limit - 1, v, f, solid -- filled, filled +: current)
+      case _ =>
+        (current, solid)
+    }
+  }
+}
+
+/**
+ *
+ * @param a the array to be filled
+ * @param f function returning whether an element is "solid" or not
+ * @param sx start x index
+ * @param sy start y index
+ */
+class FloodFiller[T](a:Array2dView[T], f:T => Boolean, sx:Int, sy:Int) {
+  private var points = Set[(Int,Int)]((sx, sy))
+  private val workQueue = collection.mutable.Queue[(Int,Int)](points.toVector:_*)
+
+
+  def fill(width:Int, height:Int, step:Int):Set[(Int,Int)] = {
+    while (!workQueue.isEmpty) {
+      val next = workQueue.dequeue()
+      val neighbors = getNeighbors(next._1, next._2, width, height, step)
+      points = points ++ neighbors
+      workQueue ++= neighbors
+    }
+    points
+  }
+
+  private def getNeighbors(i:Int, j:Int, width:Int, height:Int, step:Int):Seq[(Int,Int)] = {
+    def get(x:Int, y:Int):Option[(T,(Int,Int))] = {
+      if (x < 0 || x > width - 1 || y < 0 || y > height - 1 || points.contains((x, y))) {
+        None
+      } else {
+        (a.get(x, y), (x, y)).some
+      }
+    }
+    Vector(
+      (i - step, j),
+      (i + step, j),
+      (i, j + step),
+      (i, j - step)
+    ).map { case (ii, jj) =>
+      get(ii,jj)
+    }.flatten.filter { case (t, (ii, jj)) =>
+      f(t)
+    }.map {_._2}
+  }
+}

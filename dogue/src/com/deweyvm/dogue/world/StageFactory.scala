@@ -35,6 +35,7 @@ class StageFactory(cols:Int, rows:Int) {
         val chatPanel = new ChatPanel(chatRect, bgColor, fgColor, Client.instance, textInput, textOutput)
         makeStage(chatPanel)
       case World =>
+        val worldSize = 512
         val controlsHeight = 8
         val minSideWidth = 24
         val minimapSize = 69
@@ -46,7 +47,7 @@ class StageFactory(cols:Int, rows:Int) {
             (minSideWidth, cols - minSideWidth)
           }
         val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, rows - 2)
-        val worldPanel = WorldPanel.create(mapRect, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, 256)
+        val worldPanel = WorldPanel.create(mapRect, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, worldSize)
         val controlRect = Recti(1, rows - controlsHeight + 1, sideWidth, controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)
         makeStage(worldPanel, controlPanel)

@@ -73,7 +73,7 @@ object MapState {
 
   case object Moisture extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val c = Color.fromHsb(t.moisture.toFloat % 1)
+      val c = Color.fromHsb(t.moisture.toFloat/2 % 1)
       t.tile.copy(bgColor = c).draw(i, j)
     }
   }
@@ -99,7 +99,7 @@ object WorldPanel {
              bgColor:Color,
              size:Int):WorldPanel = {
     val date = DateConstants(framesPerDay = 60*60*24*60)
-    val params = WorldParams(minimapSize, size/4, 22, size, date, 5)
+    val params = WorldParams(minimapSize, size/4, 8, size, date, 5)
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
