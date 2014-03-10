@@ -25,7 +25,7 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:Celestial
       val arrow = eco.getWind(i, j)
       val windDir = arrow.direction * arrow.magnitude
       val pressure = eco.getPressure(i, j)
-      val (elevation, color, code) = eco.getElevation(i, j)
+      val (surface, elevation, color, code) = eco.getElevation(i, j)
       val lat = eco.getLatitude(i, j)
       val light = cycle.getSunlight(i, j)
       val moisture = eco.getMoisture(i, j)
@@ -33,7 +33,7 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:Celestial
       val sunTemp = cycle.getSunHeat(i, j)
       val tile = new Tile(code, color, Color.White)
       val biome = eco.getBiome(i, j)
-      new WorldTile(elevation, pressure, moisture, biome, lat, windDir, light, sunTemp, season, tile)
+      new WorldTile(elevation, surface, pressure, moisture, biome, lat, windDir, light, sunTemp, season, tile)
     }
 
   }

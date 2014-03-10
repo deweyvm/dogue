@@ -34,7 +34,7 @@ object Ecosphere {
       w
     }
 
-    override def getElevation(i:Int, j:Int):(Meters, Color, Code) = {
+    override def getElevation(i:Int, j:Int):(SurfaceType, Meters, Color, Code) = {
       val (h, time) = Timer.timer(() => {
         getElevationTriple(i, j)
       })
@@ -80,50 +80,16 @@ object Ecosphere {
 
 
 
-    private def perlinToHeight(t:Double) = {
-      val tm = 1 - t
-      val sign = math.signum(t)
-      1 - math.pow(tm, 0.1)
-    }
 
-    private val mountains = new Mountains(Mountains.mountain3, 50, worldParams.size, worldParams.period, worldParams.octaves, worldParams.seed)
 
-    private val lakes = new Mountains(Mountains.lake, 10, worldParams.size, 64, worldParams.octaves, worldParams.seed)
 
-    private val heightMap:Array2dView[Meters] = {
-      noise.map({ case (i, j, p) =>
-        val base = perlinToHeight(p)
-        val m = mountains.get(i, j)
-        val mm = if (m > 0) {
-          (base + m)/2
-        } else {
-          base
-        }
-        val h = mm - lakes.get(i, j)
-        val x = (cols/2 - i).toDouble
-        val y = (rows/2 - j).toDouble
-        val dist = math.sqrt(x*x + y*y)
-        val d1 = dist/(cols/2.toDouble)
-        val inner = 0.8
-        val ring = 0.92
-        val mring = 1 - ring
-        assert(dist > cols/2 || (d1 >= 0 && d1 <= 1.0), "bad at (%d, %d), %.2f" format (i, j, d1))
-        val d = if (d1 > ring) {
-          0//1
-        } else if (d1 < inner) {
-          h
-        } else {
-          val bowl = (d1-inner)/(1 - inner - mring)
-          (bowl + h).clamp(-1, 1)
-        }
-        d * 10000 m
-      }).view
-    }
+
+    private val heightMap = new Surface(noise, worldParams)
 
     private val windMap:Array2d[(Point2d, Arrow, Color)] = {
-      val myHeight = heightMap.map{case (i, j, m) =>
+      val myHeight = heightMap.landMap.view.map{case (i, j, (t,m)) =>
         val d = m.d
-        if (d < 0) {
+        if (t.isWater) {
           d/10
         } else {
           d
@@ -135,7 +101,7 @@ object Ecosphere {
     }
 
     private val atmosphereMap:Array2dView[Pressure] = {
-      heightMap.map{case (i, j, h) =>
+      heightMap.landMap.view.map{case (i, j, (_,h)) =>
         val f = (h < 0) select (waterPressure _, airPressure _)
         f(h)
       }
@@ -151,7 +117,7 @@ object Ecosphere {
       }
     }
 
-    val moistureMap = new Moisture(cols, rows, heightMap, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,20)
+    val moistureMap = new Moisture(cols, rows, heightMap.landMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,20)
     override def getMoisture(i:Int, j:Int):Double = moistureMap.get(i, j)
 
     private val regionMap:Array2dView[Biome] = {
@@ -176,12 +142,12 @@ object Ecosphere {
       }
     }
 
-    private def getElevationTriple(i:Int, j:Int):(Meters, Color, Code) = {
-      val h = heightMap.get(i, j)
+    private def getElevationTriple(i:Int, j:Int):(SurfaceType, Meters, Color, Code) = {
+      val (t, h) = heightMap.get(i, j)
       val altitude = Altitude.fromHeight(h)
       val code = altitude.code
       val color = altitude.color
-      (h, color, code)
+      (t, h, color, code)
     }
 
   }
@@ -191,7 +157,7 @@ trait Ecosphere {
   val cols:Int
   val rows:Int
   def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Polar
-  def getElevation(i:Int, j:Int):(Meters, Color, Code) = (0.m, Color.Black, Code.` `)
+  def getElevation(i:Int, j:Int):(SurfaceType, Meters, Color, Code) = (Surface.Land, 0.m, Color.Black, Code.` `)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
   def getBiome(i:Int, j:Int):Biome = Biome.Void
   def getPressure(i:Int, j:Int):Pressure = 1.atm

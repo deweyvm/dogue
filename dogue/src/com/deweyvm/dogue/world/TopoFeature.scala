@@ -6,7 +6,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
-object Mountains {
+object TopoFeature {
   def river(d:Double) = math.abs(d) - 0.15//32, 6, 256
   def mountain(d:Double) = (1 - math.abs(d)) - 0.95//32, 6, 256
   def mountain2(d:Double) = math.pow(d, 0.1) - 0.85//16, 6, 256
@@ -14,13 +14,17 @@ object Mountains {
     val h = 1 - (d - 0.3).clamp(0, 1)
     1 - math.pow(h, 3)
   }
+  def trench(d:Double) = {
+    val h = 1 - (d - 0.3).clamp(0, 1)
+    1 - math.pow(h, 3)
+  }
   def lake(d:Double) = {
     val h = 1 - (d - 0.5).clamp(0, 1)
-    (1 - math.pow(h, 3))/2
+    1 - math.pow(h, 3)
   }
 }
 
-class Mountains(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int, seed:Long) {
+class TopoFeature(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int, seed:Long) {
   val rows = size
   val cols = size
 
@@ -36,7 +40,7 @@ class Mountains(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int
     Set(solid:_*)
   }
 
-  val extracted:Vector[Set[(Int,Int)]] = extract(count.some, noise, all, (x:Double) => x > 0.0)
+  val extracted:Vector[Set[(Int,Int)]] = FloodFill.extract(count.some, noise, all, (x:Double) => x > 0.0)
 
   def get(i:Int, j:Int):Double = {
     view.get(i, j)
@@ -48,7 +52,6 @@ class Mountains(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int
     } else {
       0
     }
-    //
   }
 
   def getNoise:Array2dView[Color] = noise.map {case (i, j, d) =>
@@ -58,38 +61,36 @@ class Mountains(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int
     } else {
       Color.Black
     }
-    //
-  }
-
-  type Points = Set[(Int,Int)]
-  def extract[T](limit:Option[Int], v:Array2dView[T], solid:Points, f:T=>Boolean) = {
-    val (regions, _) = extractHelper(limit.getOrElse(Int.MaxValue), v, f, solid, Vector())
-    regions
-  }
-
-  def extractHelper[T](limit:Int, v:Array2dView[T], f:T=>Boolean, solid:Points, current:Vector[Points]):(Vector[Points], Points) = {
-    solid.headOption match {
-      case Some(root) if limit > 0 =>
-        println(root)
-        val filled = new FloodFiller(v, f, root._1, root._2).fill(v.cols, v.rows, 1)
-        extractHelper(limit - 1, v, f, solid -- filled, filled +: current)
-      case _ =>
-        (current, solid)
-    }
   }
 }
 
+object FloodFill {
+  type Points = Set[(Int,Int)]
+  def extract[T](limit:Option[Int], v:Array2dView[T], emptyPoints:Points, f:T=>Boolean) = {
+    val (regions, _) = extractHelper(limit.getOrElse(Int.MaxValue), v, f, emptyPoints, Vector())
+    regions
+  }
+
+  private def extractHelper[T](limit:Int, v:Array2dView[T], f:T=>Boolean, emptyPoints:Points, current:Vector[Points]):(Vector[Points], Points) = {
+    emptyPoints.headOption match {
+      case Some(root) if limit > 0 =>
+        val filled = new FloodFill(v, f, root._1, root._2).fill(v.cols, v.rows, 1)
+        extractHelper(limit - 1, v, f, emptyPoints -- filled, filled +: current)
+      case _ =>
+        (current, emptyPoints)
+    }
+  }
+}
 /**
  *
  * @param a the array to be filled
- * @param f function returning whether an element is "solid" or not
+ * @param f function returning whether an element is "empty" or not
  * @param sx start x index
  * @param sy start y index
  */
-class FloodFiller[T](a:Array2dView[T], f:T => Boolean, sx:Int, sy:Int) {
+class FloodFill[T](a:Array2dView[T], f:T => Boolean, sx:Int, sy:Int) {
   private var points = Set[(Int,Int)]((sx, sy))
   private val workQueue = collection.mutable.Queue[(Int,Int)](points.toVector:_*)
-
 
   def fill(width:Int, height:Int, step:Int):Set[(Int,Int)] = {
     while (!workQueue.isEmpty) {

@@ -12,6 +12,7 @@ import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+import com.deweyvm.dogue.world.Surface.Land
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -49,9 +50,13 @@ object MapState {
       new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
     }
   }
-  case object Elevation extends MapState {
+  case object Topography extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      t.tile.draw(i, j)
+      t.surface match {
+        case Surface.Land => t.tile.copy(bgColor = Color.Green).draw(i, j)
+        case Surface.Water => t.tile.copy(bgColor = Color.Blue).draw(i, j)
+      }
+
     }
   }
   case object Latitude extends MapState {
@@ -77,7 +82,7 @@ object MapState {
       t.tile.copy(bgColor = c).draw(i, j)
     }
   }
-  val All = Vector(Elevation, Moisture, Wind, Latitude, Biome, Nychthemera)
+  val All = Vector(Topography, Moisture, Wind, Latitude, Biome, Nychthemera)
   def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
 

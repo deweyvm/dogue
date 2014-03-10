@@ -7,7 +7,7 @@ import Implicits._
 import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
 
-class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[Arrow], speed:Double, steps:Int) {
+class Moisture(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], wind:Array2dView[Arrow], speed:Double, steps:Int) {
   def followWind(w:Arrow, i:Double, j:Double):(Double,Double) = {
     (Point2d(i, j) - w.direction*speed).toTuple
   }
@@ -19,9 +19,9 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[
     if (ni < 0 || nj < 0 || ni > cols - 1 || nj > rows - 1) {
       return current
     }
-    val h = height.get(ni.toInt, nj.toInt)
+    val (t,h) = height.get(ni.toInt, nj.toInt)
     val v = h +: current
-    if (depthLeft <= 0 || h < moistureSpawnDepth) {
+    if (depthLeft <= 0 || t.isWater) {
       v
     } else {
       val newDepth = if (h > mountainHeight) {
@@ -42,7 +42,7 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[Meters], wind:Array2dView[
   def get(i:Int, j:Int) = map.view.get(i, j)
 
   private val map = Array2d.tabulate(cols, rows) {case (i, j) =>
-    if (height.get(i, j) <= moistureSpawnDepth) {
+    if (height.get(i, j)._1.isWater) {
       0
     } else {
       val path: Vector[Meters] = traceWind(i, j, steps, Vector())
