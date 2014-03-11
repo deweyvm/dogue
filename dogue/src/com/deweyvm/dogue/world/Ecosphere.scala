@@ -34,9 +34,9 @@ object Ecosphere {
       w
     }
 
-    override def getElevation(i:Int, j:Int):(SurfaceType, Meters, Color, Code) = {
+    override def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
       val (h, time) = Timer.timer(() => {
-        getElevationTriple(i, j)
+        getElevationParts(i, j)
       })
       eTime += time
       h
@@ -71,18 +71,9 @@ object Ecosphere {
       "wind(%d) height(%d) region(%d)" format (w, h, r)
     }
 
-    private val maxElevation = 10000.0 m
+
     private val solidElevation = 0 m
-    private val solidTier = solidElevation.d/maxElevation.d - 1
-
-    private val border = math.min(cols, rows)/2 - 10
     private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).render
-
-
-
-
-
-
 
     private val heightMap = new Surface(noise, worldParams)
 
@@ -117,8 +108,8 @@ object Ecosphere {
       }
     }
 
-    val moistureMap = new Moisture(cols, rows, heightMap.landMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 1,20)
-    override def getMoisture(i:Int, j:Int):Double = moistureMap.get(i, j)
+    val moistureMap = new Moisture(cols, rows, heightMap.landMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5,80)
+    override def getMoisture(i:Int, j:Int):Rainfall = moistureMap.get(i, j)
 
     private val regionMap:Array2dView[Biome] = {
       val hexSize = cols/50
@@ -129,7 +120,13 @@ object Ecosphere {
         val cols = outer.cols
         val rows = outer.rows
         def get(i:Int, j:Int) = {
-          hexGrid.pointInPoly(i, j) match {
+          //Biome.Void
+          val moisture = moistureMap.get(i, j)
+          val temp = 0.5
+          val (t, height, alt) = getElevationParts(i, j)
+          val lat = latRegions.view.get(i, j)
+          Biome.getBiome(moisture, temp, lat, alt)
+          /*hexGrid.pointInPoly(i, j) match {
             case Some(poly) =>
               val center = poly.centroid.toPoint2i
               val moisture = moistureMap.get(i, j)
@@ -137,17 +134,15 @@ object Ecosphere {
               Biome.Void
               //colorMap(poly)
             case None => Biome.Void
-          }
+          }*/
         }
       }
     }
 
-    private def getElevationTriple(i:Int, j:Int):(SurfaceType, Meters, Color, Code) = {
+    private def getElevationParts(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
       val (t, h) = heightMap.get(i, j)
       val altitude = Altitude.fromHeight(h)
-      val code = altitude.code
-      val color = altitude.color
-      (t, h, color, code)
+      (t, h, altitude)
     }
 
   }
@@ -157,11 +152,12 @@ trait Ecosphere {
   val cols:Int
   val rows:Int
   def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Polar
-  def getElevation(i:Int, j:Int):(SurfaceType, Meters, Color, Code) = (Surface.Land, 0.m, Color.Black, Code.` `)
+  def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = (Surface.Land, 0.m, Altitude.Abyss)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
   def getBiome(i:Int, j:Int):Biome = Biome.Void
   def getPressure(i:Int, j:Int):Pressure = 1.atm
-  def getMoisture(i:Int, j:Int):Double = 0
+  def getMoisture(i:Int, j:Int):Rainfall = 0.`mm/yr`
+  def getTemperature(i:Int, j:Int):Celcius = 20.C
   /**
    * force the area at (i, j) to be calculated so there is not a loading delay
    */
@@ -172,6 +168,7 @@ trait Ecosphere {
     getBiome(i, j).ignore()
     getPressure(i, j).ignore()
     getMoisture(i, j).ignore()
+    getTemperature(i, j).ignore()
   }
   def getTimeString:String
   def update:Ecosphere

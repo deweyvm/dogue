@@ -8,10 +8,11 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
 object WorldTile {
-  val Blank = WorldTile(0 m, Surface.Water, 1 atm, 0, Biome.Void, Latitude.Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
+  val Blank = WorldTile(0 m, Altitude.Abyss, Surface.Water, 1 atm, 0, Biome.Void, Latitude.Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
 }
 
 case class WorldTile(height:Meters,
+                     altitude:AltitudinalRegion,
                      surface:SurfaceType,
                      pressure:Pressure,
                      moisture:Double,

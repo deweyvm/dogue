@@ -39,7 +39,12 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], wi
    */
   val moistureSpawnDepth = 0 m
 
-  def get(i:Int, j:Int) = map.view.get(i, j)
+  def get(i:Int, j:Int) = {
+    val raw = map.view.get(i, j)
+    (raw * 10000).`mm/yr`
+  }
+
+  def linearToMoisture(d:Double) = d*d
 
   private val map = Array2d.tabulate(cols, rows) {case (i, j) =>
     if (height.get(i, j)._1.isWater) {
@@ -51,7 +56,7 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], wi
       if (index < 0) {
         0
       } else {
-        1 - path.length/steps.toDouble
+        linearToMoisture(1 - path.length/steps.toDouble)
       }
     }
   }

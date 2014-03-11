@@ -12,12 +12,9 @@ object TopoFeature {
   def mountain2(d:Double) = math.pow(d, 0.1) - 0.85//16, 6, 256
   def mountain3(d:Double) = {
     val h = 1 - (d - 0.3).clamp(0, 1)
-    1 - math.pow(h, 3)
+    1 - math.pow(h, 5)
   }
-  def trench(d:Double) = {
-    val h = 1 - (d - 0.3).clamp(0, 1)
-    1 - math.pow(h, 3)
-  }
+
   def lake(d:Double) = {
     val h = 1 - (d - 0.5).clamp(0, 1)
     1 - math.pow(h, 3)
@@ -54,12 +51,18 @@ class TopoFeature(f:Double => Double, count:Int, size:Int, period:Int, octaves:I
     }
   }
 
-  def getNoise:Array2dView[Color] = noise.map {case (i, j, d) =>
+  def getNoise(b:Boolean):Array2dView[Color] = noise.map {case (i, j, d) =>
     if (extracted.exists{_.contains((i, j))}) {
       val c = d.toFloat
-      Color(c, c, c, 1)
+      if (b) {
+
+        Color(c, c, 0, 1)
+      } else {
+
+        Color(c, 0, c, 1)
+      }
     } else {
-      Color.Black
+      Color(0,0,0,0)
     }
   }
 }

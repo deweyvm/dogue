@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.data.{Array2dView, Array2d}
+import com.deweyvm.dogue.common.data.{Code, Array2dView, Array2d}
 import com.deweyvm.dogue.entities.Tile
 
 
@@ -25,15 +25,15 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:Celestial
       val arrow = eco.getWind(i, j)
       val windDir = arrow.direction * arrow.magnitude
       val pressure = eco.getPressure(i, j)
-      val (surface, elevation, color, code) = eco.getElevation(i, j)
+      val (surface, elevation, altitude) = eco.getElevation(i, j)
       val lat = eco.getLatitude(i, j)
       val light = cycle.getSunlight(i, j)
       val moisture = eco.getMoisture(i, j)
       val season = cycle.getSeason
       val sunTemp = cycle.getSunHeat(i, j)
-      val tile = new Tile(code, color, Color.White)
+      val tile = new Tile(Code.` `, Color.Black, Color.White)
       val biome = eco.getBiome(i, j)
-      new WorldTile(elevation, surface, pressure, moisture, biome, lat, windDir, light, sunTemp, season, tile)
+      new WorldTile(elevation, altitude, surface, pressure, moisture, biome, lat, windDir, light, sunTemp, season, tile)
     }
 
   }

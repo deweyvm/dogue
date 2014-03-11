@@ -10,8 +10,8 @@ class PerlinVisualizer extends Visualizer {
   override def zoom = 0.5
   override def translation = (-Game.RenderWidth/4, -Game.RenderHeight/4)
   val size = 256
-  val mountains = new TopoFeature(TopoFeature.lake, 50, size, 16, 6, System.nanoTime)
-  val texture = ImageUtils.makeColorTexture(mountains.getNoise.toVector, size, size)
+  val mountains = new TopoFeature(TopoFeature.mountain3, 50, size, 16, 6, System.nanoTime)
+  val texture = ImageUtils.makeColorTexture(mountains.getNoise(false).toVector, size, size)
   override def drawBatch(ogl:OglRenderer) = {
     ogl.drawSprite(new Sprite(texture), 10, 10)
   }
