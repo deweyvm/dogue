@@ -118,31 +118,15 @@ object Ecosphere {
     }
 
     private val regionMap:Array2dView[Biome] = {
-      val hexSize = cols/50
-      val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
-      val colors = (0 until hexGrid.graph.nodes.length).map {_ => Color.randomHue()}
-      val graph = hexGrid.graph
-      new Array2dView[Biome] {
-        val cols = outer.cols
-        val rows = outer.rows
-        def get(i:Int, j:Int) = {
-          //Biome.Void
-          val moisture = moistureMap.get(i, j)
-          val temp = 0.5
-          val (t, height, alt) = getElevationParts(i, j)
-          val lat = latRegions.view.get(i, j)
-          Biomes.getBiome(moisture, temp, lat, alt, t)
-          /*hexGrid.pointInPoly(i, j) match {
-            case Some(poly) =>
-              val center = poly.centroid.toPoint2i
-              val moisture = moistureMap.get(i, j)
-              val height = heightMap.get(i, j)
-              Biome.Void
-              //colorMap(poly)
-            case None => Biome.Void
-          }*/
-        }
-      }
+      //val hexSize = cols/50
+      //val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
+      Array2d.tabulate(cols, rows) { case (i, j) =>
+        val moisture = moistureMap.get(i, j)
+        val temp = 0.5
+        val (t, height, alt) = getElevationParts(i, j)
+        val lat = latRegions.view.get(i, j)
+        Biomes.getBiome(moisture, temp, lat, alt, t)
+      }.view
     }
 
     private def getElevationParts(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
