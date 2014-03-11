@@ -6,10 +6,13 @@ import com.deweyvm.dogue.common.Implicits
 import Implicits._
 import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
+import java.util.Random
 
-class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int) {
+class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int, r:Random) {
+
+  val rp = r.nextDouble - 0.5
   def followWind(w:Arrow, i:Double, j:Double):(Double,Double) = {
-    (Point2d(i, j) - w.direction*speed).toTuple
+    (Point2d(i, j) - w.direction.rotate(rp)*speed).toTuple
   }
 
   @tailrec
@@ -25,7 +28,7 @@ class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)],
       v
     } else {
       val newDepth = if (h > mountainHeight) {
-        depthLeft - 5
+        depthLeft - 20
       } else {
         depthLeft - 1
       }

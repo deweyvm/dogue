@@ -51,14 +51,14 @@ object MapState {
   }
   case object Topography extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      t.surface match {
+      val color = t.surface match {
         case Surface.Land =>
-          val tint = t.height.d/4000
-          t.tile.copy(bgColor = Color.DarkGreen.brighten(tint.toFloat)).draw(i, j)
+          Color.DarkGreen
         case Surface.Water =>
-          val tint = t.height.d/4000
-          t.tile.copy(bgColor = Color.DarkBlue.brighten(tint.toFloat)).draw(i, j)
+          Color.DarkBlue
       }
+      val tint = (t.height.d/4000).toFloat
+      t.tile.copy(bgColor = color.brighten(tint), fgColor = Color.White, code = t.biome.code).draw(i, j)
 
     }
   }
@@ -69,7 +69,7 @@ object MapState {
   }
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      t.tile.copy(bgColor = t.biome.mapColor, code = Code.` `).draw(i, j)
+      t.tile.copy(bgColor = t.biome.mapColor, code = t.biome.code).draw(i, j)
     }
   }
   case object Nychthemera extends MapState {
@@ -107,7 +107,7 @@ object WorldPanel {
              bgColor:Color,
              size:Int):WorldPanel = {
 
-    val seed = 621810818307780L//System.nanoTime
+    val seed = 622965729637789L//System.nanoTime
     println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
     val params = WorldParams(minimapSize, size/4, 8, size, date, seed)

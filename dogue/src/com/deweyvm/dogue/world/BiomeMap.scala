@@ -6,7 +6,6 @@ import Implicits._
 import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
 import com.deweyvm.gleany.graphics.Color
-import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.reflect.Reflection
 
 trait TerrestrialBiome
@@ -114,19 +113,19 @@ object Biomes {
     Altitude.Montane <=> Altitude.SuperAlpine
   )
 
-  val Taiga = LandBiome("Taiga", Color.DarkGreen.dim(1.2f), Code.*,
+  val Taiga = LandBiome("Taiga", Color.DarkGreen.dim(1.2f), Code.♣,
     Latitude.Boreal <=> Latitude.Boreal,
     250.`mm/yr` <=> 10000.`mm/yr`,//M: [200,750]
     -273.C <=> 1000.C,//T: [-5, 5]
     Altitude.Midlands <=> Altitude.Subalpine)
 
-  val BorealWetlands = LandBiome("Boreal Wetlands", Color.DarkGreen.dim(1.5f), Code.*,
+  val BorealWetlands = LandBiome("Boreal Wetlands", Color.DarkGreen.dim(1.5f), Code.~,
     Latitude.Boreal <=> Latitude.Boreal,
     250.`mm/yr` <=> 10000.`mm/yr`,//M: [200,750]
     -273.C <=> 1000.C,//T: [-5, 5]
     Altitude.Lowlands <=> Altitude.Lowlands)
 
-  val BorealGrassland = LandBiome("Boreal Grassland", Color.DarkGreen.dim(1.8f), Code.*,
+  val BorealGrassland = LandBiome("Boreal Grassland", Color.DarkGreen.dim(1.8f), Code.`»`,
     Latitude.Boreal <=> Latitude.Boreal,
     25.`mm/yr` <=> 250.`mm/yr`,//M: [200,750]
     -273.C <=> 1000.C,//T: [-5, 5]
@@ -157,7 +156,7 @@ object Biomes {
     -273.C <=> 1000.C,//17.0 <=> 37.0, 0.m <=> 10.m)
     Altitude.Midlands <=> Altitude.Highlands)
 
-  val Mangroves = LandBiome("Mangroves", Color.Brown.brighten(0.1f), Code.*,
+  val Mangroves = LandBiome("Mangroves", Color.Brown.brighten(0.1f), Code.~,
     Latitude.Tropical <=> Latitude.Subtropical,
     2000.`mm/yr` <=> 10000.`mm/yr`,
     -273.C <=> 1000.C,
@@ -175,6 +174,13 @@ object Biomes {
     2000.`mm/yr` <=> 10000.`mm/yr`,
     -273.C <=> 1000.C,//17.0 <=> 37.0, 0.m <=> 10.m)
     Altitude.Midlands <=> Altitude.Highlands)
+
+  val SubtropicalBroadleafForest = LandBiome("Subtropical Broadleaf Forest", Color.DarkGreen.brighten(0.1f), Code.♠,
+    Latitude.Subtropical <=> Latitude.Subtropical,
+    1500.`mm/yr` <=> 2000.`mm/yr`,
+    -273.C <=> 1000.C,
+    Altitude.Midlands <=> Altitude.Montane
+  )
 
   val TemperateBroadleafForest = LandBiome("Temperate Broadleaf Forest", Color.DarkGreen.brighten(0.1f), Code.♠,
     Latitude.WarmTemperate <=> Latitude.CoolTemperate,
@@ -199,14 +205,14 @@ object Biomes {
     Altitude.Midlands <=> Altitude.Subalpine
   )
 
-  val TemperateWetlands = LandBiome("Temperate Wetlands", Color.Brown.dim(2), Code.♠,
+  val TemperateWetlands = LandBiome("Temperate Wetlands", Color.Brown.dim(2), Code.~,
     Latitude.WarmTemperate <=> Latitude.CoolTemperate,
     180.`mm/yr` <=> 10000.`mm/yr`,
     -273.C <=> 1000.C,
     Altitude.Lowlands <=> Altitude.Lowlands
   )
 
-  val TemperateScrubland = LandBiome("Temperate Scrubland", Color.Yellow.dim(2), Code.♠,
+  val TemperateScrubland = LandBiome("Temperate Scrubland", Color.Yellow.dim(2), Code.*,
     Latitude.WarmTemperate <=> Latitude.CoolTemperate,
     25.`mm/yr` <=> 180.`mm/yr`,
     -273.C <=> 1000.C,
@@ -216,7 +222,7 @@ object Biomes {
   //approximately 1 in. (.25 cm) of rain falls in dry deserts per year.
   //The latitude range is 15-28° north and south of the equator.
   //http://www.blueplanetbiomes.org/desert_climate_page.htm
-  val AridDesert = LandBiome("Arid Desert", Color.Yellow, Code.`.`,
+  val AridDesert = LandBiome("Arid Desert", Color.Yellow.dim(3), Code.`.`,
     Latitude.Tropical <=> Latitude.CoolTemperate,
     0.`mm/yr` <=> 25.`mm/yr`,
     -273.C <=> 1000.C,
@@ -224,14 +230,14 @@ object Biomes {
   )
 
   //made up
-  val Badlands = LandBiome("Badlands", Color.Brown, Code.`.`,
+  val Badlands = LandBiome("Badlands", Color.Brown, Code.`-`,
     Latitude.CoolTemperate <=> Latitude.Boreal,
     0.`mm/yr` <=> 250.`mm/yr`,
     -273.C <=> 1000.C,
     Altitude.Lowlands <=> Altitude.Highlands
   )
 
-  val Steppe = LandBiome("Steppe", Color.Brown.brighten(0.3f), Code.`.`,
+  val Steppe = LandBiome("Steppe", Color.Brown.brighten(0.3f), Code.`*`,
     Latitude.Subtropical <=> Latitude.CoolTemperate,
     250.`mm/yr` <=> 750.`mm/yr`,
     -273.C <=> 1000.C,
@@ -245,21 +251,21 @@ object Biomes {
     Altitude.Lowlands <=> Altitude.Highlands
   )
 
-  val TallGrassland = LandBiome("Tall Temperate Grassland", Color.Green.dim(2f), Code.`,`,
+  val TallGrassland = LandBiome("Tall Temperate Grassland", Color.Green.dim(2f), Code.`»`,
     Latitude.WarmTemperate <=> Latitude.CoolTemperate,
     250.`mm/yr` <=> 300.`mm/yr`,
     -273.C <=> 1000.C,
     Altitude.Lowlands <=> Altitude.Highlands
   )
 
-  val MontaneGrassland = LandBiome("Montane Grassland", Color.Green.dim(4f), Code.`,`,
+  val MontaneGrassland = LandBiome("Montane Grassland", Color.Green.dim(4f), Code.`»`,
     Latitude.Subtropical <=> Latitude.Boreal,
     25.`mm/yr` <=> 300.`mm/yr`,
     -273.C <=> 1000.C,
     Altitude.Montane <=> Altitude.Alpine
   )
 
-  val ShortGrassland = LandBiome("Short Temperate Grassland", Color.Green.dim(3f), Code.`,`,
+  val ShortGrassland = LandBiome("Short Temperate Grassland", Color.Green.dim(3f), Code.`»`,
     Latitude.WarmTemperate <=> Latitude.CoolTemperate,
     25.`mm/yr` <=> 250.`mm/yr`,
     -273.C <=> 1000.C,
@@ -273,21 +279,21 @@ object Biomes {
     Altitude.Lowlands <=> Altitude.Highlands
   )
 
-  val Infestation = LandBiome("Infestation", Color.Green, Code.♣,
+  val Infestation = LandBiome("Infestation", Color.Green, Code.`#`,
     Latitude.SuperTropical <=> Latitude.SuperTropical,
     0.01.`mm/yr` <=> 2000.`mm/yr`,
     -273.C <=> 1000.C,
     Altitude.Lowlands <=> Altitude.Highlands
   )
 
-  val Maelstrom = LandBiome("Maelstrom", Color.Grey, Code.♣,
+  val Maelstrom = LandBiome("Maelstrom", Color.Grey, Code.`@`,
     Latitude.SuperTropical <=> Latitude.SuperTropical,
     2000.`mm/yr` <=> 7000.`mm/yr`,
     -273.C <=> 1000.C,
     Altitude.Lowlands <=> Altitude.Highlands
   )
 
-  val Roil = LandBiome("Infestation", Color.Cyan, Code.♣,
+  val Roil = LandBiome("Infestation", Color.Cyan, Code.`¢`,
     Latitude.SuperTropical <=> Latitude.SuperTropical,
     7000.`mm/yr` <=> 10000.`mm/yr`,
     -273.C <=> 1000.C,

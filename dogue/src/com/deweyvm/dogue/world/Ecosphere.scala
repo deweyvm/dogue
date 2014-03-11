@@ -11,6 +11,7 @@ import com.deweyvm.dogue.common.procgen.Arrow
 import com.deweyvm.dogue.common.Implicits.Pressure
 import scala.Some
 import com.deweyvm.dogue.common.Implicits.Meters
+import java.util.Random
 
 object Ecosphere {
   def create(worldParams:WorldParams):Ecosphere = new Ecosphere {
@@ -110,8 +111,8 @@ object Ecosphere {
     private val latRegions:Array2d[LatitudinalRegion] = latitudeMap.map{ case (i, j, l) =>
       Latitude.getLatitude(l)
     }
-
-    val moistureMap = new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 250)
+    val random = new Random(worldParams.seed)
+    val moistureMap = new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 250, random)
     override def getMoisture(i:Int, j:Int):Rainfall = {
       moistureMap.get(i, j)
     }
