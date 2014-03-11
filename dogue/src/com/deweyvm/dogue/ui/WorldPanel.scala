@@ -12,7 +12,6 @@ import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
-import com.deweyvm.dogue.world.Surface.Land
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -82,11 +81,11 @@ object MapState {
 
   case object Moisture extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val c = Color.fromHsb(t.moisture.toFloat/2 % 1)
+      val c = Color.fromHsb(t.moisture.d.toFloat/(10000*2) % 1)
       t.tile.copy(bgColor = c).draw(i, j)
     }
   }
-  val All = Vector(Topography, Moisture, Wind, Latitude, Biome, Nychthemera)
+  val All = Vector(Topography, Biome, Moisture, Wind, Latitude, Nychthemera)
   def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
 
@@ -107,8 +106,11 @@ object WorldPanel {
              minimapSize:Int,
              bgColor:Color,
              size:Int):WorldPanel = {
+
+    val seed = 621810818307780L//System.nanoTime
+    println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
-    val params = WorldParams(minimapSize, size/4, 8, size, date, 5)
+    val params = WorldParams(minimapSize, size/4, 8, size, date, seed)
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)

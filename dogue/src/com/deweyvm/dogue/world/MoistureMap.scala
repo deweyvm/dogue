@@ -7,7 +7,7 @@ import Implicits._
 import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
 
-class Moisture(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], wind:Array2dView[Arrow], speed:Double, steps:Int) {
+class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int) {
   def followWind(w:Arrow, i:Double, j:Double):(Double,Double) = {
     (Point2d(i, j) - w.direction*speed).toTuple
   }
@@ -25,7 +25,7 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], wi
       v
     } else {
       val newDepth = if (h > mountainHeight) {
-        depthLeft - 1//5
+        depthLeft - 5
       } else {
         depthLeft - 1
       }
@@ -40,8 +40,11 @@ class Moisture(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], wi
   val moistureSpawnDepth = 0 m
 
   def get(i:Int, j:Int) = {
+    val lat = latitude.get(i, j).clamp(0, 1)
+    val latm1 = 1 - lat
     val raw = map.view.get(i, j)
-    (raw * 10000).`mm/yr`
+
+    (raw * (latm1*latm1)*10000).`mm/yr`
   }
 
   def linearToMoisture(d:Double) = d*d

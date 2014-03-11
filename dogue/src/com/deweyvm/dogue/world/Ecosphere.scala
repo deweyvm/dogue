@@ -75,7 +75,7 @@ object Ecosphere {
     private val solidElevation = 0 m
     private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).render
 
-    private val heightMap = new Surface(noise, worldParams)
+    private val heightMap = new SurfaceMap(noise, worldParams)
 
     private val windMap:Array2d[(Point2d, Arrow, Color)] = {
       val myHeight = heightMap.landMap.view.map{case (i, j, (t,m)) =>
@@ -83,7 +83,7 @@ object Ecosphere {
         if (t.isWater) {
           d/10
         } else {
-          d
+          d/10
         }
       }
       VectorField.perlinWind(solidElevation.d, myHeight, cols, rows, 1, seed).lazyVectors
@@ -98,18 +98,23 @@ object Ecosphere {
       }
     }
 
-    private val latRegions:Array2d[LatitudinalRegion] = {
+    private val latitudeMap:Array2d[Double] = {
       val max = cols/2
       Array2d.tabulate(cols, rows){ case (i, j) =>
         val x = (cols/2 - i).toDouble
         val y = (rows/2 - j).toDouble
-        val lat = (x*x + y*y).sqrt/max
-        Latitude.getLatitude(lat)
+        (x*x + y*y).sqrt/max
       }
     }
 
-    val moistureMap = new Moisture(cols, rows, heightMap.landMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5,80)
-    override def getMoisture(i:Int, j:Int):Rainfall = moistureMap.get(i, j)
+    private val latRegions:Array2d[LatitudinalRegion] = latitudeMap.map{ case (i, j, l) =>
+      Latitude.getLatitude(l)
+    }
+
+    val moistureMap = new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 250)
+    override def getMoisture(i:Int, j:Int):Rainfall = {
+      moistureMap.get(i, j)
+    }
 
     private val regionMap:Array2dView[Biome] = {
       val hexSize = cols/50
@@ -125,7 +130,7 @@ object Ecosphere {
           val temp = 0.5
           val (t, height, alt) = getElevationParts(i, j)
           val lat = latRegions.view.get(i, j)
-          Biome.getBiome(moisture, temp, lat, alt)
+          Biomes.getBiome(moisture, temp, lat, alt, t)
           /*hexGrid.pointInPoly(i, j) match {
             case Some(poly) =>
               val center = poly.centroid.toPoint2i
@@ -154,7 +159,7 @@ trait Ecosphere {
   def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Polar
   def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = (Surface.Land, 0.m, Altitude.Abyss)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
-  def getBiome(i:Int, j:Int):Biome = Biome.Void
+  def getBiome(i:Int, j:Int):Biome = Biomes.Void
   def getPressure(i:Int, j:Int):Pressure = 1.atm
   def getMoisture(i:Int, j:Int):Rainfall = 0.`mm/yr`
   def getTemperature(i:Int, j:Int):Celcius = 20.C

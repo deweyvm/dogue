@@ -13,7 +13,7 @@ object Altitude {
   val Alpine      = AltitudinalRegion("Alpine",       3600.m <=> 4500.m)
   val Subalpine   = AltitudinalRegion("Subalpine",    2700.m <=> 3600.m)
   val Montane     = AltitudinalRegion("Montane",      900.m <=> 2700.m)
-  val Highlands    = AltitudinalRegion("Highland",     500.m <=> 900.m)
+  val Highlands   = AltitudinalRegion("Highlands",    500.m <=> 900.m)
   val Midlands    = AltitudinalRegion("Midlands",     100.m <=> 500.m)
   val Lowlands    = AltitudinalRegion("Lowlands",     0.001.m <=> 100.m)
   val Oceanic     = AltitudinalRegion("Oceanic",      -100.m <=> 0.001.m)

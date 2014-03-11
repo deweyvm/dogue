@@ -19,7 +19,7 @@ object Surface {
   }
 }
 
-class Surface(noise:Array2d[Double], params:WorldParams) {
+class SurfaceMap(noise:Array2d[Double], params:WorldParams) {
   private val cols = noise.cols
   private val rows = noise.rows
   private def perlinToHeight(t:Double) = {
