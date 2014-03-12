@@ -1,49 +1,15 @@
 package com.deweyvm.dogue.world.biomes
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.data.{DogueRange, Code}
+import com.deweyvm.dogue.common.data.{ColorHarmony, DogueRange, Code}
 import com.deweyvm.dogue.world._
 import com.deweyvm.dogue.common.reflect.Reflection
 import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import scala.collection.mutable
 
-trait BiomeType {
-  val baseColor:Color
-  val code:Code
-}
-object BiomeType {
-  case object GrasslandScrublandSavanna extends BiomeType {
-    val baseColor = Color.Green
-    val code = Code.`»`
-  }
-  case object Forest extends BiomeType {
-    val baseColor = Color.DarkGreen
-    val code = Code.♠
-  }
-  case object Desert extends BiomeType {
-    val baseColor = Color.Tan
-    val code = Code.`.`
-  }
-  case object Wetlands extends BiomeType {
-    val baseColor = Color.Brown
-    val code = Code.~
-  }
-  case object Alpine extends BiomeType {
-    val baseColor = Color.Grey
-    val code = Code.▲
-  }
-  case object Aquatic extends BiomeType {
-    val baseColor = Color.Blue
-    val code = Code.≈
-  }
-
-  case object Special extends BiomeType {
-    val baseColor = Color.Purple
-    val code = Code.`¢`
-  }
-}
 
 object Biomes {
 
@@ -130,21 +96,21 @@ object Biomes {
   )
 
   val AlpineTundra = LandBiome("Alpine Tundra",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Tropical <=> Polar,
     250.`mm/yr` <=> 750.`mm/yr`,
     Alpine <=> SuperAlpine
   )
 
   val ArcticTundra = LandBiome("Arctic Tundra",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Subpolar <=> Subpolar,
     250.`mm/yr` <=> 750.`mm/yr`,
     Lowlands <=> Subalpine
   )
 
   val AntarcticTundra = LandBiome("Antarctic Tundra",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Polar <=> Polar,
     250.`mm/yr` <=> 750.`mm/yr`,
     Lowlands <=> Subalpine
@@ -187,7 +153,7 @@ object Biomes {
   )
 
   val BorealGrassland = LandBiome("Boreal Grassland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Boreal <=> Boreal,
     25.`mm/yr` <=> 250.`mm/yr`,
     Lowlands <=> Montane
@@ -201,21 +167,21 @@ object Biomes {
   )
 
   val TropicalGrassland = LandBiome("Tropical Grassland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Tropical <=> Tropical,
     250.`mm/yr` <=> 500.`mm/yr`,
     Lowlands <=> Highlands
   )
 
   val TropicalSavanna = LandBiome("Tropical Savanna",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Tropical <=> Subtropical,
     500.`mm/yr` <=> 1300.`mm/yr`,
     Lowlands <=> Highlands
   )
 
   val SubtropicalScrubland = LandBiome("Subtropical Scrubland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Subtropical <=> Subtropical,
     250.`mm/yr` <=> 500.`mm/yr`,
     Lowlands <=> Highlands
@@ -303,14 +269,14 @@ object Biomes {
   )
 
   val Steppe = LandBiome("Steppe",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Subtropical <=> CoolTemperate,
     250.`mm/yr` <=> 750.`mm/yr`,
     Midlands <=> Highlands
   )
 
   val TemperateScrubland = LandBiome("Temperate Scrubland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     WarmTemperate <=> CoolTemperate,
     25.`mm/yr` <=> 180.`mm/yr`,
     Lowlands <=> Lowlands
@@ -327,28 +293,28 @@ object Biomes {
   )
 
   val XericScrubland = LandBiome("Xeric Scrubland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Tropical <=> Subtropical,
     25.`mm/yr` <=> 250.`mm/yr`,
     Lowlands <=> Highlands
   )
 
   val TallGrassland = LandBiome("Tall Temperate Grassland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     WarmTemperate <=> CoolTemperate,
     250.`mm/yr` <=> 300.`mm/yr`,
     Lowlands <=> Highlands
   )
 
   val MontaneGrassland = LandBiome("Montane Grassland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     Subtropical <=> Boreal,
     25.`mm/yr` <=> 300.`mm/yr`,
     Montane <=> Alpine
   )
 
   val ShortGrassland = LandBiome("Short Temperate Grassland",
-    BiomeType.GrasslandScrublandSavanna,
+    BiomeType.Grassland,
     WarmTemperate <=> CoolTemperate,
     25.`mm/yr` <=> 250.`mm/yr`,
     Lowlands <=> Highlands
@@ -382,7 +348,22 @@ object Biomes {
     Lowlands <=> Highlands
   )
 
-   val All:Vector[Biome] = Reflection.getEnum(Biomes, this.getClass, "Biome", _ == "Void")
+  val All:Vector[Biome] = Reflection.getEnum(Biomes, this.getClass, "Biome", _ == "Void")
 
+  val colorMap:Map[Biome,Color] = {
+    val map = mutable.Map[Biome,Color]()
+    map(Void) = Color.Black
+    val groups: Map[BiomeType, Vector[Biome]] = All.groupBy(_.spec.`type`)
+    for (b <- groups.keys) {
+      val group = groups(b)
+      val count = group.length
+      val colors = ColorHarmony.create(count, b.baseHue, 0.1, 0.0, 0.0, 1, 1, 1f, 0.7f, 0L)
+      for (i <- 0 until count) {
+        val biome = group(i)
+        map(biome) = colors(i)//b.baseColor.brighten(i/(2*count.toFloat))
+      }
 
- }
+    }
+    map.toMap
+  }
+}

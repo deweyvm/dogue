@@ -12,6 +12,7 @@ import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import com.deweyvm.dogue.world.biomes.Biomes
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -49,6 +50,7 @@ object MapState {
       new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
     }
   }
+
   case object Topography extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
       val (color1,color2) = t.surface match {
@@ -67,16 +69,20 @@ object MapState {
 
     }
   }
+
   case object Latitude extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
       t.tile.copy(bgColor = t.latitude.color).draw(i, j)
     }
   }
+
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      t.tile.copy(bgColor = t.biome.spec.`type`.baseColor, code = t.biome.code).draw(i, j)
+      val color = Biomes.colorMap(t.biome)
+      t.tile.copy(bgColor = color, code = t.biome.code).draw(i, j)
     }
   }
+
   case object Nychthemera extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
       val light = Color.fromHsb(t.daylight.toFloat/2)
