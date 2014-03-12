@@ -51,14 +51,19 @@ object MapState {
   }
   case object Topography extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val color = t.surface match {
+      val (color1,color2) = t.surface match {
         case Surface.Land =>
-          Color.DarkGreen
+          (Color.DarkGreen, Color.Grey)
         case Surface.Water =>
-          Color.DarkBlue
+          (Color.DarkBlue, Color.Cyan)
       }
-      val tint = (t.height.d/4000).toFloat
-      t.tile.copy(bgColor = color.brighten(tint), fgColor = Color.White, code = t.biome.code).draw(i, j)
+      val d = (t.height.d/4000).toFloat
+      val color = if (d > 0.8) {
+        color2.dim((2 - d).clamp(1, 999))
+      } else {
+        color1.brighten(d)
+      }
+      t.tile.copy(bgColor = color, fgColor = Color.White, code = t.biome.code).draw(i, j)
 
     }
   }
