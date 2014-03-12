@@ -20,7 +20,7 @@ DAEMON_USER=root
 
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-if [[ "$2" = "--debug" ]] ; then
+if [ "$2" = "--debug" ] ; then
     echo "Debugging mode"
     OUTPUT="$DAEMONLOG"
     HASLOG=true
@@ -33,7 +33,7 @@ start)
     echo "Starting $NAME"
     cd $DAEMON_PATH
     $DAEMON $DAEMONOPTS > $OUTPUT 2>&1 &
-    if [[ $? -eq 0 ]] ; then
+    if [ $? -eq 0 ] ; then
         echo "Service started successfully"
     else
         echo "Service failed to start"
@@ -45,7 +45,7 @@ start)
 status)
     echo "Status of $NAME:"
     pgrep --exact $NAME &> /dev/null
-    if [[ $? -eq 0 ]] ; then
+    if [ $? -eq 0 ] ; then
         echo "Service is running"
     else
         echo "Service not running"
@@ -53,9 +53,8 @@ status)
 ;;
 stop)
     echo "Stopping $NAME"
-    echo "pkill -9 --full $DAEMON"
     pkill -9 --full $DAEMON
-    if [[ $? -eq 0 ]] ; then
+    if [ $? -eq 0 ] ; then
         echo "Stopped"
     else
         echo "Did not stop/Already dead"
