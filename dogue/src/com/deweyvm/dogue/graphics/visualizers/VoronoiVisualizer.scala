@@ -2,7 +2,7 @@ package com.deweyvm.dogue.graphics.visualizers
 
 import com.deweyvm.dogue.common.procgen.{PolygonUtils, PerlinNoise, PoissonRng, Polygon}
 import com.deweyvm.dogue.common.procgen.voronoi.Voronoi
-import com.deweyvm.gleany.data.{Timer, Point2d, Rectd}
+import com.deweyvm.gleany.data.{Timer, Rectd}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.dogue.input.Controls

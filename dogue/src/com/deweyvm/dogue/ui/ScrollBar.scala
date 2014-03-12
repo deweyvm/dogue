@@ -1,10 +1,8 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.graphics.Renderer
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.Code
-import com.deweyvm.dogue.Dogue
 
 /*
  * have continuous scrollbar

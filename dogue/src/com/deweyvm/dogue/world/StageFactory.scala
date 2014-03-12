@@ -4,8 +4,6 @@ import com.deweyvm.dogue.ui._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.gleany.data.Recti
-import com.deweyvm.dogue.common.CommonImplicits
-import CommonImplicits._
 
 class StageFactory(cols:Int, rows:Int) {
   val serverText = Text.create(Color.Black, Color.White)

@@ -1,7 +1,6 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.CommonImplicits.Meters
-import com.deweyvm.dogue.common.data.{Array2d, Array2dView}
+import com.deweyvm.dogue.common.data.Array2d
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._

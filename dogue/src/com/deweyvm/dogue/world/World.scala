@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.data.{Code, Array2dView, Array2d}
+import com.deweyvm.dogue.common.data.{Code, Array2dView}
 import com.deweyvm.dogue.entities.Tile
 
 

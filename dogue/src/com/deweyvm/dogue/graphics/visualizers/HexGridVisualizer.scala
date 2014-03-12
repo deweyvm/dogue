@@ -2,7 +2,6 @@ package com.deweyvm.dogue.graphics.visualizers
 
 import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.dogue.common.data.Code
-import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.CommonImplicits

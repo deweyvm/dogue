@@ -2,7 +2,6 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.ui
 
 
 object ButtonFactory {

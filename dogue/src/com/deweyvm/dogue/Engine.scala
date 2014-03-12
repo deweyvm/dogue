@@ -6,7 +6,6 @@ import com.deweyvm.dogue.ui.TextInput
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.data.Pointer
-import com.deweyvm.dogue.common.procgen.MapName
 import com.deweyvm.dogue.graphics.OglRenderer
 
 

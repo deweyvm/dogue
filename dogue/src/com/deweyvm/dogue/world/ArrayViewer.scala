@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.data.{Array2dView, Array2d, Code}
+import com.deweyvm.dogue.common.data.{Array2dView, Code}
 import com.deweyvm.gleany.input.Control
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color

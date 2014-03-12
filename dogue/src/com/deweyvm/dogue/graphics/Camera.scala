@@ -1,7 +1,6 @@
 package com.deweyvm.dogue.graphics
 
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.deweyvm.dogue.Game
 
 class Camera(width:Int, height:Int) {
   private val cam = {

@@ -1,8 +1,6 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.dogue.graphics.Renderer
-import com.deweyvm.dogue.Dogue
 
 trait Orientation
 case object Vertical extends Orientation

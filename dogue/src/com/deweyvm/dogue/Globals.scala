@@ -1,8 +1,6 @@
 package com.deweyvm.dogue
 
-import util.Random
 import com.deweyvm.gleany.Debug
-import com.deweyvm.dogue.common.CommonImplicits._
 
 class Globals {
   Debug.load()

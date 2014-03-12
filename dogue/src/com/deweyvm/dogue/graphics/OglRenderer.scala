@@ -3,9 +3,9 @@ package com.deweyvm.dogue.graphics
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Timer, Point2d, Recti}
+import com.deweyvm.gleany.data.{Point2d, Recti}
 import com.badlogic.gdx.graphics.g2d.{TextureRegion, SpriteBatch, Sprite}
-import com.deweyvm.dogue.common.data.{Array2d, Code}
+import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.CommonImplicits

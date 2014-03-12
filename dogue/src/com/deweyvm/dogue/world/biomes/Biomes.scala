@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world.biomes
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.data.{ColorHarmony, DogueRange, Code}
+import com.deweyvm.dogue.common.data.{ColorHarmony, DogueRange}
 import com.deweyvm.dogue.world._
 import com.deweyvm.dogue.common.reflect.Reflection
 import com.deweyvm.dogue.DogueImplicits

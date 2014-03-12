@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.ui
 
-import com.badlogic.gdx.{InputAdapter, Gdx}
+import com.badlogic.gdx.InputAdapter
 import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.{Dogue, Game}
@@ -9,7 +9,6 @@ import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.parsing.CommandParser
 import scala.Some
-import com.deweyvm.gleany.data.Recti
 
 
 object TextInput {

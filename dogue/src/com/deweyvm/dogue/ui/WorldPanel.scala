@@ -4,7 +4,7 @@ import com.deweyvm.dogue.world._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.common.data.{Array2dView, Array2d, Pointer, Code}
+import com.deweyvm.dogue.common.data.{Array2dView, Pointer, Code}
 import com.deweyvm.dogue.common.procgen.{PerlinParams, VectorField}
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams

@@ -1,8 +1,6 @@
 package com.deweyvm
 
 import com.deweyvm.dogue.world.{AltitudinalRegion, LatitudinalRegion}
-import com.deweyvm.dogue.common.CommonImplicits
-import CommonImplicits._
 package object dogue {
   object DogueImplicits {
     implicit val latitudeOrdering = new Ordering[LatitudinalRegion] {

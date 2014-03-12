@@ -3,10 +3,8 @@ package com.deweyvm.dogue.graphics.visualizers
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.procgen.VectorField
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
-import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.graphics.OglRenderer
-import com.deweyvm.gleany.data.Point2d
 
 class VectorFieldVisualizer extends Visualizer {
   var seed = 0L

@@ -1,11 +1,10 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.gleany.data.{Point2d, Point2f, Recti}
-import com.deweyvm.dogue.graphics.{Renderer, RectSprite}
+import com.deweyvm.gleany.data.{Point2d, Recti}
+import com.deweyvm.dogue.graphics.Renderer
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
-import com.deweyvm.dogue.Dogue
 import com.deweyvm.dogue.world.Stage
 
 class Panel(val rect:Recti, bgColor:Color) {

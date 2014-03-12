@@ -6,7 +6,7 @@ import com.deweyvm.dogue.entities.Tile
 
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.data.{Code, Array2d}
-import com.deweyvm.dogue.graphics.{OglRenderer, Renderer}
+import com.deweyvm.dogue.graphics.Renderer
 import com.deweyvm.gleany.data.{Timer, Point2d, Point2f, Recti}
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._

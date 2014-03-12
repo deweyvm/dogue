@@ -4,8 +4,6 @@ import com.deweyvm.dogue.common.data.{Angles, Circle}
 import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
-import com.badlogic.gdx.math.MathUtils
-import com.deweyvm.dogue.Game
 
 trait Season {
   def name:String
