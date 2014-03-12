@@ -120,9 +120,6 @@ case class CelestialBodies(t:Long, worldRadius:Double, c:DateConstants) {
 
   /**
    * how much heat is gained from the sun as you move away from the sun's closest point
-   * @param i
-   * @param j
-   * @return
    */
   def getSunHeat(i:Int, j:Int):Double = {
     val light = getSunlight(i, j)

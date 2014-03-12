@@ -74,9 +74,9 @@ object Ecosphere {
 
 
     private val solidElevation = 0 m
-    private val noise = new PerlinNoise(1/worldParams.period.toDouble, worldParams.octaves, worldParams.size, seed).render
+    private val noise = new PerlinNoise(worldParams.perlin).render
 
-    private val heightMap = new SurfaceMap(noise, worldParams)
+    private val heightMap = new SurfaceMap(noise, worldParams.perlin)
 
     private val windMap:Array2d[(Point2d, Arrow, Color)] = {
       val myHeight = heightMap.landMap.view.map{case (i, j, (t,m)) =>
@@ -112,7 +112,7 @@ object Ecosphere {
       Latitude.getLatitude(l)
     }
     val random = new Random(worldParams.seed)
-    val moistureMap = new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 250, random)
+    val moistureMap = new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 100, random)
     override def getMoisture(i:Int, j:Int):Rainfall = {
       moistureMap.get(i, j)
     }

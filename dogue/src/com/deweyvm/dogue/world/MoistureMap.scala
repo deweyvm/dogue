@@ -43,11 +43,12 @@ class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)],
   val moistureSpawnDepth = 0 m
 
   def get(i:Int, j:Int) = {
-    val lat = latitude.get(i, j).clamp(0, 1)
+    val lat = latitude.get(i, j).clamp(0, 0.6)
     val latm1 = 1 - lat
+    val max = (1 - lat)*10000
     val raw = map.view.get(i, j)
 
-    (raw * (latm1*latm1)*10000).`mm/yr`
+    (raw * (latm1*latm1)*max).`mm/yr`
   }
 
   def linearToMoisture(d:Double) = d*d

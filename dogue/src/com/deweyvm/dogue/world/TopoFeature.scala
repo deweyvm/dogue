@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.procgen.PerlinNoise
+import com.deweyvm.dogue.common.procgen.{PerlinParams, PerlinNoise}
 import com.deweyvm.dogue.common.data.Array2dView
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.Implicits
@@ -17,17 +17,18 @@ object TopoFeature {
 
   def lake(d:Double) = {
     val h = 1 - (d - 0.5).clamp(0, 1)
-    1 - math.pow(h, 3)
+    (1 - math.pow(h, 3))/2
   }
 }
 
-class TopoFeature(f:Double => Double, count:Int, size:Int, period:Int, octaves:Int, seed:Long) {
+class TopoFeature(f:Double => Double, count:Int, perlin:PerlinParams) {
+  val size = perlin.size
   val rows = size
   val cols = size
 
-  val noise = new PerlinNoise(1 / period.toDouble, octaves, size, seed).render.view.map { case (i, j, d) =>
+  val noise = new PerlinNoise(perlin).render.map { case (i, j, d) =>
     f(d)
-  }
+  }.view
 
   val all:Set[(Int,Int)] = {
     val points = for (i <- 0 until cols; j <- 0 until rows) yield {

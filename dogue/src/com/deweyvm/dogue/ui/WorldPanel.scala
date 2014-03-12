@@ -5,7 +5,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.data.{Array2dView, Array2d, Pointer, Code}
-import com.deweyvm.dogue.common.procgen.VectorField
+import com.deweyvm.dogue.common.procgen.{PerlinParams, VectorField}
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
@@ -110,7 +110,8 @@ object WorldPanel {
     val seed = 622965729637789L//System.nanoTime
     println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
-    val params = WorldParams(minimapSize, size/4, 8, size, date, seed)
+    val perlin = PerlinParams(size/4, 8, size, seed)
+    val params = WorldParams(minimapSize, perlin, date)
     val world = World.create(params)
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)

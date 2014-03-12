@@ -35,7 +35,7 @@ class StageFactory(cols:Int, rows:Int) {
         val chatPanel = new ChatPanel(chatRect, bgColor, fgColor, Client.instance, textInput, textOutput)
         makeStage(chatPanel)
       case World =>
-        val worldSize = 512
+        val worldSize = 256
         val controlsHeight = 8
         val minSideWidth = 24
         val minimapSize = 69

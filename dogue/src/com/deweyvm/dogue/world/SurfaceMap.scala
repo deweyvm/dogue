@@ -5,6 +5,7 @@ import com.deweyvm.dogue.common.data.{Array2d, Array2dView}
 import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+import com.deweyvm.dogue.common.procgen.PerlinParams
 
 trait SurfaceType {
   val isWater:Boolean
@@ -19,7 +20,7 @@ object Surface {
   }
 }
 
-class SurfaceMap(noise:Array2d[Double], params:WorldParams) {
+class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
   private val cols = noise.cols
   private val rows = noise.rows
   private def perlinToHeight(t:Double) = {
@@ -32,10 +33,10 @@ class SurfaceMap(noise:Array2d[Double], params:WorldParams) {
     }
   }
 
-  private val mountainSet = new TopoFeature(TopoFeature.mountain3, 50, params.size, params.period, params.octaves, params.seed)
+  private val mountainSet = new TopoFeature(TopoFeature.mountain3, 50, params)
 
   val numDepressions = 10
-  private val lakeSet = new TopoFeature(TopoFeature.lake, numDepressions, params.size, 64, params.octaves, params.seed)
+  private val lakeSet = new TopoFeature(TopoFeature.lake, numDepressions, params.copy(period=64))
 
 
   private val (lakes, basins) = lakeSet.extracted.splitAt(numDepressions/2)

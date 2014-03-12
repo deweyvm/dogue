@@ -7,6 +7,7 @@ import com.deweyvm.dogue.common.threading.ThreadManager
 import com.deweyvm.dogue.common.io.DogueSocket
 import com.deweyvm.dogue.common.protocol.{DogueOps, Invalid, Command, DogueMessage}
 import com.deweyvm.dogue.common.procgen.Name
+import java.net.SocketException
 
 trait ClientState
 class ClientError(error:String) {
@@ -96,7 +97,12 @@ class Client(serverName:String, socket:DogueSocket, manager:ClientManager) exten
 
   def close() {
     Log.info("Client closing connection")
-    socket.transmit(Command(DogueOps.Close, Client.name, serverName, Vector()))
+    try {
+      socket.transmit(Command(DogueOps.Close, Client.name, serverName, Vector()))
+    } catch {
+      case s:SocketException =>
+        Log.info("Already closed")
+    }
   }
 }
 
