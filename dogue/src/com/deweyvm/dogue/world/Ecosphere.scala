@@ -12,6 +12,7 @@ import com.deweyvm.dogue.common.Implicits.Pressure
 import scala.Some
 import com.deweyvm.dogue.common.Implicits.Meters
 import java.util.Random
+import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 
 object Ecosphere {
   def create(worldParams:WorldParams):Ecosphere = new Ecosphere {

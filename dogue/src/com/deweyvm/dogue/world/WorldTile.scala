@@ -6,6 +6,7 @@ import com.deweyvm.dogue.ui.Tooltip
 import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 
 object WorldTile {
   val Blank = WorldTile(0 m, Altitude.Abyss, Surface.Water, 1 atm, 0, Biomes.Void, Latitude.Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
