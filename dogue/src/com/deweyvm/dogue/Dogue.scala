@@ -2,8 +2,8 @@ package com.deweyvm.dogue
 
 import com.deweyvm.dogue.graphics.{Renderer, NullRenderer, OglRenderer}
 import com.badlogic.gdx.Gdx
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.deweyvm.dogue.loading.TileSpec
 
 

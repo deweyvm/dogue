@@ -8,8 +8,8 @@ import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.data.{Code, Array2d}
 import com.deweyvm.dogue.graphics.{OglRenderer, Renderer}
 import com.deweyvm.gleany.data.{Timer, Point2d, Point2f, Recti}
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.deweyvm.dogue.Dogue
 import com.badlogic.gdx.Gdx
 

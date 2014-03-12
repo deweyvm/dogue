@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.ui
 
 import com.badlogic.gdx.{InputAdapter, Gdx}
-import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.{Dogue, Game}
 import com.deweyvm.dogue.common.protocol._

@@ -10,8 +10,8 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.world.DateConstants
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit

@@ -5,8 +5,8 @@ import com.deweyvm.dogue.common.data.Array2d
 import com.deweyvm.gleany.AssetLoader
 import com.deweyvm.gleany.data.Recti
 import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 case class Tileset(cols:Int,
                    rows:Int,

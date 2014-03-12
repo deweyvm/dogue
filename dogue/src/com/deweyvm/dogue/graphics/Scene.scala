@@ -2,8 +2,8 @@ package com.deweyvm.dogue.graphics
 
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Array2d
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 class Scene(cols:Int, rows:Int) {
   val array = Array.tabulate[Option[Tile]](cols*rows) {_ => None}

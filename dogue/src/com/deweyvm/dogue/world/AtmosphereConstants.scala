@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.dogue.common.CommonImplicits._
 
 case object AtmosphereConstants {
   val elrRate = 6.49/1000 //K m-1

@@ -4,13 +4,13 @@ import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.data.{Array2dView, Array2d, Code}
 import com.deweyvm.gleany.data._
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.deweyvm.dogue.world.AtmosphereConstants._
 import com.deweyvm.dogue.common.procgen.Arrow
-import com.deweyvm.dogue.common.Implicits.Pressure
+import com.deweyvm.dogue.common.CommonImplicits.Pressure
 import scala.Some
-import com.deweyvm.dogue.common.Implicits.Meters
+import com.deweyvm.dogue.common.CommonImplicits.Meters
 import java.util.Random
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 

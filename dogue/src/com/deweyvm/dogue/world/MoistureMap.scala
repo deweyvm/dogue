@@ -2,8 +2,8 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.data.{Array2dView, Array2d}
 import com.deweyvm.dogue.common.procgen.Arrow
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
 import java.util.Random

@@ -6,8 +6,8 @@ import com.deweyvm.dogue.world._
 import com.deweyvm.dogue.common.reflect.Reflection
 import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 trait BiomeType {
   val baseColor:Color

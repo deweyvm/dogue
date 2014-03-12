@@ -2,8 +2,8 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 class StageManager(stages:Pointer[Stage]) {
 

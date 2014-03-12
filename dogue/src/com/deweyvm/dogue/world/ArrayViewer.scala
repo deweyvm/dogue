@@ -5,8 +5,8 @@ import com.deweyvm.gleany.input.Control
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, xControl:Control[Int], yControl:Control[Int]) {
   private val crosshair = new Tile(Code.+, Color.Red, Color.Pink)

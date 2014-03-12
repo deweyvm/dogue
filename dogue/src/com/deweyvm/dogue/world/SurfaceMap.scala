@@ -1,10 +1,10 @@
 package com.deweyvm.dogue.world
 
-import com.deweyvm.dogue.common.Implicits.Meters
+import com.deweyvm.dogue.common.CommonImplicits.Meters
 import com.deweyvm.dogue.common.data.{Array2d, Array2dView}
 import scala.collection.mutable.ArrayBuffer
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.deweyvm.dogue.common.procgen.PerlinParams
 
 trait SurfaceType {

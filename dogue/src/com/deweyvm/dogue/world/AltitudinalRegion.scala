@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.data.{Code, DogueRange}
-import com.deweyvm.dogue.common.Implicits.Meters
+import com.deweyvm.dogue.common.CommonImplicits.Meters
 import com.deweyvm.gleany.graphics.Color
 
 case class AltitudinalRegion(name:String, range:DogueRange[Meters]) {

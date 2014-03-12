@@ -2,8 +2,8 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.data.{Angles, Circle}
 import com.deweyvm.gleany.data.Point2d
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.badlogic.gdx.math.MathUtils
 import com.deweyvm.dogue.Game
 

@@ -4,8 +4,8 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.ui.Tooltip
 import com.deweyvm.gleany.data.Point2d
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 
 object WorldTile {

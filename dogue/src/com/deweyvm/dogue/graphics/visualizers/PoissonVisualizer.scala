@@ -4,8 +4,8 @@ import com.deweyvm.dogue.common.procgen.{PerlinNoise, PoissonRng}
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.graphics.OglRenderer
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 class PoissonVisualizer extends Visualizer {
   val size = 500

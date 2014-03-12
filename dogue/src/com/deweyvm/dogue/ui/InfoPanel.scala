@@ -2,7 +2,7 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.common.Implicits._
+import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.gleany.data.Recti
 
 object InfoPanel {

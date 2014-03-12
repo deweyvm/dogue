@@ -2,8 +2,8 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.DogueRange
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 object Latitude {
 

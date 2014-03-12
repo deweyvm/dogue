@@ -3,8 +3,8 @@ package com.deweyvm.dogue.world
 import com.deweyvm.dogue.common.procgen.{PerlinParams, PerlinNoise}
 import com.deweyvm.dogue.common.data.Array2dView
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 object TopoFeature {
   def river(d:Double) = math.abs(d) - 0.15//32, 6, 256

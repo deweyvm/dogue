@@ -4,8 +4,8 @@ import com.deweyvm.dogue.world.Stage
 import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 object TitleMenu {
   def create(bgColor:Color, f:() => Stage) = {

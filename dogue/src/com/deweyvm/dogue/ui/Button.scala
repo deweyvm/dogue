@@ -1,8 +1,8 @@
 package com.deweyvm.dogue.ui
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.Implicits
-import Implicits._
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 class Button[T](t:Text, result:() => T, shouldActivate:() => Boolean, i:Int, j:Int) extends Menu[T] {
   lazy val lazyResult = result()
