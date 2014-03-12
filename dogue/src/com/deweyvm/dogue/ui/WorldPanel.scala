@@ -74,7 +74,7 @@ object MapState {
   }
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      t.tile.copy(bgColor = t.biome.mapColor, code = t.biome.code).draw(i, j)
+      t.tile.copy(bgColor = t.biome.spec.`type`.baseColor, code = t.biome.code).draw(i, j)
     }
   }
   case object Nychthemera extends MapState {

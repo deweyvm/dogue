@@ -5,6 +5,7 @@ import com.deweyvm.dogue.common.data.DogueRange
 import com.deweyvm.dogue.common.Implicits.Rainfall
 
 case class BiomeSpec(surface:SurfaceType,
-                      region:DogueRange[LatitudinalRegion],
-                      moisture:DogueRange[Rainfall],
-                      altitude:DogueRange[AltitudinalRegion])
+                     `type`:BiomeType,
+                     region:DogueRange[LatitudinalRegion],
+                     moisture:DogueRange[Rainfall],
+                     altitude:DogueRange[AltitudinalRegion])
