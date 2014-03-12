@@ -46,7 +46,7 @@ object BiomeType {
 }
 
 object Biomes {
-  
+
   def LandBiome(name:String,
                 `type`:BiomeType,
                 region:DogueRange[LatitudinalRegion],
