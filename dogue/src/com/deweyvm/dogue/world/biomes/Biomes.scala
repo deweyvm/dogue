@@ -9,6 +9,16 @@ import DogueImplicits._
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
 
+trait BiomeType
+object BiomeType {
+  case object GrasslandScrublandSavanna extends BiomeType
+  case object Forest extends BiomeType
+  case object Desert extends BiomeType
+  case object Wetlands extends BiomeType
+  case object Alpine extends BiomeType
+  case object Aquatic extends BiomeType
+}
+
 object Biomes {
 
   def LandBiome(name:String,
