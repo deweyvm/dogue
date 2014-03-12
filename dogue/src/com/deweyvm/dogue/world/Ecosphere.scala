@@ -26,22 +26,14 @@ object Ecosphere {
     }
 
     override def getWind(i:Int, j:Int):Arrow = {
-      val (w, time) = Timer.timer(() => {
-        (windMap.get(i, j) match {
-          case Some((_, arr, _)) => arr.some
-          case _ => None
-        }).getOrElse(super.getWind(i, j))
-      })
-      wTime += time
-      w
+      (windMap.get(i, j) match {
+        case Some((_, arr, _)) => arr.some
+        case _ => None
+      }).getOrElse(super.getWind(i, j))
     }
 
     override def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
-      val (h, time) = Timer.timer(() => {
-        getElevationParts(i, j)
-      })
-      eTime += time
-      h
+      getElevationParts(i, j)
     }
 
     override def getLatitude(i:Int, j:Int):LatitudinalRegion = {
@@ -49,11 +41,7 @@ object Ecosphere {
     }
 
     override def getBiome(i:Int, j:Int):Biome = {
-      val (r, time) = Timer.timer(() => {
-        regionMap.get(i, j)
-      })
-      rTime += time
-      r
+      regionMap.get(i, j)
     }
 
     override def getPressure(i:Int, j:Int):Pressure = {
@@ -61,36 +49,42 @@ object Ecosphere {
       atmosphereMap.get(i, j)
     }
 
+    var heightTime = 0L
+    var windTime = 0L
+    var biomeTime = 0L
+    var moistureTime = 0L
 
-    private var eTime = 0.0
-    private var rTime = 0.0
-    private var wTime = 0.0
     override def getTimeString:String = {
-      val totalTime = rTime + eTime + wTime
-      val r = (rTime/totalTime * 100).toInt
-      val h = (eTime/totalTime * 100).toInt
-      val w = (wTime/totalTime * 100).toInt
-      "wind(%d) height(%d) region(%d)" format (w, h, r)
+      val sum = (windTime + heightTime + biomeTime + moistureTime).toDouble
+      def pc(d:Double):Int = ((d/sum)*100).toInt
+      val w = pc(windTime)
+      val h = pc(heightTime)
+      val b = pc(biomeTime)
+      val m = pc(moistureTime)
+      "wind(%d) height(%d) biome(%d) moisture(%d)" format (w, h, b, m)
     }
 
 
     private val solidElevation = 0 m
     private val noise = new PerlinNoise(worldParams.perlin).render
 
-    private val heightMap = new SurfaceMap(noise, worldParams.perlin)
+    private val heightMap = {
+      val (s, t) = Timer.timer(() => new SurfaceMap(noise, worldParams.perlin))
+      heightTime = t
+      s
+    }
 
     private val windMap:Array2d[(Point2d, Arrow, Color)] = {
-      val myHeight = heightMap.landMap.view.map{case (i, j, (t,m)) =>
-        val d = m.d
-        if (t.isWater) {
-          d/10
-        } else {
-          d/10
+      val (w, t) = Timer.timer(() => {
+        val myHeight = heightMap.landMap.view.map{case (i, j, (t,m)) =>
+          m.d/10
         }
-      }
-      VectorField.perlinWind(solidElevation.d, myHeight, cols, rows, 1, seed).lazyVectors
+        //VectorField.const(cols, rows).lazyVectors
+        VectorField.perlinWind(0.m.d, myHeight, cols, rows, 1, seed).lazyVectors
+      })
 
-      //VectorField.const(cols, rows).lazyVectors
+      windTime = t
+      w
     }
 
     private val atmosphereMap:Array2dView[Pressure] = {
@@ -113,7 +107,13 @@ object Ecosphere {
       Latitude.getLatitude(l)
     }
     val random = new Random(worldParams.seed)
-    val moistureMap = new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 100, random)
+    val moistureMap = {
+      val (m, t) = Timer.timer(() => {
+        new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 100, random)
+      })
+      moistureTime = t
+      m
+    }
     override def getMoisture(i:Int, j:Int):Rainfall = {
       moistureMap.get(i, j)
     }
@@ -121,13 +121,18 @@ object Ecosphere {
     private val regionMap:Array2dView[Biome] = {
       //val hexSize = cols/50
       //val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
-      Array2d.tabulate(cols, rows) { case (i, j) =>
-        val moisture = moistureMap.get(i, j)
-        val temp = 0.5
-        val (t, height, alt) = getElevationParts(i, j)
-        val lat = latRegions.view.get(i, j)
-        Biomes.getBiome(moisture, temp, lat, alt, t)
-      }.view
+      val (r, t) = Timer.timer(() => {
+        Array2d.tabulate(cols, rows) { case (i, j) =>
+          val moisture = moistureMap.get(i, j)
+          val temp = 0.5
+          val (t, height, alt) = getElevationParts(i, j)
+          val lat = latRegions.view.get(i, j)
+          Biomes.getBiome(moisture, temp, lat, alt, t)
+        }.view
+      })
+      biomeTime = t
+      r
+
     }
 
     private def getElevationParts(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {

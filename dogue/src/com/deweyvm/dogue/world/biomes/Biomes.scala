@@ -53,7 +53,7 @@ object Biomes {
       println("    Latitude : %s" format lat)
       println("    Altitude : %s" format alt)
       println("    Surface  : %s" format surf)
-      throw new RuntimeException()
+      //throw new RuntimeException()
       Void
     }
   }
