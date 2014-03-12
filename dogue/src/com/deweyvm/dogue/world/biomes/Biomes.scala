@@ -8,6 +8,7 @@ import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
 import com.deweyvm.dogue.common.Implicits
 import Implicits._
+
 object Biomes {
 
   def LandBiome(name:String,
@@ -52,7 +53,7 @@ object Biomes {
       println("    Latitude : %s" format lat)
       println("    Altitude : %s" format alt)
       println("    Surface  : %s" format surf)
-
+      throw new RuntimeException()
       Void
     }
   }
@@ -62,26 +63,26 @@ object Biomes {
   val Void = LandBiome("Void", Color.Black, Code.` `,
     SuperTropical <=> Polar,
     0.`mm/yr` <=> 10000.`mm/yr`,
-    Abyss <=> SuperAlpine)
-
-  //todo -- very rainy boreal = ??, perhaps glacier
+    Abyss <=> SuperAlpine
+  )
 
   val Lake = AquaticBiome("Lake", Color.Blue.brighten(0.1f), Code.≈,
     SuperTropical <=> Polar,
     0.`mm/yr` <=> 10000.`mm/yr`,
-    Lowlands <=> SuperAlpine)
+    Lowlands <=> SuperAlpine
+  )
 
   val Ocean = AquaticBiome("Ocean", Color.Blue, Code.≈,
     SuperTropical <=> Polar,
     0.`mm/yr` <=> 10000.`mm/yr`,
-    Abyss <=> Oceanic)
+    Abyss <=> Oceanic
+  )
 
   val PolarDesert = LandBiome("Polar Desert", Color.White, Code.`.`,
     Subpolar <=> Polar,
     0.`mm/yr` <=> 250.`mm/yr`,
-    Lowlands <=> Subalpine)
-
-
+    Lowlands <=> Montane
+  )
 
   val FrozenCrags = LandBiome("Frozen Crags", Color.Purple.dim(1.6f), Code.^,
     Subpolar <=> Polar,
@@ -92,7 +93,8 @@ object Biomes {
   val AlpineTundra = LandBiome("Alpine Tundra", Color.White.dim(1.1f), Code.▲,
     Tropical <=> Polar,
     250.`mm/yr` <=> 750.`mm/yr`,
-    Alpine <=> SuperAlpine)
+    Alpine <=> SuperAlpine
+  )
 
   val ArcticTundra = LandBiome("Arctic Tundra", Color.White.dim(1.5f), Code.☼,
     Subpolar <=> Subpolar,
@@ -128,54 +130,82 @@ object Biomes {
   val Taiga = LandBiome("Taiga", Color.DarkGreen.dim(1.2f), Code.♣,
     Boreal <=> Boreal,
     250.`mm/yr` <=> 750.`mm/yr`,
-    Midlands <=> Subalpine)
+    Midlands <=> Subalpine
+  )
 
   val BorealWetlands = LandBiome("Boreal Wetlands", Color.DarkGreen.dim(1.5f), Code.~,
     Boreal <=> Boreal,
     250.`mm/yr` <=> 10000.`mm/yr`,
-    Lowlands <=> Lowlands)
+    Lowlands <=> Lowlands
+  )
 
   val BorealGrassland = LandBiome("Boreal Grassland", Color.DarkGreen.dim(1.8f), Code.`»`,
     Boreal <=> Boreal,
     25.`mm/yr` <=> 250.`mm/yr`,
-    Lowlands <=> Montane)
+    Lowlands <=> Montane
+  )
+
+  val BorealDesert = LandBiome("Boreal Desert", Color.DarkGreen.dim(1.9f), Code.`»`,
+    Boreal <=> Boreal,
+    0.`mm/yr` <=> 25.`mm/yr`,
+    Lowlands <=> Montane
+  )
+
+  val TropicalGrassland = LandBiome("Tropical Grassland", Color.Green, Code.*,
+    Tropical <=> Tropical,
+    250.`mm/yr` <=> 500.`mm/yr`,
+    Lowlands <=> Highlands
+  )
 
   val TropicalSavanna = LandBiome("Tropical Savanna", Color.Orange, Code.*,
     Tropical <=> Subtropical,
     500.`mm/yr` <=> 1300.`mm/yr`,
-    Lowlands <=> Highlands)
+    Lowlands <=> Highlands
+  )
+
+  val SubtropicalScrubland = LandBiome("Subtropical Scrubland", Color.Green.dim(1.5f), Code.*,
+    Subtropical <=> Subtropical,
+    250.`mm/yr` <=> 500.`mm/yr`,
+    Lowlands <=> Highlands
+  )
 
   val PeatSwampForest = LandBiome("Peat Swamp Forest", Color.Orange.dim(1.5f), Code.*,
     Tropical <=> Subtropical,
     1300.`mm/yr` <=> 2000.`mm/yr`,
-    Lowlands <=> Lowlands)
+    Lowlands <=> Lowlands
+  )
 
   val SubtropicalDeciduousForest = LandBiome("Subtropical Deciduous Forest", Color.Green.dim(1.5f), Code.*,
     Tropical <=> Subtropical,
     1300.`mm/yr` <=> 2000.`mm/yr`,
-    Midlands <=> Highlands)
+    Midlands <=> Highlands
+  )
 
   //http://earthobservatory.nasa.gov/Experiments/Biome/biorainforest.php
   val TropicalRainforest = LandBiome("Tropical Rainforest", Color.Green.brighten(0.1f), Code.*,
     Tropical <=> Subtropical,
     2000.`mm/yr` <=> 10000.`mm/yr`,
-    Midlands <=> Highlands)
+    Midlands <=> Highlands
+  )
 
   val Mangroves = LandBiome("Mangroves", Color.Brown.brighten(0.1f), Code.~,
     Tropical <=> Subtropical,
     2000.`mm/yr` <=> 10000.`mm/yr`,
-    Lowlands <=> Lowlands)
+    Lowlands <=> Lowlands
+  )
 
   val MontaneRainforest = LandBiome("Montane Rainforest", Color.Green.dim(1.7f), Code.*,
     Subtropical <=> CoolTemperate,
     2000.`mm/yr` <=> 10000.`mm/yr`,
-    Montane <=> Subalpine)
+    Montane <=> Subalpine
+  )
 
   //http://earthobservatory.nasa.gov/Experiments/Biome/biorainforest.php
   val TemperateRainforest = LandBiome("Temperate Rainforest", Color.Green.dim(1.4f), Code.*,
     WarmTemperate <=> CoolTemperate,
     2000.`mm/yr` <=> 10000.`mm/yr`,
-    Midlands <=> Highlands)
+    Midlands <=> Highlands
+  )
 
   val SubtropicalBroadleafForest = LandBiome("Subtropical Broadleaf Forest", Color.DarkGreen.brighten(0.1f), Code.♠,
     Subtropical <=> Subtropical,
@@ -209,6 +239,12 @@ object Biomes {
     Lowlands <=> Lowlands
   )
 
+  val Steppe = LandBiome("Steppe", Color.Brown.brighten(0.3f), Code.`*`,
+    Subtropical <=> CoolTemperate,
+    250.`mm/yr` <=> 750.`mm/yr`,
+    Midlands <=> Highlands
+  )
+
   val TemperateScrubland = LandBiome("Temperate Scrubland", Color.Yellow.dim(2), Code.*,
     WarmTemperate <=> CoolTemperate,
     25.`mm/yr` <=> 180.`mm/yr`,
@@ -218,24 +254,18 @@ object Biomes {
   //approximately 1 in. (.25 cm) of rain falls in dry deserts per year.
   //The latitude range is 15-28° north and south of the equator.
   //http://www.blueplanetbiomes.org/desert_climate_page.htm
-  val AridDesert = LandBiome("Arid Desert", Color.Yellow.dim(3), Code.`.`,
+  val AridDesert = LandBiome("Arid Desert", Color.Yellow.dim(1.1f), Code.`.`,
     Tropical <=> CoolTemperate,
     0.`mm/yr` <=> 25.`mm/yr`,
     Lowlands <=> Highlands
   )
 
   //made up
-  val Badlands = LandBiome("Badlands", Color.Brown, Code.`-`,
+  /*val Badlands = LandBiome("Badlands", Color.Brown, Code.`-`,
     CoolTemperate <=> Boreal,
     0.`mm/yr` <=> 250.`mm/yr`,
     Lowlands <=> Highlands
-  )
-
-  val Steppe = LandBiome("Steppe", Color.Brown.brighten(0.3f), Code.`*`,
-    Subtropical <=> CoolTemperate,
-    250.`mm/yr` <=> 750.`mm/yr`,
-    Lowlands <=> Highlands
-  )
+  )*/
 
   val XericScrubland = LandBiome("Xeric Scrubland", Color.Yellow.dim(1.5f), Code.`,`,
     Tropical <=> Subtropical,
