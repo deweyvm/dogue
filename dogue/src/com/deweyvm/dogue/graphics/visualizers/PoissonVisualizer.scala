@@ -14,10 +14,7 @@ class PoissonVisualizer extends Visualizer {
   def makePoisson = {
     val pos = new PoissonRng(size, size, {case(i, j) => space}, maxSpace, seed).getPoints
     val points = pos.filter { pt =>
-      noise.get(pt.x.toInt, pt.y.toInt) match {
-        case Some(d) => d > 0.2
-        case None => true
-      }
+      noise.get(pt.x.toInt, pt.y.toInt) > 0.2
     }
     points
 

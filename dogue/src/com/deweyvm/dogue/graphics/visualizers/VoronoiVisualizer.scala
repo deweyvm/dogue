@@ -24,11 +24,7 @@ class VoronoiVisualizer extends Visualizer {
     val perlin = time("Perlin noise: ", () => new PerlinNoise(1/128.0, 5, size, vorSeed).render)
     val pts = time("Generate points: ", () => {
       new PoissonRng(size, size, {case (i, j) => scale}, scale, vorSeed).getPoints.filter { pt =>
-        perlin.get(pt.x.toInt, pt.y.toInt) match {
-          case Some(d) => d > 0.2
-          case None => true
-        }
-        true
+        perlin.get(pt.x.toInt, pt.y.toInt) > 0.2
       }
     })
 

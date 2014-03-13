@@ -8,7 +8,7 @@ import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
 import java.util.Random
 
-class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)], latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int, r:Random) {
+class MoistureMap(cols:Int, rows:Int, surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int, r:Random) {
 
   val rp = r.nextDouble - 0.5
   def followWind(w:Arrow, i:Double, j:Double):(Double,Double) = {
@@ -22,7 +22,8 @@ class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)],
     if (ni < 0 || nj < 0 || ni > cols - 1 || nj > rows - 1) {
       return current
     }
-    val (t,h) = height.get(ni.toInt, nj.toInt)
+    val t = surface.landMap.get(ni.toInt, nj.toInt)
+    val h = surface.heightMap.get(ni.toInt, nj.toInt)
     val v = h +: current
     if (depthLeft <= 0 || t.isWater) {
       v
@@ -46,7 +47,7 @@ class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)],
     val lat = latitude.get(i, j).clamp(0, 0.6)
     val latm1 = 1 - lat
     val max = (1 - lat)*10000
-    val raw = map.view.get(i, j)
+    val raw = map.get(i, j)
 
     (raw * (latm1*latm1)*max).`mm/yr`
   }
@@ -54,7 +55,7 @@ class MoistureMap(cols:Int, rows:Int, height:Array2dView[(SurfaceType, Meters)],
   def linearToMoisture(d:Double) = d*d
 
   private val map = Array2d.tabulate(cols, rows) {case (i, j) =>
-    if (height.get(i, j)._1.isWater) {
+    if (surface.landMap.get(i, j).isWater) {
       0
     } else {
       val path: Vector[Meters] = traceWind(i, j, steps, Vector())

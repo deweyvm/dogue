@@ -32,7 +32,7 @@ class TopoFeature(f:Double => Double, count:Int, base:Array2d[Double]) {
 
   private val noise = base.map { case (i, j, d) =>
     f(d)
-  }.view
+  }
 
   private val all:Set[(Int,Int)] = {
     val points = for (i <- 0 until cols; j <- 0 until rows) yield {

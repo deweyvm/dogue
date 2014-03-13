@@ -41,29 +41,21 @@ object Ecosphere {
         p
       }
 
-      private val heightMap = {
+      private val surfaceMap = {
         val (s, t) = Timer.timer(() => new SurfaceMap(noise, worldParams.perlin))
         heightTime = t
         s
       }
 
-      private val windMap:Array2d[(Point2d, Arrow, Color)] = {
-        val (w, t) = Timer.timer(() => {
-          val myHeight = heightMap.landMap.view.map { case (i, j, (_,m)) =>
-            m.d
-          }
-          //VectorField.const(cols, rows).lazyVectors
-          //VectorField.perlinWind(0.m.d, myHeight, cols, rows, 1, seed).lazyVectors
-          VectorField.perlinWind(0.m.d, myHeight, 10000, 1, cols, rows, 1, seed).lazyVectors
-        })
-
+      private val windMap = {
+        val (w, t) = Timer.timer(() => new StaticWindMap(surfaceMap.heightMap, 10000, 1, seed))
         windTime = t
         w
       }
 
       private val atmosphereMap:Array2dView[Pressure] = {
-        heightMap.landMap.view.map{case (i, j, (_,h)) =>
-          val f = (h < 0) select (waterPressure _, airPressure _)
+        surfaceMap.heightMap.map{case (i, j, h) =>
+          val f = (h < 0.m) select (waterPressure _, airPressure _)
           f(h)
         }
       }
@@ -74,7 +66,7 @@ object Ecosphere {
       val random = new Random(worldParams.seed)
       val moistureMap = {
         val (m, t) = Timer.timer(() => {
-          new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.latitude.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, cols/2, random)
+          new MoistureMap(cols, rows, surfaceMap, latitudeMap.latitude, windMap.arrows, 0.5, cols/2, random)
         })
         moistureTime = t
         m
@@ -84,12 +76,7 @@ object Ecosphere {
         //val hexSize = cols/50
         //val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
         val (r, t) = Timer.timer(() => {
-          Array2d.tabulate(cols, rows) { case (i, j) =>
-            val moisture = moistureMap.get(i, j)
-            val (t, _, alt) = getElevationParts(i, j)
-            val lat = latitudeMap.regions.view.get(i, j)
-            Biomes.getBiome(moisture, lat, alt, t)
-          }.view
+
         })
         Biomes.resolver.printConflicts()
         biomeTime = t
@@ -101,19 +88,14 @@ object Ecosphere {
         this
       }
 
-      override def getWind(i:Int, j:Int):Arrow = {
-        (windMap.get(i, j) match {
-          case Some((_, arr, _)) => arr.some
-          case _ => None
-        }).getOrElse(super.getWind(i, j))
-      }
+      override def getWind(i:Int, j:Int):Arrow = windMap.arrows.get(i, j)
 
       override def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
         getElevationParts(i, j)
       }
 
       override def getLatitude(i:Int, j:Int):LatitudinalRegion = {
-        latitudeMap.regions.view.get(i, j)
+        latitudeMap.regions.get(i, j)
       }
 
       override def getBiome(i:Int, j:Int):Biome = {
@@ -121,7 +103,6 @@ object Ecosphere {
       }
 
       override def getPressure(i:Int, j:Int):Pressure = {
-        //atmosphereic pressure based on height only for now
         atmosphereMap.get(i, j)
       }
 
@@ -131,7 +112,8 @@ object Ecosphere {
       }
 
       private def getElevationParts(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
-        val (t, h) = heightMap.get(i, j)
+        val t = surfaceMap.landMap.get(i, j)
+        val h = surfaceMap.heightMap.get(i, j)
         val altitude = Altitude.fromHeight(h)
         (t, h, altitude)
       }

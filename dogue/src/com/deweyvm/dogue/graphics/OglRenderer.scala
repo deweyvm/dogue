@@ -33,9 +33,7 @@ class OglTile(tileset:Tileset) {
   private def makeSprite(index:Int, color:Color, texture:Texture) = {
     val x = index % rows
     val y = index / rows
-    val region = tileset.getRegion(x, y).getOrElse(
-      AssetLoader.makeTextureRegion(texture, Recti(x * width, y * height, width, height).some)
-    )
+    val region = tileset.getRegion(x, y)
     OglSprite(region, color)
   }
 

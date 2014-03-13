@@ -20,12 +20,9 @@ object Surface {
 }
 
 class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
-  private val cols = noise.cols
-  private val rows = noise.rows
   private def perlinToHeight(t:Double) = {
     if (t > 0) {
       val tm = 1 - t
-      val sign = math.signum(t)
       1 - math.pow(tm, 0.1)
     } else {
       math.pow(t, 3)
@@ -34,13 +31,13 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
 
   private val mountainSet = new TopoFeature(TopoFeature.mountain3, 50, noise)
 
-  val numDepressions = 10
+  private val numDepressions = 10
   private val lakeSet = TopoFeature.create(TopoFeature.lake, numDepressions, params.copy(period=64))
 
 
   private val (lakes, basins) = lakeSet.extracted.splitAt(numDepressions/2)
 
-  private val lakeHeight:Array2d[Double] = noise.map {case (i, j, d) =>
+  private val lakeHeight:Array2d[Double] = noise.transform {case (i, j, d) =>
     if (lakes.exists(_.contains((i, j)))) {
       lakeSet.get(i, j)
     } else {
@@ -48,7 +45,7 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
     }
   }
 
-  private val basinHeight:Array2d[Double] = noise.map {case (i, j, d) =>
+  private val basinHeight:Array2d[Double] = noise.transform {case (i, j, d) =>
     if (basins.exists(_.contains((i, j)))) {
       lakeSet.get(i, j)
     } else {
@@ -60,10 +57,10 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
     (mountain > 0) select ((land + mountain)/2, land)
   }
 
-  private val height = noise.map({ case (i, j, p) =>
+  val heightMap: Array2d[Meters] = noise.transform({ case (i, j, p) =>
     val base = perlinToHeight(p)
     val m = applyMountain(base, mountainSet.get(i, j))
-    val h = m - lakeHeight.view.get(i, j) - basinHeight.view.get(i, j)
+    val h = m - lakeHeight.get(i, j) - basinHeight.get(i, j)
     h * 10000 m
   })
 
@@ -73,7 +70,7 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
   private def isLake(i:Int, j:Int):Boolean = lakes.exists {_.contains((i, j))}
   private val oceanPoints = {
     val buff = ArrayBuffer[(Int,Int)]()
-    height foreach { case (i, j, h) =>
+    heightMap foreach { case (i, j, h) =>
       if (isOcean(h) || isLake(i, j)) {
         (buff += ((i, j))).ignore()
       }
@@ -81,15 +78,13 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
     buff.toSet
   }
 
-  def get(i:Int, j:Int):(SurfaceType, Meters) = landMap.view.get(i, j)
+  private val flooded = FloodFill.extract(None, heightMap, oceanPoints, isOcean)
 
-  private val flooded = FloodFill.extract(None, height.view, oceanPoints, isOcean)
-
-  val landMap:Array2d[(SurfaceType, Meters)] = Array2d.tabulate(height.rows, height.cols) { case (i, j) =>
+  val landMap:Array2d[SurfaceType] = Array2d.tabulate(heightMap.rows, heightMap.cols) { case (i, j) =>
     if (flooded.exists{_.contains((i, j))}) {
-      (Surface.Water, height.view.get(i, j))
+      Surface.Water
     } else {
-      (Surface.Land, height.view.get(i, j))
+      Surface.Land
     }
   }
 }

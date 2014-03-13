@@ -17,7 +17,7 @@ case class Tileset(cols:Int,
     AssetLoader.makeTextureRegion(texture,Recti(i * tileWidth, j * tileHeight, tileWidth, tileHeight).some)
   }
 
-  def getRegion(i:Int, j:Int):Option[TextureRegion] = {
+  def getRegion(i:Int, j:Int):TextureRegion = {
     regions.get(i, j)
   }
 }
