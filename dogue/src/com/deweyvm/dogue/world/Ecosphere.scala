@@ -72,12 +72,10 @@ object Ecosphere {
         m
       }
 
-      private val regionMap:Array2dView[Biome] = {
+      private val regionMap:BiomeMap = {
         //val hexSize = cols/50
         //val hexGrid = new HexGrid(hexSize, cols/hexSize, 2*rows/hexSize, hexSize/4, seed)
-        val (r, t) = Timer.timer(() => {
-
-        })
+        val (r, t) = Timer.timer(() => new BiomeMap(cols, rows, moistureMap, surfaceMap, latitudeMap))
         Biomes.resolver.printConflicts()
         biomeTime = t
         r
@@ -99,7 +97,7 @@ object Ecosphere {
       }
 
       override def getBiome(i:Int, j:Int):Biome = {
-        regionMap.get(i, j)
+        regionMap.biomes.get(i, j)
       }
 
       override def getPressure(i:Int, j:Int):Pressure = {
