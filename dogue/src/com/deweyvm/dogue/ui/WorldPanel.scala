@@ -19,6 +19,7 @@ trait MapState {
 }
 
 object MapState {
+  var maxWind = 1.0
   case object Wind extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
       val dir = t.wind.normalize
@@ -47,7 +48,11 @@ object MapState {
             case _ => Code.`?`
           }
         }
-      new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(t.wind.magnitude), Color.White).draw(i, j)
+      val magnitude = t.wind.magnitude
+      if (magnitude > maxWind) {
+        maxWind = magnitude
+      }
+      new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(magnitude, maxWind), Color.White).draw(i, j)
     }
   }
 
@@ -92,11 +97,15 @@ object MapState {
 
   case object Moisture extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val c = Color.fromHsb(t.moisture.d.toFloat/(10000*2) % 1)
-      t.tile.copy(bgColor = c).draw(i, j)
+      if (t.biome.spec.surface.isWater) {
+        t.tile.copy(bgColor = Color.Black).draw(i, j)
+      } else {
+        val c = Color.fromHsb(t.moisture.d.toFloat/(10000*2) % 1)
+        t.tile.copy(bgColor = c).draw(i, j)
+      }
     }
   }
-  val All = Vector(Topography, Biome, Moisture, Wind, Latitude, Nychthemera)
+  val All = Vector(Wind, Topography, Biome, Moisture, Latitude, Nychthemera)
   def getPointer:Pointer[MapState] = Pointer.create(All, 0)
 }
 
@@ -118,7 +127,7 @@ object WorldPanel {
              bgColor:Color,
              size:Int):WorldPanel = {
 
-    val seed = 622965729637789L//System.nanoTime
+    val seed = 287207247751L//System.nanoTime
     println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
     val perlin = PerlinParams(size/4, 8, size, seed)

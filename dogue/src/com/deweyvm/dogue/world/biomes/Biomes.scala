@@ -9,10 +9,57 @@ import DogueImplicits._
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 
 object Biomes {
+  val resolver = new BiomeResolver {
+    type BiomeInfo = (Rainfall,LatitudinalRegion, AltitudinalRegion, SurfaceType)
+    val conflicts = mutable.Map[Set[Biome], Vector[BiomeInfo]]().withDefaultValue(Vector())
+    val void = ArrayBuffer[BiomeInfo]()
+    override def resolve(wet:Rainfall, lat:LatitudinalRegion, alt:AltitudinalRegion, surf:SurfaceType, bs:Seq[Biome]): Biome = {
+      if (bs.length > 1) {
+        val s = Set(bs:_*)
+        conflicts(s) = conflicts(s) :+ ((wet, lat, alt, surf))
+      }
 
+      bs.headOption.getOrElse {
+        void += ((wet, lat, alt, surf))
+        Void
+      }
+    }
+
+    override def printConflicts() {
+      def printThing(header:String, biomes:Vector[BiomeInfo]) {
+        val rainfall = biomes.map {_._1.d}
+        val rMin = rainfall.min
+        val rMax = rainfall.max
+        val lats = biomes.map{_._2}
+        val lMin = lats.min
+        val lMax = lats.max
+        val alts = biomes.map{_._3}
+        val aMin = alts.min
+        val aMax = alts.max
+        val stypes = Set(biomes.map{_._4} : _*)
+        println(header)
+        println("    Rainfall: %.2f <=> %.2f" format (rMin, rMax))
+        println("    Latitude: %s <=> %s" format (lMin, lMax))
+        println("    Altitude: %s <=> %s" format (aMin, aMax))
+        println("    Surface :(%s)" format stypes.mkString(","))
+      }
+      conflicts.keys foreach { s =>
+        val biomes = conflicts(s)
+        printThing("Conflict: (%s)" format s.mkString(","), biomes)
+      }
+      void foreach {v =>
+        println("Void region:")
+        println("    Moisture : %.2f" format v._1.d)
+        println("    Latitude : %s" format v._2)
+        println("    Altitude : %s" format v._3)
+        println("    Surface  : %s" format v._4)
+      }
+    }
+  }
   def LandBiome(name:String,
                 `type`:BiomeType,
                 region:DogueRange[LatitudinalRegion],
@@ -31,31 +78,14 @@ object Biomes {
     Biome(name, spec)
   }
 
-  def getBiome(wet:Rainfall, temp:Double, lat:LatitudinalRegion, alt:AltitudinalRegion, surf:SurfaceType):Biome = {
+  def getBiome(wet:Rainfall, lat:LatitudinalRegion, alt:AltitudinalRegion, surf:SurfaceType):Biome = {
     val found = All.filter { b =>
       b.spec.surface == surf &&
       b.spec.region.contains(lat) &&
       b.spec.moisture.contains(wet) &&
       b.spec.altitude.contains(alt)
     }
-    if (found.length > 1) {
-
-      println("(%s) found for :" format found.mkString(","))
-      println("    Moisture : %.2f" format wet.d)
-      println("    Latitude : %s" format lat)
-      println("    Altitude : %s" format alt)
-      println("    Surface  : %s" format surf)
-    }
-
-    found.headOption.getOrElse {
-      println("Void region:")
-      println("    Moisture : %.2f" format wet.d)
-      println("    Latitude : %s" format lat)
-      println("    Altitude : %s" format alt)
-      println("    Surface  : %s" format surf)
-      //throw new RuntimeException()
-      Void
-    }
+    resolver.resolve(wet, lat, alt, surf, found)
   }
 
   import Latitude._
@@ -134,7 +164,7 @@ object Biomes {
     BiomeType.Desert,
     Tropical <=> Boreal,
     0.`mm/yr` <=> 25.`mm/yr`,
-    Montane <=> SuperAlpine
+    Subalpine <=> SuperAlpine
   )
 
   //T: [-5, 5]
@@ -173,13 +203,6 @@ object Biomes {
     Lowlands <=> Highlands
   )
 
-  val TropicalSavanna = LandBiome("Tropical Savanna",
-    BiomeType.Grassland,
-    Tropical <=> Subtropical,
-    500.`mm/yr` <=> 1300.`mm/yr`,
-    Lowlands <=> Highlands
-  )
-
   val SubtropicalScrubland = LandBiome("Subtropical Scrubland",
     BiomeType.Grassland,
     Subtropical <=> Subtropical,
@@ -194,11 +217,32 @@ object Biomes {
     Lowlands <=> Lowlands
   )
 
+  val SubtropicalConiferousForest = LandBiome("Subtropical Coniferous Forest",
+    BiomeType.Forest,
+    Subtropical <=> Subtropical,
+    300.`mm/yr` <=> 1100.`mm/yr`,
+    Montane <=> Montane
+  )
+
+  val SubtropicalBroadleafForest = LandBiome("Subtropical Broadleaf Forest",
+    BiomeType.Forest,
+    Subtropical <=> Subtropical,
+    1100.`mm/yr` <=> 1500.`mm/yr`,
+    Midlands <=> Montane
+  )
+
   val SubtropicalDeciduousForest = LandBiome("Subtropical Deciduous Forest",
     BiomeType.Forest,
+    Subtropical <=> Subtropical,
+    1500.`mm/yr` <=> 2000.`mm/yr`,
+    Midlands <=> Montane
+  )
+
+  val TropicalSavanna = LandBiome("Tropical Savanna",
+    BiomeType.Grassland,
     Tropical <=> Subtropical,
-    1300.`mm/yr` <=> 2000.`mm/yr`,
-    Midlands <=> Highlands
+    500.`mm/yr` <=> 1100.`mm/yr`,
+    Lowlands <=> Highlands
   )
 
   //http://earthobservatory.nasa.gov/Experiments/Biome/biorainforest.php
@@ -207,6 +251,27 @@ object Biomes {
     Tropical <=> Subtropical,
     2000.`mm/yr` <=> 10000.`mm/yr`,
     Midlands <=> Highlands
+  )
+
+  val TropicalDeciduousForest = LandBiome("Tropical Deciduous Forest",
+    BiomeType.Forest,
+    Tropical <=> Tropical,
+    1500.`mm/yr` <=> 2000.`mm/yr`,
+    Midlands <=> Highlands
+  )
+
+  val TropicalBroadleafForest = LandBiome("Tropical Broadleaf Forest",
+    BiomeType.Forest,
+    Tropical <=> Tropical,
+    1300.`mm/yr` <=> 1500.`mm/yr`,
+    Midlands <=> Highlands
+  )
+
+  val TropicalConiferousForest = LandBiome("Tropical Coniferous Forest",
+    BiomeType.Forest,
+    Tropical <=> Tropical,
+    1100.`mm/yr` <=> 1300.`mm/yr`,
+    Lowlands <=> Highlands
   )
 
   val Mangroves = LandBiome("Mangroves",
@@ -229,13 +294,6 @@ object Biomes {
     WarmTemperate <=> CoolTemperate,
     2000.`mm/yr` <=> 10000.`mm/yr`,
     Midlands <=> Highlands
-  )
-
-  val SubtropicalBroadleafForest = LandBiome("Subtropical Broadleaf Forest",
-    BiomeType.Forest,
-    Subtropical <=> Subtropical,
-    1500.`mm/yr` <=> 2000.`mm/yr`,
-    Midlands <=> Montane
   )
 
   val TemperateBroadleafForest = LandBiome("Temperate Broadleaf Forest",
@@ -261,26 +319,13 @@ object Biomes {
     Midlands <=> Subalpine
   )
 
-  val TemperateWetlands = LandBiome("Temperate Wetlands",
-    BiomeType.Wetlands,
-    WarmTemperate <=> CoolTemperate,
-    180.`mm/yr` <=> 10000.`mm/yr`,
-    Lowlands <=> Lowlands
-  )
-
-  val Steppe = LandBiome("Steppe",
+  /*val Steppe = LandBiome("Steppe",
     BiomeType.Grassland,
     Subtropical <=> CoolTemperate,
     250.`mm/yr` <=> 750.`mm/yr`,
     Midlands <=> Highlands
   )
-
-  val TemperateScrubland = LandBiome("Temperate Scrubland",
-    BiomeType.Grassland,
-    WarmTemperate <=> CoolTemperate,
-    25.`mm/yr` <=> 180.`mm/yr`,
-    Lowlands <=> Lowlands
-  )
+*/
 
   //approximately 1 in. (.25 cm) of rain falls in dry deserts per year.
   //The latitude range is 15-28° north and south of the equator.
@@ -289,20 +334,13 @@ object Biomes {
     BiomeType.Desert,
     Tropical <=> CoolTemperate,
     0.`mm/yr` <=> 25.`mm/yr`,
-    Lowlands <=> Highlands
+    Lowlands <=> Montane
   )
 
   val XericScrubland = LandBiome("Xeric Scrubland",
     BiomeType.Grassland,
     Tropical <=> Subtropical,
     25.`mm/yr` <=> 250.`mm/yr`,
-    Lowlands <=> Highlands
-  )
-
-  val TallGrassland = LandBiome("Tall Temperate Grassland",
-    BiomeType.Grassland,
-    WarmTemperate <=> CoolTemperate,
-    250.`mm/yr` <=> 300.`mm/yr`,
     Lowlands <=> Highlands
   )
 
@@ -313,10 +351,32 @@ object Biomes {
     Montane <=> Alpine
   )
 
+  val TallGrassland = LandBiome("Tall Temperate Grassland",
+    BiomeType.Grassland,
+    WarmTemperate <=> CoolTemperate,
+    250.`mm/yr` <=> 300.`mm/yr`,
+    Lowlands <=> Highlands
+  )
+
   val ShortGrassland = LandBiome("Short Temperate Grassland",
     BiomeType.Grassland,
     WarmTemperate <=> CoolTemperate,
-    25.`mm/yr` <=> 250.`mm/yr`,
+    80.`mm/yr` <=> 250.`mm/yr`,
+    Lowlands <=> Highlands
+  )
+
+
+  val TemperateWetlands = LandBiome("Temperate Wetlands",
+    BiomeType.Wetlands,
+    WarmTemperate <=> CoolTemperate,
+    300.`mm/yr` <=> 10000.`mm/yr`,
+    Lowlands <=> Lowlands
+  )
+
+  val TemperateScrubland = LandBiome("Temperate Scrubland",
+    BiomeType.Grassland,
+    WarmTemperate <=> CoolTemperate,
+    25.`mm/yr` <=> 80.`mm/yr`,
     Lowlands <=> Highlands
   )
 

@@ -24,9 +24,9 @@ case class WorldTile(height:Meters,
                      sunTemp:Celcius,
                      season:Season,
                      tile:Tile) {
-  def fullTooltip:Tooltip = Tooltip(Color.Red, Vector(
+  def fullTooltip:Tooltip = Tooltip(Color.White, Vector(
     "Height   : %f" format height.d,
-    "AltRegion: %s" format altitude,
+    "Altitude : %s" format altitude,
     "Region   : %s" format biome,
     "Surface  : %s" format surface,
     "Latitude : %s" format latitude,
@@ -39,5 +39,5 @@ case class WorldTile(height:Meters,
     "Season: %s" format season.toString
   ))
 
-  def regionTooltip:Tooltip = fullTooltip.copy(color = Color.White)
+  def regionTooltip:Tooltip = fullTooltip//.copy(color = Color.White)
 }

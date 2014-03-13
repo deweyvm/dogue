@@ -8,8 +8,8 @@ case class BiomeType(baseHue:Double, code:Code)
 
 object BiomeType {
   val Desert = BiomeType(0.1, Code.`.`)
-  val Grassland = BiomeType(0.2, Code.`»`)
-  val Forest = BiomeType(0.35, Code.♠)
+  val Grassland = BiomeType(0.15, Code.`»`)
+  val Forest = BiomeType(0.2, Code.♠)
   val Wetlands = BiomeType(0.45, Code.~)
   val Alpine = BiomeType(0.55, Code.▲)
   val Aquatic = BiomeType(0.65, Code.≈)

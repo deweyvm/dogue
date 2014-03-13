@@ -8,9 +8,6 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.world.AtmosphereConstants._
 import com.deweyvm.dogue.common.procgen.Arrow
-import com.deweyvm.dogue.common.CommonImplicits.Pressure
-import scala.Some
-import com.deweyvm.dogue.common.CommonImplicits.Meters
 import java.util.Random
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 
@@ -64,8 +61,6 @@ object Ecosphere {
       "wind(%d) height(%d) biome(%d) moisture(%d)" format (w, h, b, m)
     }
 
-
-    private val solidElevation = 0 m
     private val noise = new PerlinNoise(worldParams.perlin).render
 
     private val heightMap = {
@@ -76,11 +71,12 @@ object Ecosphere {
 
     private val windMap:Array2d[(Point2d, Arrow, Color)] = {
       val (w, t) = Timer.timer(() => {
-        val myHeight = heightMap.landMap.view.map{case (i, j, (t,m)) =>
-          m.d/10
+        val myHeight = heightMap.landMap.view.map { case (i, j, (_,m)) =>
+          m.d
         }
         //VectorField.const(cols, rows).lazyVectors
-        VectorField.perlinWind(0.m.d, myHeight, cols, rows, 1, seed).lazyVectors
+        //VectorField.perlinWind(0.m.d, myHeight, cols, rows, 1, seed).lazyVectors
+        VectorField.perlinWind(0.m.d, myHeight, 10000, 80, cols, rows, 1, seed).lazyVectors
       })
 
       windTime = t
@@ -109,7 +105,7 @@ object Ecosphere {
     val random = new Random(worldParams.seed)
     val moistureMap = {
       val (m, t) = Timer.timer(() => {
-        new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, 100, random)
+        new MoistureMap(cols, rows, heightMap.landMap.view, latitudeMap.view, windMap.view.map{case (i, j,(_,a,_)) => a}, 0.5, cols/2, random)
       })
       moistureTime = t
       m
@@ -124,12 +120,12 @@ object Ecosphere {
       val (r, t) = Timer.timer(() => {
         Array2d.tabulate(cols, rows) { case (i, j) =>
           val moisture = moistureMap.get(i, j)
-          val temp = 0.5
-          val (t, height, alt) = getElevationParts(i, j)
+          val (t, _, alt) = getElevationParts(i, j)
           val lat = latRegions.view.get(i, j)
-          Biomes.getBiome(moisture, temp, lat, alt, t)
+          Biomes.getBiome(moisture, lat, alt, t)
         }.view
       })
+      Biomes.resolver.printConflicts()
       biomeTime = t
       r
 
@@ -154,18 +150,6 @@ trait Ecosphere {
   def getPressure(i:Int, j:Int):Pressure = 1.atm
   def getMoisture(i:Int, j:Int):Rainfall = 0.`mm/yr`
   def getTemperature(i:Int, j:Int):Celcius = 20.C
-  /**
-   * force the area at (i, j) to be calculated so there is not a loading delay
-   */
-  final def view(i:Int, j:Int) {
-    getWind(i, j).ignore()
-    getElevation(i, j).ignore()
-    getLatitude(i, j).ignore()
-    getBiome(i, j).ignore()
-    getPressure(i, j).ignore()
-    getMoisture(i, j).ignore()
-    getTemperature(i, j).ignore()
-  }
   def getTimeString:String
   def update:Ecosphere
 }
