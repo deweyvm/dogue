@@ -234,8 +234,11 @@ case class WorldPanel(override val rect:Recti,
   }
 
   private def drawDebug() {
-    val s = world.eco.getTimeString
-    Text.fromString(s, Color.Black, Color.White).draw(0, height + 1)
+    val strs = world.eco.getTimeStrings
+    strs.zipWithIndex foreach { case (s, i) =>
+      Text.fromString(s, Color.Black, Color.White).draw(0, height + 1 - i)
+    }
+
   }
 
   private def drawName() {

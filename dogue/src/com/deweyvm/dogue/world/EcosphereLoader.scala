@@ -16,7 +16,7 @@ object EcosphereLoader {
     override val rows: Int = worldParams.size
     override val cols: Int = worldParams.size
 
-    override def getTimeString: String = "Loading..."
+    override def getTimeStrings: Vector[String] = Vector("Loading...")
 
     override def update: Ecosphere = innerEco.getResult.getOrElse(this)
 

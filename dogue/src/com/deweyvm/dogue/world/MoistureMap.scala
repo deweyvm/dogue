@@ -8,8 +8,10 @@ import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
 import java.util.Random
 
-class MoistureMap(cols:Int, rows:Int, surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int, r:Random) {
-
+class MoistureMap(surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int, seed:Long) {
+  val cols = latitude.cols
+  val rows = latitude.rows
+  val r = new Random(seed)
   val rp = r.nextDouble - 0.5
   def followWind(w:Arrow, i:Double, j:Double):(Double,Double) = {
     (Point2d(i, j) - w.direction.rotate(rp)*speed).toTuple

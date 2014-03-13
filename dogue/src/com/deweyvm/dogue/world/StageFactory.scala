@@ -48,7 +48,7 @@ class StageFactory(cols:Int, rows:Int) {
         val worldPanel = WorldPanel.create(mapRect, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, worldSize)
         val controlRect = Recti(1, rows - controlsHeight + 1, sideWidth, controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)
-        makeStage(worldPanel, controlPanel)
+        makeStage(controlPanel, worldPanel)
 
     }
   }
