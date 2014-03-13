@@ -146,10 +146,17 @@ object Biomes {
     Lowlands <=> Subalpine
   )
 
-  val Glacier = LandBiome("Glacier",
+  val ColdGlacier = LandBiome("Glacier",
     BiomeType.Desert,
-    Tropical <=> Polar,
+    CoolTemperate <=> Polar,
     750.`mm/yr` <=> 10000.`mm/yr`,
+    Subalpine <=> SuperAlpine
+  )
+
+  val WarmGlacier = LandBiome("Glacier",
+    BiomeType.Desert,
+    Tropical <=> WarmTemperate,
+    4000.`mm/yr` <=> 10000.`mm/yr`,
     Subalpine <=> SuperAlpine
   )
 
@@ -284,7 +291,7 @@ object Biomes {
   val MontaneRainforest = LandBiome("Montane Rainforest",
     BiomeType.Forest,
     Subtropical <=> CoolTemperate,
-    2000.`mm/yr` <=> 10000.`mm/yr`,
+    2000.`mm/yr` <=> 4000.`mm/yr`,//more than this is glacier
     Montane <=> Subalpine
   )
 
@@ -346,9 +353,9 @@ object Biomes {
 
   val MontaneGrassland = LandBiome("Montane Grassland",
     BiomeType.Grassland,
-    Subtropical <=> Boreal,
+    Subtropical <=> CoolTemperate,
     25.`mm/yr` <=> 300.`mm/yr`,
-    Montane <=> Alpine
+    Montane <=> Subalpine
   )
 
   val TallGrassland = LandBiome("Tall Temperate Grassland",

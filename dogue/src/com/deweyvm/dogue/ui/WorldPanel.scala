@@ -127,7 +127,7 @@ object WorldPanel {
              bgColor:Color,
              size:Int):WorldPanel = {
 
-    val seed = 287207247751L//System.nanoTime
+    val seed = System.nanoTime
     println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
     val perlin = PerlinParams(size/4, 8, size, seed)

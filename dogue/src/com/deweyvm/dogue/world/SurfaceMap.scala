@@ -32,10 +32,10 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
     }
   }
 
-  private val mountainSet = new TopoFeature(TopoFeature.mountain3, 50, params)
+  private val mountainSet = new TopoFeature(TopoFeature.mountain3, 50, noise)
 
   val numDepressions = 10
-  private val lakeSet = new TopoFeature(TopoFeature.lake, numDepressions, params.copy(period=64))
+  private val lakeSet = TopoFeature.create(TopoFeature.lake, numDepressions, params.copy(period=64))
 
 
   private val (lakes, basins) = lakeSet.extracted.splitAt(numDepressions/2)

@@ -25,16 +25,16 @@ case class WorldTile(height:Meters,
                      season:Season,
                      tile:Tile) {
   def fullTooltip:Tooltip = Tooltip(Color.White, Vector(
-    "Height   : %f" format height.d,
+    "Height   : %.2fm" format height.d,
     "Altitude : %s" format altitude,
     "Region   : %s" format biome,
     "Surface  : %s" format surface,
     "Latitude : %s" format latitude,
-    "Wind     : %.2f" format wind.magnitude,
+    "Wind     : %.2fm/s" format wind.magnitude,
     "Daylight : %.2f" format daylight,
-    "Mean Temp: %.2f" format sunTemp.d,
-    "Pressure : %.2f" format pressure.d,
-    "Rainfall : %.2f" format moisture.d,
+    "Mean Temp: %.2fC" format sunTemp.d,
+    "Pressure : %.2fatm" format pressure.d,
+    "Rainfall : %.2fmm/yr" format moisture.d,
     "",
     "Season: %s" format season.toString
   ))

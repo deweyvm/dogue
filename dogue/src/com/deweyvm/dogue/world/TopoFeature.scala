@@ -1,7 +1,7 @@
 package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.procgen.{PerlinParams, PerlinNoise}
-import com.deweyvm.dogue.common.data.Array2dView
+import com.deweyvm.dogue.common.data.{Array2d, Array2dView}
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
@@ -19,18 +19,22 @@ object TopoFeature {
     val h = 1 - (d - 0.5).clamp(0, 1)
     (1 - math.pow(h, 3))/2
   }
+
+  def create(f:Double => Double, count:Int, perlin:PerlinParams) = {
+    val p = new PerlinNoise(perlin).render
+    new TopoFeature(f, count, p)
+  }
 }
 
-class TopoFeature(f:Double => Double, count:Int, perlin:PerlinParams) {
-  val size = perlin.size
-  val rows = size
-  val cols = size
+class TopoFeature(f:Double => Double, count:Int, base:Array2d[Double]) {
+  private val rows = base.rows
+  private val cols = base.cols
 
-  val noise = new PerlinNoise(perlin).render.map { case (i, j, d) =>
+  private val noise = base.map { case (i, j, d) =>
     f(d)
   }.view
 
-  val all:Set[(Int,Int)] = {
+  private val all:Set[(Int,Int)] = {
     val points = for (i <- 0 until cols; j <- 0 until rows) yield {
       (i, j)
     }
