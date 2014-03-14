@@ -1,0 +1,11 @@
+{
+biomeTypes:[
+  {name:"Desert",    hue:0.1,  code:46},
+  {name:"Grassland", hue:0.15, code:175},
+  {name:"Forest",    hue:0.2,  code:6},
+  {name:"Wetlands",  hue:0.45, code:126},
+  {name:"Alpine",    hue:0.55, code:30},
+  {name:"Aquatic",   hue:0.65, code:247},
+  {name:"Special",   hue:0.75, code:155}
+]
+}

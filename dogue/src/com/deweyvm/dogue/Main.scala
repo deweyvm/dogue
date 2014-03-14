@@ -4,10 +4,10 @@ import com.deweyvm.gleany.{GleanyInitializer, GleanyConfig, GleanyGame}
 import com.deweyvm.gleany.files.PathResolver
 import com.deweyvm.gleany.saving.Settings
 import com.deweyvm.dogue.input.DogueControls
-import com.deweyvm.dogue.loading.DogueDefaultSettings
+import com.deweyvm.dogue.loading.{BiomeTypeMap, BiomeTypeManifest, Loader, DogueDefaultSettings}
 import com.deweyvm.dogue.common.logging.{LogLevel, Log}
 import com.deweyvm.dogue.common.testing.TestManager
-
+import DogueImplicits._
 
 object Main {
   def main(args: Array[String]) {

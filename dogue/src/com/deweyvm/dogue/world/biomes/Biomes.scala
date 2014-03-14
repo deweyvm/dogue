@@ -10,6 +10,7 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import com.deweyvm.dogue.ui.MapState.Latitude
 
 
 object Biomes {
@@ -81,7 +82,7 @@ object Biomes {
   def getBiome(wet:Rainfall, lat:LatitudinalRegion, alt:AltitudinalRegion, surf:SurfaceType):Biome = {
     val found = All.filter { b =>
       b.spec.surface == surf &&
-      b.spec.region.contains(lat) &&
+      b.spec.latitude.contains(lat) &&
       b.spec.moisture.contains(wet) &&
       b.spec.altitude.contains(alt)
     }
