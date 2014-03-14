@@ -69,12 +69,12 @@ object Biomes {
     Biome(name, spec)
   }
 
-  def AquaticBiome(name:String,
+  def SaltwaterBiome(name:String,
                    `type`:BiomeType,
                    region:DogueRange[LatitudinalRegion],
                    moisture:DogueRange[Rainfall],
                    altitude:DogueRange[AltitudinalRegion]) = {
-    val spec = BiomeSpec(Surface.Water, `type`, region, moisture, altitude)
+    val spec = BiomeSpec(Surface.Saltwater, `type`, region, moisture, altitude)
     Biome(name, spec)
   }
 
@@ -97,14 +97,14 @@ object Biomes {
     Abyss <=> SuperAlpine
   )
 
-  val Lake = AquaticBiome("Lake",
+  val Lake = SaltwaterBiome("Lake",
     BiomeType.Aquatic,
     SuperTropical <=> Polar,
     0.`mm/yr` <=> 10000.`mm/yr`,
     Lowlands <=> SuperAlpine
   )
 
-  val Ocean = AquaticBiome("Ocean",
+  val Ocean = SaltwaterBiome("Ocean",
     BiomeType.Aquatic,
     SuperTropical <=> Polar,
     0.`mm/yr` <=> 10000.`mm/yr`,

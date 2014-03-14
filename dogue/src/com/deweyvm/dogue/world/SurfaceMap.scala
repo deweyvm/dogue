@@ -14,7 +14,7 @@ object Surface {
   case object Land extends SurfaceType {
     val isWater = false
   }
-  case object Water extends SurfaceType {
+  case object Saltwater extends SurfaceType {
     val isWater = true
   }
 }
@@ -82,7 +82,7 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
 
   val landMap:Array2d[SurfaceType] = Array2d.tabulate(heightMap.rows, heightMap.cols) { case (i, j) =>
     if (flooded.exists{_.contains((i, j))}) {
-      Surface.Water
+      Surface.Saltwater
     } else {
       Surface.Land
     }

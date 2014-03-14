@@ -61,7 +61,7 @@ object MapState {
       val (color1,color2) = t.surface match {
         case Surface.Land =>
           (Color.DarkGreen, Color.Grey)
-        case Surface.Water =>
+        case Surface.Saltwater =>
           (Color.DarkBlue, Color.Cyan)
       }
       val d = (t.height.d/4000).toFloat

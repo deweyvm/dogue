@@ -9,7 +9,7 @@ import CommonImplicits._
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 
 object WorldTile {
-  val Blank = WorldTile(0 m, Altitude.Abyss, Surface.Water, 1 atm, 0, Biomes.Void, Latitude.Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
+  val Blank = WorldTile(0 m, Altitude.Abyss, Surface.Saltwater, 1 atm, 0, Biomes.Void, Latitude.Polar, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
 }
 
 case class WorldTile(height:Meters,
