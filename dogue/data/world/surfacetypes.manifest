@@ -1,0 +1,7 @@
+{
+types:[
+    {name:"Land", isWater:false},
+    {name:"Water", isWater:true}
+]
+
+}

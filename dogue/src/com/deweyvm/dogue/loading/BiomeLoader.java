@@ -2,7 +2,8 @@ package com.deweyvm.dogue.loading;
 
 public class BiomeLoader {
     public String name;
-    public String type;
+    public String surfaceType;
+    public String biomeType;
     public String minLat;
     public String maxLat;
     public int minRain;

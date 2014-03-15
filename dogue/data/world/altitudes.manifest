@@ -1,0 +1,14 @@
+{
+altitudes:[
+    {name:"Super Alpine",  max:10000.1},
+    {name:"Alpine",        max:4500},
+    {name:"Subalpine",     max:3600},
+    {name:"Montane",       max:2700},
+    {name:"Highlands",     max:900},
+    {name:"Midlands",      max:500},
+    {name:"Lowlands",      max:50},
+    {name:"Oceanic",       max:0},
+    {name:"Suboceanic",    max:-100},
+    {name:"Abyss",         max:-1000}
+]
+}

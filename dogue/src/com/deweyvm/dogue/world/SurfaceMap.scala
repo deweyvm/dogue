@@ -5,21 +5,12 @@ import scala.collection.mutable.ArrayBuffer
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.common.procgen.PerlinParams
+import com.deweyvm.dogue.loading.SurfaceTypeMap
+import sun.java2d.Surface
 
-trait SurfaceType {
-  val isWater:Boolean
-}
+case class SurfaceType(name:String, isWater:Boolean)
 
-object Surface {
-  case object Land extends SurfaceType {
-    val isWater = false
-  }
-  case object Saltwater extends SurfaceType {
-    val isWater = true
-  }
-}
-
-class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
+class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap) {
   private def perlinToHeight(t:Double) = {
     if (t > 0) {
       val tm = 1 - t
@@ -82,9 +73,9 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams) {
 
   val landMap:Array2d[SurfaceType] = Array2d.tabulate(heightMap.rows, heightMap.cols) { case (i, j) =>
     if (flooded.exists{_.contains((i, j))}) {
-      Surface.Saltwater
+      ??? //Surface.Saltwater
     } else {
-      Surface.Land
+      ??? //Surface.Land
     }
   }
 }
