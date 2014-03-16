@@ -12,6 +12,7 @@ import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 import com.deweyvm.dogue.loading.AltitudeRegionMap
 import com.deweyvm.gleany.graphics.Color
+import com.deweyvm.dogue.common.logging.Log
 
 object Ecosphere {
   private def buildEcosphere(worldParams:WorldParams,
@@ -21,9 +22,12 @@ object Ecosphere {
                              wind:StaticWindMap,
                              moisture:MoistureMap,
                              biomeMap:BiomeMap,
+                             surfaceRegions:SurfaceTypeMap,
+                             latRegions:LatitudeRegionMap,
                              altRegions:AltitudeRegionMap,
                              timeStrings:Vector[String]):Ecosphere = new Ecosphere {
     outer =>
+    biomeMap.biomes.resolver.printConflicts()
 
     override val cols = worldParams.size
     override val rows = worldParams.size
@@ -40,12 +44,24 @@ object Ecosphere {
     }
 
     override def update = {
-      if (Controls.Backspace.justPressed) {
-        /*println("reloading")
-        val result = buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, biome, timeStrings)
-        println("loaded")
-        result*/
-        this
+      if (Controls.Insert.justPressed) {
+        println("hey")
+        val b = for {
+          biomes <- Loads.loadBiomes(latRegions, altRegions, surfaceRegions)
+        } yield {
+          biomes.resolver.printConflicts()
+          val biomeMap = new BiomeMap(moisture, surface, latitude, altRegions, biomes)
+          buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
+        }
+        b.toEither(_.length == 0) match {
+          case Left(err) =>
+            Log.error("Failed to refresh biome map")
+            err foreach Log.error
+            this
+          case Right(result) =>
+            Log.warn("Biome map successfully reloaded")
+            result
+        }
       } else {
         this
       }
@@ -88,22 +104,12 @@ object Ecosphere {
     val seed = worldParams.seed
     val cols = worldParams.size
     val rows = cols
-    val bs = for {
-      altRegions <- loading.loadAltitudeManifest(Loader.fromFile[AltitudeManifest]("data/world/altitudes.manifest"))
-      latRegions <- loading.loadLatitudeManifest(Loader.fromFile[LatitudeManifest]("data/world/latitudes.manifest"))
-      surfaceRegions <- loading.loadSurfaceManifest(Loader.fromFile[SurfaceTypeManifest]("data/world/surfacetypes.manifest"))
-      biomeTypes <- loading.loadBiomeTypeManifest(Loader.fromFile[BiomeTypeManifest]("data/biomes/biometypes.manifest"))
-      biomes <- loading.loadBiomes(Loader.fromFile[BiomeManifest]("data/biomes/biomes.manifest"), latRegions, altRegions, biomeTypes, surfaceRegions)
-    } yield {
-      (altRegions, latRegions, surfaceRegions, biomeTypes, biomes)
-    }
 
-    val (altRegions, latRegions, surfaceRegions, biomeTypes, biomes) = bs.toEither(_.length == 0) match {
-      case Left(errs) =>
-        errs foreach {x => println("Error " + x)}
-        throw new RuntimeException
-      case Right(a) => a
-    }
+
+    val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.getOrCrash(_.length == 0, _ foreach { println(_)})
+
+    val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).getOrCrash(_.length == 0, _ foreach Log.error)
+
 
     val latitudeMap = new LatitudeMap(cols, rows, latRegions)
     def time[T](t: => T) = Timer.timer(() => t)
@@ -112,7 +118,6 @@ object Ecosphere {
     val (windMap,     windTime)     = time(new StaticWindMap(surfaceMap.heightMap, 10000, 1, seed))
     val (moistureMap, moistureTime) = time(new MoistureMap(surfaceMap, latitudeMap.latitude, windMap.arrows, 0.5, cols/2, seed))
     val (biomeMap,    biomeTime)    = time(new BiomeMap(moistureMap, surfaceMap, latitudeMap, altRegions, biomes))
-    biomes.resolver.printConflicts()
 
     val timeStrings = {
       val sum = (perlinTime + windTime + surfaceTime + biomeTime + moistureTime).toDouble
@@ -129,7 +134,7 @@ object Ecosphere {
         "moisture (%02d)" format m,
         "perlin   (%02d)" format p)
     }
-    buildEcosphere(worldParams, latitudeMap, noise, surfaceMap, windMap, moistureMap, biomeMap, altRegions, timeStrings)
+    buildEcosphere(worldParams, latitudeMap, noise, surfaceMap, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
 
 
   }

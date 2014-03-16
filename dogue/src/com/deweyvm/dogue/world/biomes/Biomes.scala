@@ -3,7 +3,7 @@ package com.deweyvm.dogue.world.biomes
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.ColorHarmony
 import com.deweyvm.dogue.world._
-import com.deweyvm.dogue.DogueImplicits
+import com.deweyvm.dogue.{Game, DogueImplicits}
 import DogueImplicits._
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
@@ -21,9 +21,6 @@ object Biomes {
 }
 
 class Biomes(all:Vector[Biome]) {
-
-
-
   val resolver = new BiomeResolver {
     type BiomeInfo = (Rainfall, LatitudinalRegion, AltitudinalRegion, SurfaceType)
     val conflicts = mutable.Map[Set[Biome], Vector[BiomeInfo]]().withDefaultValue(Vector())

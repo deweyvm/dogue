@@ -6,13 +6,14 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.common.procgen.PerlinParams
 import com.deweyvm.dogue.loading.SurfaceTypeMap
-import sun.java2d.Surface
 
 object SurfaceType {
   val Void = SurfaceType("void", true)
 }
 
-case class SurfaceType(name:String, isWater:Boolean)
+case class SurfaceType(name:String, isWater:Boolean) {
+  override def toString = name
+}
 
 class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap) {
   private def perlinToHeight(t:Double) = {

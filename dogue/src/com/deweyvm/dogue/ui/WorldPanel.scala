@@ -84,7 +84,7 @@ object MapState {
 
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val color = t.biomeColor//biomes.colorMap(t.biome)
+      val color = t.biomeColor
       t.tile.copy(bgColor = color, code = t.biome.code).draw(i, j)
     }
   }
@@ -154,7 +154,7 @@ case class WorldPanel(override val rect:Recti,
     super.getRects ++ tooltip.getRects
   }
   val regionSize = 16
-  val miniDiv = world.cols/minimapSize//minimap.div //(4096*16)/69
+  val miniDiv = world.cols/minimapSize
   override def update:WorldPanel = {
     val newTooltip = getTooltip
     val newWorld = world.update

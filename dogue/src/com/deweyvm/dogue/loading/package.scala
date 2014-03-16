@@ -3,11 +3,13 @@ package com.deweyvm.dogue
 import com.deweyvm.dogue.world.{SurfaceType, LatitudinalRegion, AltitudinalRegion}
 import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.dogue.world.biomes.{Biomes, BiomeSpec, Biome, BiomeType}
-import com.deweyvm.dogue.common.data.{EitherWriter, Code, DogueRange}
+import com.deweyvm.dogue.common.data.{Writer, Code, DogueRange}
 import com.deweyvm.dogue.common.data.algebra.Algebra
 import DogueImplicits._
+import com.deweyvm.dogue.common.logging.Log
 
 package object loading {
+  type LoadResult[T] = Writer[Vector[String],T]
 
   def filterDuplicates[K](fmtString:String, ts:Map[String,Seq[K]], getName:K=>String):LoadResult[Map[String,K]] = {
     val (dupes, filmap) = ts.values.foldLeft(Vector[String](), Map[String,K]()) { case ((dup, map), v) =>
@@ -21,20 +23,20 @@ package object loading {
     }
 
     if (dupes.length > 0) {
-      EitherWriter(dupes, None)
+      Writer(dupes, None)
     } else {
-      EitherWriter.unit(filmap)
+      Writer.unit(filmap)
     }
   }
 
   def parseRegionMap[TLoader, TRegion, TMap, K](label:String,
-                                             regions:Seq[TLoader],
-                                             fMax:TLoader => K,
-                                             getName:TLoader => String,
-                                             getNameRegion:TRegion => String,
-                                             regionCtor:(String,DogueRange[K]) => TRegion,
-                                             mapCtor:Map[String,TRegion] => TMap,
-                                             min:K)(implicit o:Ordering[K]):LoadResult[TMap] = {
+                                                regions:Seq[TLoader],
+                                                fMax:TLoader => K,
+                                                getName:TLoader => String,
+                                                getNameRegion:TRegion => String,
+                                                regionCtor:(String,DogueRange[K]) => TRegion,
+                                                mapCtor:Map[String,TRegion] => TMap,
+                                                min:K)(implicit o:Ordering[K]):LoadResult[TMap] = {
     val sorted:Vector[TLoader] = regions.sortBy(fMax).toVector
     val indexed = for (i <- 0 until sorted.length) yield {
       val lower:K = sorted.tryGet(i - 1).map(fMax).getOrElse(min)
@@ -47,14 +49,23 @@ package object loading {
     typeMap.map(mapCtor)
   }
 
-  type LoadResult[T] = EitherWriter[Vector[String],T]
 
-  def loadLatitudeManifest(manifest:LatitudeManifest):LoadResult[LatitudeRegionMap] = {
-      parseRegionMap[LatitudeLoader, LatitudinalRegion, LatitudeRegionMap, Double]("Duplicate latitude region \"%s\"" , manifest.regions, _.maxRadius, _.name, _.name, LatitudinalRegion, LatitudeRegionMap, 0.0)
+  def loadLatitudeManifest(manifest:LoadResult[LatitudeManifest]):LoadResult[LatitudeRegionMap] = {
+      for {
+        m <- manifest
+        map <- parseRegionMap[LatitudeLoader, LatitudinalRegion, LatitudeRegionMap, Double]("Duplicate latitude region \"%s\"" , m.regions, _.maxRadius, _.name, _.name, LatitudinalRegion, LatitudeRegionMap, 0.0)
+      } yield {
+        map
+      }
   }
 
-  def loadAltitudeManifest(manifest:AltitudeManifest):LoadResult[AltitudeRegionMap] = {
-      parseRegionMap[AltitudeLoader, AltitudinalRegion, AltitudeRegionMap, Meters]("Duplicate altitude region \"%s\"" , manifest.altitudes, _.max, _.name, _.name, AltitudinalRegion, AltitudeRegionMap, -10000.m)
+  def loadAltitudeManifest(manifest:LoadResult[AltitudeManifest]):LoadResult[AltitudeRegionMap] = {
+    for {
+      m <- manifest
+      map <- parseRegionMap[AltitudeLoader, AltitudinalRegion, AltitudeRegionMap, Meters]("Duplicate altitude region \"%s\"" , m.altitudes, _.max, _.name, _.name, AltitudinalRegion, AltitudeRegionMap, -10000.m)
+    } yield {
+      map
+    }
   }
 
   def makeMap[K, T](s:Seq[K], f:K=>T, getName:T=>String):Map[String, Vector[T]] = {
@@ -66,45 +77,47 @@ package object loading {
     }
   }
 
-  def loadBiomeTypeManifest(manifest:BiomeTypeManifest):LoadResult[BiomeTypeMap] = {
+  def loadBiomeTypeManifest(manifest:LoadResult[BiomeTypeManifest]):LoadResult[BiomeTypeMap] = {
     def loaderToBiomeType(b:BiomeTypeLoader) = {
       val name = Option(b.name).getOrElse("<unknown>")
       val hue = b.hue
       val code = Code.intToCode(b.code)
       new BiomeType(name, hue, code)
     }
-    val map = makeMap[BiomeTypeLoader,BiomeType](manifest.biomeTypes, loaderToBiomeType, _.name)
-    val typeMap = filterDuplicates[BiomeType]("Duplicate biome type \"%s\"", map, _.name)
-    typeMap.map(BiomeTypeMap)
+    for {
+      m <- manifest
+      map = makeMap[BiomeTypeLoader,BiomeType](m.biomeTypes, loaderToBiomeType, _.name)
+      filtered <- filterDuplicates[BiomeType]("Duplicate biome type \"%s\"", map, _.name)
+    } yield {
+      BiomeTypeMap(filtered)
+    }
   }
 
-  def loadSurfaceManifest(manifest:SurfaceTypeManifest):LoadResult[SurfaceTypeMap] = {
+  def loadSurfaceManifest(manifest:LoadResult[SurfaceTypeManifest]):LoadResult[SurfaceTypeMap] = {
     def loaderToSurfaceType(l:SurfaceTypeLoader) = {
       val name = Option(l.name).getOrElse("<unknown>")
       val isWater = l.isWater
       SurfaceType(name, isWater)
     }
+    for {
+      m <- manifest
+      map = makeMap[SurfaceTypeLoader, SurfaceType](m.types, loaderToSurfaceType, _.name)
+      filtered <- filterDuplicates[SurfaceType]("Duplicate surface type \"%s\"", map, _.name)
+    } yield {
+      SurfaceTypeMap(filtered)
+    }
 
-    val map = makeMap[SurfaceTypeLoader, SurfaceType](manifest.types, loaderToSurfaceType, _.name)
-    val typeMap = filterDuplicates[SurfaceType]("Duplicate surface type \"%s\"", map, _.name)
-    typeMap.map(SurfaceTypeMap)
   }
 
-  def loadBiomes(biomeManifest:BiomeManifest,
+  def loadBiomes(biomeManifest:LoadResult[BiomeManifest],
                  latMap:LatitudeRegionMap,
                  altMap:AltitudeRegionMap,
                  biomeMap:BiomeTypeMap,
                  surfaceMap:SurfaceTypeMap):LoadResult[Biomes] = {
-    val b: Seq[LoadResult[Biome]] = biomeManifest.biomes.map{loadBiome(_, latMap, altMap, biomeMap, surfaceMap)}
-    println("sequencing")
-    b foreach {
-      case EitherWriter(log, None) => println(log)
-      case _ =>
-        ()
-    }
-    val s: LoadResult[Seq[Biome]] = EitherWriter.sequence(b)
     for {
-      bs <- s
+      m <- biomeManifest
+      b = m.biomes.map{loadBiome(_, latMap, altMap, biomeMap, surfaceMap)}
+      bs <- Writer.sequence(b)
     } yield {
       new Biomes(bs.toVector)
     }
@@ -117,26 +130,26 @@ package object loading {
                 surfaceMap:SurfaceTypeMap):LoadResult[Biome] = {
     import Algebra._
     def getAltitude(s:String) = {
-      ("Altitude \"%s\" not found" format s) ~> (altMap.map.contains(s), altMap.map(s))
+      ("Altitude \"%s\" not found" format s) ~|> (altMap.map.contains(s), altMap.map(s))
     }
 
     def getLatitude(s:String) = {
-      ("Latitude \"%s\" not found" format s) ~> (latMap.map.contains(s), latMap.map(s))
+      ("Latitude \"%s\" not found" format s) ~|> (latMap.map.contains(s), latMap.map(s))
     }
 
     def makeRange[T](label:String, min:T, max:T)(implicit o:Ordering[T]) = {
-      ("Range %s is invalid. Requires min <= max. got %s <=> %s" format (label, min, max)) ~> (o.lteq(min, max), min <=> max)
+      ("Range %s is invalid. Requires min <= max. got %s <=> %s" format (label, min, max)) ~|> (o.lteq(min, max), min <=> max)
     }
     def nonEmpty(label:String, s:String) = {
-      ("Value \"%s\" is empty" format label) ~> (s != null && s.replace(" ", "").length > 0, s)
+      ("Value \"%s\" is empty" format label) ~|> (s != null && s.replace(" ", "").length > 0, s)
     }
 
     def getBiomeType(t:String) = {
-      ("Biome type \"%s\" does not exist" format t) ~> (biomeMap.map.contains(t), biomeMap.map(t))
+      ("Biome type \"%s\" does not exist" format t) ~|> (biomeMap.map.contains(t), biomeMap.map(t))
     }
 
     def getSurfaceType(t:String) = {
-      ("Surface type \"%s\" does not exist" format t) ~> (surfaceMap.map.contains(t), surfaceMap.map(t))
+      ("Surface type \"%s\" does not exist" format t) ~|> (surfaceMap.map.contains(t), surfaceMap.map(t))
     }
 
     for {
@@ -155,5 +168,26 @@ package object loading {
     }
   }
 
-  //def loadBiomes
+  object Loads {
+    def loadRegionMaps:LoadResult[(AltitudeRegionMap, LatitudeRegionMap, SurfaceTypeMap)] = {
+      for {
+        altRegions <- loading.loadAltitudeManifest(Loader.fromFile[AltitudeManifest]("data/world/altitudes.manifest"))
+        latRegions <- loading.loadLatitudeManifest(Loader.fromFile[LatitudeManifest]("data/world/latitudes.manifest"))
+        surfaceRegions <- loading.loadSurfaceManifest(Loader.fromFile[SurfaceTypeManifest]("data/world/surfacetypes.manifest"))
+      } yield {
+        (altRegions, latRegions, surfaceRegions)
+      }
+
+    }
+    def loadBiomes(latRegions:LatitudeRegionMap,
+                   altRegions:AltitudeRegionMap,
+                   surfaceRegions:SurfaceTypeMap):LoadResult[Biomes] = {
+      for {
+        biomeTypes <- loading.loadBiomeTypeManifest(Loader.fromFile[BiomeTypeManifest]("data/biomes/biometypes.manifest"))
+        biomes <- loading.loadBiomes(Loader.fromFile[BiomeManifest]("data/biomes/biomes.manifest"), latRegions, altRegions, biomeTypes, surfaceRegions)
+      } yield {
+        biomes
+      }
+    }
+  }
 }
