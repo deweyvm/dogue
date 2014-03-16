@@ -45,23 +45,26 @@ object Ecosphere {
 
     override def update = {
       if (Controls.Insert.justPressed) {
-        println("hey")
-        val b = for {
-          biomes <- Loads.loadBiomes(latRegions, altRegions, surfaceRegions)
-        } yield {
-          biomes.resolver.printConflicts()
-          val biomeMap = new BiomeMap(moisture, surface, latitude, altRegions, biomes)
-          buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
-        }
-        b.toEither(_.length == 0) match {
-          case Left(err) =>
-            Log.error("Failed to refresh biome map")
-            err foreach Log.error
-            this
-          case Right(result) =>
-            Log.warn("Biome map successfully reloaded")
-            result
-        }
+        val (r, t) = Timer.timer(() => {
+          val b = for {
+            biomes <- Loads.loadBiomes(latRegions, altRegions, surfaceRegions)
+          } yield {
+            biomes.resolver.printConflicts()
+            val biomeMap = new BiomeMap(moisture, surface, latitude, altRegions, biomes)
+            buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
+          }
+          b.toEither(_.length == 0) match {
+            case Left(err) =>
+              Log.error("Failed to refresh biome map")
+              err foreach Log.error
+              this
+            case Right(result) =>
+              Log.warn("Biome map successfully reloaded")
+              result
+          }
+        })
+        Log.warn("Took %dms" format (t/1000000L))
+        r
       } else {
         this
       }
