@@ -53,7 +53,7 @@ object Ecosphere {
             val biomeMap = new BiomeMap(moisture, surface, latitude, altRegions, biomes)
             buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
           }
-          b.toEither match {
+          b.either match {
             case Left(err) =>
               Log.error("Failed to refresh biome map")
               err foreach Log.error
@@ -109,9 +109,9 @@ object Ecosphere {
     val rows = cols
 
 
-    val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.getOrCrash
+    val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.get
 
-    val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).getOrCrash
+    val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).get
 
 
     val latitudeMap = new LatitudeMap(cols, rows, latRegions)

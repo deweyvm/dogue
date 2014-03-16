@@ -12,8 +12,8 @@ package object loading {
   type LoadResult[T] = Writer[Vector[String],T]
 
   implicit class LoadResultUtil[A](l:LoadResult[A]){
-    def getOrCrash = l.getOrCrash(_.length == 0, _ foreach Log.warn)
-    def toEither = l.toEither(_.length == 0)
+    def get = l.getOrCrash(_.length == 0, _ foreach Log.warn)
+    def either = l.toEither(_.length == 0)
   }
 
   def filterDuplicates[K](fmtString:String, ts:Map[String,Seq[K]], getName:K=>String):LoadResult[Map[String,K]] = {
