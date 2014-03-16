@@ -10,7 +10,7 @@ import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 import sun.java2d.Surface
 
 object WorldTile {
-  val Blank = WorldTile(0 m, Altitude.Void, SurfaceType.Void, 1 atm, 0, Biomes.Void, Latitude.Void, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
+  val Blank = WorldTile(0 m, Altitude.Void, SurfaceType.Void, 1 atm, 0, Biomes.Void, Color.Black, Latitude.Void, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)
 }
 
 case class WorldTile(height:Meters,
@@ -19,6 +19,7 @@ case class WorldTile(height:Meters,
                      pressure:Pressure,
                      moisture:Rainfall,
                      biome:Biome,
+                     biomeColor:Color,
                      latitude:LatitudinalRegion,
                      wind:Point2d,
                      daylight:Double,

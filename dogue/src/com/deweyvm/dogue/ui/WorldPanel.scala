@@ -84,7 +84,7 @@ object MapState {
 
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val color = ??? //Biomes.colorMap(t.biome)
+      val color = t.biomeColor//biomes.colorMap(t.biome)
       t.tile.copy(bgColor = color, code = t.biome.code).draw(i, j)
     }
   }

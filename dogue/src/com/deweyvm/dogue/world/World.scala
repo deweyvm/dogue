@@ -31,10 +31,10 @@ case class World(t:Long, worldParams:WorldParams, eco:Ecosphere, cycle:Celestial
       val moisture = eco.getMoisture(i, j)
       val season = cycle.getSeason
       val sunTemp = cycle.getSunHeat(i, j)
-      val biome = eco.getBiome(i, j)
+      val (biome,biomeColor) = eco.getBiome(i, j)
       val code = biome.code
       val tile = new Tile(code, Color.Black, Color.White)
-      new WorldTile(elevation, altitude, surface, pressure, moisture, biome, lat, windDir, light, sunTemp, season, tile)
+      new WorldTile(elevation, altitude, surface, pressure, moisture, biome, biomeColor, lat, windDir, light, sunTemp, season, tile)
     }
 
   }

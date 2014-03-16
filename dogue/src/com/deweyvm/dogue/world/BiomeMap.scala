@@ -9,7 +9,9 @@ class BiomeMap(moisture:MoistureMap, surface:SurfaceMap, latitude:LatitudeMap, a
   val cols = moisture.cols
   val rows = moisture.rows
 
-  val biomes:Array2d[Biome] = Array2d.tabulate(cols, rows) { case (i, j) =>
+  val biomes = bs
+
+  val biomeArray:Array2d[Biome] = Array2d.tabulate(cols, rows) { case (i, j) =>
     val rain = moisture.get(i, j)
     val t = surface.landMap.get(i, j)
     val alt = altMap.fromHeight(surface.heightMap.get(i, j))

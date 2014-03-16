@@ -2,7 +2,7 @@
 biomes:[
     {
         name:"Lake",
-        surfaceType:"Land",
+        surfaceType:"Saltwater",
         biomeType:"Aquatic",
         minLat:"Super Tropical",
         maxLat:"Polar",
@@ -14,7 +14,7 @@ biomes:[
 
     {
         name:"Ocean",
-        surfaceType:"Land",
+        surfaceType:"Saltwater",
         biomeType:"Aquatic",
         minLat:"Super Tropical",
         maxLat:"Polar",

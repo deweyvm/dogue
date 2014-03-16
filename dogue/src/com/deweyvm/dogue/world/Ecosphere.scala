@@ -11,6 +11,7 @@ import com.deweyvm.dogue.common.procgen.Arrow
 import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 import com.deweyvm.dogue.loading.AltitudeRegionMap
+import com.deweyvm.gleany.graphics.Color
 
 object Ecosphere {
   private def buildEcosphere(worldParams:WorldParams,
@@ -19,7 +20,7 @@ object Ecosphere {
                              surface:SurfaceMap,
                              wind:StaticWindMap,
                              moisture:MoistureMap,
-                             biome:BiomeMap,
+                             biomeMap:BiomeMap,
                              altRegions:AltitudeRegionMap,
                              timeStrings:Vector[String]):Ecosphere = new Ecosphere {
     outer =>
@@ -60,8 +61,9 @@ object Ecosphere {
       latitude.regions.get(i, j)
     }
 
-    override def getBiome(i:Int, j:Int):Biome = {
-      biome.biomes.get(i, j)
+    override def getBiome(i:Int, j:Int):(Biome,Color) = {
+      val biome = biomeMap.biomeArray.get(i, j)
+      (biome, biomeMap.biomes.colorMap(biome))
     }
 
     override def getPressure(i:Int, j:Int):Pressure = {
@@ -139,7 +141,7 @@ trait Ecosphere {
   def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Void
   def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = (SurfaceType.Void, 0.m, Altitude.Void)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
-  def getBiome(i:Int, j:Int):Biome = Biomes.Void
+  def getBiome(i:Int, j:Int):(Biome,Color) = (Biomes.Void,Color.Black)
   def getPressure(i:Int, j:Int):Pressure = 1.atm
   def getMoisture(i:Int, j:Int):Rainfall = 0.`mm/yr`
   def getTemperature(i:Int, j:Int):Celcius = 20.C

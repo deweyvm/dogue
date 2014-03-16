@@ -77,9 +77,9 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap)
 
   val landMap:Array2d[SurfaceType] = Array2d.tabulate(heightMap.rows, heightMap.cols) { case (i, j) =>
     if (flooded.exists{_.contains((i, j))}) {
-      ??? //Surface.Saltwater
+      map.map.values.find{_.isWater}.getOrElse(SurfaceType.Void)
     } else {
-      ??? //Surface.Land
+      map.map.values.find{!_.isWater}.getOrElse(SurfaceType.Void)
     }
   }
 }
