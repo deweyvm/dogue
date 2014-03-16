@@ -125,7 +125,7 @@ package object loading {
     }
 
     def makeRange[T](label:String, min:T, max:T)(implicit o:Ordering[T]) = {
-      ("Range %s is invalid. Requires min <= max. got %s <=> %s" format (label, min, max)) ~> (o.gt(min, max), min <=> max)
+      ("Range %s is invalid. Requires min <= max. got %s <=> %s" format (label, min, max)) ~> (o.lteq(min, max), min <=> max)
     }
     def nonEmpty(label:String, s:String) = {
       ("Value \"%s\" is empty" format label) ~> (s != null && s.replace(" ", "").length > 0, s)
@@ -141,18 +141,17 @@ package object loading {
 
     for {
       name <- nonEmpty("name", loader.name)
-      biomeType = getBiomeType(loader.biomeType)
-      surfaceType = getSurfaceType(loader.surfaceType)
-      minLat = getLatitude(loader.minLat)
-      maxLat = getLatitude(loader.maxLat)
-      latitude = makeRange("latitude", minLat, maxLat)
-      rain = makeRange("rainfall", loader.minRain.`mm/yr`, loader.maxRain.`mm/yr`)
-      minAlt = getAltitude(loader.minAlt)
-      maxAlt = getAltitude(loader.maxAlt)
-      altitude = makeRange("altitude", minAlt, maxAlt)
-      biome = Biome(name, BiomeSpec(surfaceType, biomeType, latitude, rain, altitude))
+      biomeType <- getBiomeType(loader.biomeType)
+      surfaceType <- getSurfaceType(loader.surfaceType)
+      minLat <- getLatitude(loader.minLat)
+      maxLat <- getLatitude(loader.maxLat)
+      latitude <- makeRange("latitude", minLat, maxLat)
+      rain <- makeRange("rainfall", loader.minRain.`mm/yr`, loader.maxRain.`mm/yr`)
+      minAlt <- getAltitude(loader.minAlt)
+      maxAlt <- getAltitude(loader.maxAlt)
+      altitude <- makeRange("altitude", minAlt, maxAlt)
     } yield {
-      biome
+      Biome(name, BiomeSpec(surfaceType, biomeType, latitude, rain, altitude))
     }
   }
 
