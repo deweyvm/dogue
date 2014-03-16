@@ -8,6 +8,10 @@ import com.deweyvm.dogue.common.procgen.PerlinParams
 import com.deweyvm.dogue.loading.SurfaceTypeMap
 import sun.java2d.Surface
 
+object SurfaceType {
+  val Void = SurfaceType("void", true)
+}
+
 case class SurfaceType(name:String, isWater:Boolean)
 
 class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap) {

@@ -1,12 +1,12 @@
 {
 regions:[
-         {name:"Polar",          maxRadius:2.00}
-         {name:"Subpolar",       maxRadius:0.92}
-         {name:"Boreal",         maxRadius:0.85}
-         {name:"Cool Temperate", maxRadius:0.70}
-         {name:"Warm Temperate", maxRadius:0.40}
-         {name:"Subtropical",    maxRadius:0.20}
-         {name:"Tropical",       maxRadius:0.10}
+         {name:"Polar",          maxRadius:2.00},
+         {name:"Subpolar",       maxRadius:0.92},
+         {name:"Boreal",         maxRadius:0.85},
+         {name:"Cool Temperate", maxRadius:0.70},
+         {name:"Warm Temperate", maxRadius:0.40},
+         {name:"Subtropical",    maxRadius:0.20},
+         {name:"Tropical",       maxRadius:0.10},
          {name:"Super Tropical", maxRadius:0.03}
     ]
 }

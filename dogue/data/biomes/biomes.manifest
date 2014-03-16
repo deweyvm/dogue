@@ -1,5 +1,520 @@
-Polar Desert
-Desert
-Subpolar <=> Polar
-0 <=> 250
-Lowlands <=> Montane
+{
+biomes:[
+    {
+        name:"Lake",
+        surfaceType:"Land",
+        biomeType:"Aquatic",
+        minLat:"Super Tropical",
+        maxLat:"Polar",
+        minAlt:"Lowlands",
+        maxAlt:"Super Alpine",
+        minRain:0,
+        maxRain:10000
+    },
+
+    {
+        name:"Ocean",
+        surfaceType:"Land",
+        biomeType:"Aquatic",
+        minLat:"Super Tropical",
+        maxLat:"Polar",
+        minAlt:"Abyss",
+        maxAlt:"Oceanic",
+        minRain:0,
+        maxRain:10000
+    },
+
+    {
+        name:"Polar Desert",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Subpolar",
+        maxLat:"Polar",
+        minAlt:"Lowlands",
+        maxAlt:"Montane",
+        minRain:0,
+        maxRain:250
+    },
+
+    {
+        name:"Frozen Crags",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Subpolar",
+        maxLat:"Polar",
+        minAlt:"Subalpine",
+        maxAlt:"Super Alpine",
+        minRain:0,
+        maxRain:250
+    },
+
+    {
+        name:"Alpine Tundra",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Tropical",
+        maxLat:"Polar",
+        minAlt:"Alpine",
+        maxAlt:"Super Alpine",
+        minRain:250,
+        maxRain:750
+    },
+
+    {
+        name:"Arctic Tundra",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Subpolar",
+        maxLat:"Subpolar",
+        minAlt:"Lowlands",
+        maxAlt:"Subalpine",
+        minRain:250,
+        maxRain:750
+    },
+
+    {
+        name:"Antarctic Tundra",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Polar",
+        maxLat:"Polar",
+        minAlt:"Lowlands",
+        maxAlt:"Subalpine",
+        minRain:250,
+        maxRain:750
+    },
+
+    {
+        name:"Glacier",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Cool Temperate",
+        maxLat:"Polar",
+        minAlt:"Subalpine",
+        maxAlt:"Super Alpine",
+        minRain:750,
+        maxRain:10000
+    },
+
+    {
+        name:"Glacier",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Tropical",
+        maxLat:"Warm Temperate",
+        minAlt:"Subalpine",
+        maxAlt:"Super Alpine",
+        minRain:4000,
+        maxRain:10000
+    },
+
+    {
+        name:"Glacier",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Boreal",
+        maxLat:"Boreal",
+        minAlt:"Midlands",
+        maxAlt:"Super Alpine",
+        minRain:750,
+        maxRain:10000
+    },
+
+    {
+        name:"Barren Cliffs",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Tropical",
+        maxLat:"Boreal",
+        minAlt:"Subalpine",
+        maxAlt:"Super Alpine",
+        minRain:0,
+        maxRain:25
+    },
+
+    {
+        name:"Taiga",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Boreal",
+        maxLat:"Boreal",
+        minAlt:"Midlands",
+        maxAlt:"Subalpine",
+        minRain:250,
+        maxRain:750
+    },
+
+    {
+        name:"Boreal Wetlands",
+        surfaceType:"Land",
+        biomeType:"Wetlands",
+        minLat:"Boreal",
+        maxLat:"Boreal",
+        minAlt:"Lowlands",
+        maxAlt:"Lowlands",
+        minRain:250,
+        maxRain:10000
+    },
+
+    {
+        name:"Boreal Grassland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Boreal",
+        maxLat:"Boreal",
+        minAlt:"Lowlands",
+        maxAlt:"Montane",
+        minRain:25,
+        maxRain:250
+    },
+
+    {
+        name:"Boreal Desert",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Boreal",
+        maxLat:"Boreal",
+        minAlt:"Lowlands",
+        maxAlt:"Montane",
+        minRain:0,
+        maxRain:25
+    },
+
+    {
+        name:"Tropical Grassland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Tropical",
+        maxLat:"Tropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:250,
+        maxRain:500
+    },
+
+    {
+        name:"Subtropical Scrubland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Subtropical",
+        maxLat:"Subtropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:250,
+        maxRain:500
+    },
+
+    {
+        name:"Peat Swamp Forest",
+        surfaceType:"Land",
+        biomeType:"Wetlands",
+        minLat:"Tropical",
+        maxLat:"Subtropical",
+        minAlt:"Lowlands",
+        maxAlt:"Lowlands",
+        minRain:1300,
+        maxRain:2000
+    },
+
+    {
+        name:"Subtropical Coniferous Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Subtropical",
+        maxLat:"Subtropical",
+        minAlt:"Montane",
+        maxAlt:"Montane",
+        minRain:300,
+        maxRain:1100
+    },
+
+    {
+        name:"Subtropical Broadleaf Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Subtropical",
+        maxLat:"Subtropical",
+        minAlt:"Midlands",
+        maxAlt:"Montane",
+        minRain:1100,
+        maxRain:1500
+    },
+
+    {
+        name:"Subtropical Deciduous Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Subtropical",
+        maxLat:"Subtropical",
+        minAlt:"Midlands",
+        maxAlt:"Montane",
+        minRain:1500,
+        maxRain:2000
+    },
+
+    {
+        name:"Tropical Savanna",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Tropical",
+        maxLat:"Subtropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:500,
+        maxRain:1100
+    },
+
+    {
+        name:"Tropical Rainforest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Tropical",
+        maxLat:"Subtropical",
+        minAlt:"Midlands",
+        maxAlt:"Highlands",
+        minRain:2000,
+        maxRain:10000
+    },
+
+    {
+        name:"Tropical Deciduous Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Tropical",
+        maxLat:"Tropical",
+        minAlt:"Midlands",
+        maxAlt:"Highlands",
+        minRain:1500,
+        maxRain:2000
+    },
+
+    {
+        name:"Tropical Broadleaf Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Tropical",
+        maxLat:"Tropical",
+        minAlt:"Midlands",
+        maxAlt:"Highlands",
+        minRain:1300,
+        maxRain:1500
+    },
+
+    {
+        name:"Tropical Coniferous Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Tropical",
+        maxLat:"Tropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:1100,
+        maxRain:1300
+    },
+
+    {
+        name:"Mangroves",
+        surfaceType:"Land",
+        biomeType:"Wetlands",
+        minLat:"Tropical",
+        maxLat:"Subtropical",
+        minAlt:"Lowlands",
+        maxAlt:"Lowlands",
+        minRain:2000,
+        maxRain:10000
+    },
+
+    {
+        name:"Montane Rainforest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Subtropical",
+        maxLat:"Cool Temperate",
+        minAlt:"Montane",
+        maxAlt:"Subalpine",
+        minRain:2000,
+        maxRain:4000
+    },
+
+    {
+        name:"Temperate Rainforest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Midlands",
+        maxAlt:"Highlands",
+        minRain:2000,
+        maxRain:10000
+    },
+
+    {
+        name:"Temperate Broadleaf Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Midlands",
+        maxAlt:"Montane",
+        minRain:1500,
+        maxRain:2000
+    },
+
+    {
+        name:"Temperate Deciduous Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Midlands",
+        maxAlt:"Montane",
+        minRain:750,
+        maxRain:1500
+    },
+
+    {
+        name:"Temperate Coniferous Forest",
+        surfaceType:"Land",
+        biomeType:"Forest",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Midlands",
+        maxAlt:"Subalpine",
+        minRain:300,
+        maxRain:750
+    },
+
+    {
+        name:"Arid Desert",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Tropical",
+        maxLat:"Cool Temperate",
+        minAlt:"Lowlands",
+        maxAlt:"Montane",
+        minRain:0,
+        maxRain:25
+    },
+
+    {
+        name:"Xeric Scrubland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Tropical",
+        maxLat:"Subtropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:25,
+        maxRain:250
+    },
+
+    {
+        name:"Montane Grassland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Subtropical",
+        maxLat:"Cool Temperate",
+        minAlt:"Montane",
+        maxAlt:"Subalpine",
+        minRain:25,
+        maxRain:300
+    },
+
+    {
+        name:"Tall Temperate Grassland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:250,
+        maxRain:300
+    },
+
+    {
+        name:"Short Temperate Grassland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:80,
+        maxRain:250
+    },
+
+
+    {
+        name:"Temperate Wetlands",
+        surfaceType:"Land",
+        biomeType:"Wetlands",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Lowlands",
+        maxAlt:"Lowlands",
+        minRain:300,
+        maxRain:10000
+    },
+
+    {
+        name:"Temperate Scrubland",
+        surfaceType:"Land",
+        biomeType:"Grassland",
+        minLat:"Warm Temperate",
+        maxLat:"Cool Temperate",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:25,
+        maxRain:80
+    },
+
+    {
+        name:"Hellscape",
+        surfaceType:"Land",
+        biomeType:"Desert",
+        minLat:"Super Tropical",
+        maxLat:"Super Tropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:0,
+        maxRain:0
+    },
+
+    {
+        name:"Infestation",
+        surfaceType:"Land",
+        biomeType:"Wetlands",
+        minLat:"Super Tropical",
+        maxLat:"Super Tropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:0.01,
+        maxRain:2000
+    },
+
+    {
+        name:"Maelstrom",
+        surfaceType:"Land",
+        biomeType:"Special",
+        minLat:"Super Tropical",
+        maxLat:"Super Tropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:2000,
+        maxRain:7000
+    },
+
+    {
+        name:"Infestation",
+        surfaceType:"Land",
+        biomeType:"Special",
+        minLat:"Super Tropical",
+        maxLat:"Super Tropical",
+        minAlt:"Lowlands",
+        maxAlt:"Highlands",
+        minRain:7000,
+        maxRain:10000
+    },
+]
+}

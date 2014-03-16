@@ -13,6 +13,7 @@ import com.deweyvm.dogue.world.DateConstants
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.world.biomes.Biomes
+import sun.java2d.Surface
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -58,10 +59,10 @@ object MapState {
 
   case object Topography extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val (color1,color2) = t.surface match {
-        case Surface.Land =>
+      val (color1,color2) = t.surface.isWater match {
+        case false =>
           (Color.DarkGreen, Color.Grey)
-        case Surface.Saltwater =>
+        case true =>
           (Color.DarkBlue, Color.Cyan)
       }
       val d = (t.height.d/4000).toFloat
@@ -83,7 +84,7 @@ object MapState {
 
   case object Biome extends MapState {
     def draw(t:WorldTile, i:Int, j:Int) {
-      val color = Biomes.colorMap(t.biome)
+      val color = ??? //Biomes.colorMap(t.biome)
       t.tile.copy(bgColor = color, code = t.biome.code).draw(i, j)
     }
   }

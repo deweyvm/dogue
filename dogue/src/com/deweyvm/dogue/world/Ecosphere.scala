@@ -3,14 +3,14 @@ package com.deweyvm.dogue.world
 import com.deweyvm.dogue.common.procgen._
 import com.deweyvm.dogue.common.data.{Array2dView, Array2d}
 import com.deweyvm.gleany.data._
-import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.common.CommonImplicits
-import CommonImplicits._
 import com.deweyvm.dogue.world.AtmosphereConstants._
-import com.deweyvm.dogue.common.procgen.Arrow
-import java.util.Random
-import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
 import com.deweyvm.dogue.input.Controls
+import com.deweyvm.dogue.loading._
+import com.deweyvm.dogue.loading
+import com.deweyvm.dogue.common.procgen.Arrow
+import com.deweyvm.dogue.common.CommonImplicits._
+import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
+import com.deweyvm.dogue.loading.AltitudeRegionMap
 
 object Ecosphere {
   private def buildEcosphere(worldParams:WorldParams,
@@ -20,6 +20,7 @@ object Ecosphere {
                              wind:StaticWindMap,
                              moisture:MoistureMap,
                              biome:BiomeMap,
+                             altRegions:AltitudeRegionMap,
                              timeStrings:Vector[String]):Ecosphere = new Ecosphere {
     outer =>
 
@@ -39,11 +40,11 @@ object Ecosphere {
 
     override def update = {
       if (Controls.Backspace.justPressed) {
-        println("reloading")
-        val newBiome = new BiomeMap(moisture, surface, latitude)
-        val result = buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, newBiome, timeStrings)
+        /*println("reloading")
+        val result = buildEcosphere(worldParams, latitude, noise, surface, wind, moisture, biome, timeStrings)
         println("loaded")
-        result
+        result*/
+        this
       } else {
         this
       }
@@ -75,7 +76,7 @@ object Ecosphere {
     private def getElevationParts(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = {
       val t = surface.landMap.get(i, j)
       val h = surface.heightMap.get(i, j)
-      val altitude = Altitude.fromHeight(h)
+      val altitude = altRegions.fromHeight(h)
       (t, h, altitude)
     }
 
@@ -85,14 +86,31 @@ object Ecosphere {
     val seed = worldParams.seed
     val cols = worldParams.size
     val rows = cols
-    val latitudeMap = new LatitudeMap(cols, rows)
+    val bs = for {
+      altRegions <- loading.loadAltitudeManifest(Loader.fromFile[AltitudeManifest]("data/world/altitudes.manifest"))
+      latRegions <- loading.loadLatitudeManifest(Loader.fromFile[LatitudeManifest]("data/world/latitudes.manifest"))
+      surfaceRegions <- loading.loadSurfaceManifest(Loader.fromFile[SurfaceTypeManifest]("data/world/surfacetypes.manifest"))
+      biomeTypes <- loading.loadBiomeTypeManifest(Loader.fromFile[BiomeTypeManifest]("data/biomes/biometypes.manifest"))
+      biomes <- loading.loadBiomes(Loader.fromFile[BiomeManifest]("data/biomes/biomes.manifest"), latRegions, altRegions, biomeTypes, surfaceRegions)
+    } yield {
+      (altRegions, latRegions, surfaceRegions, biomeTypes, biomes)
+    }
+
+    val (altRegions, latRegions, surfaceRegions, biomeTypes, biomes) = bs.toEither(_.length == 0) match {
+      case Left(errs) =>
+        errs foreach {x => println("Error " + x)}
+        throw new RuntimeException
+      case Right(a) => a
+    }
+
+    val latitudeMap = new LatitudeMap(cols, rows, latRegions)
     def time[T](t: => T) = Timer.timer(() => t)
     val (noise,       perlinTime)   = time(new PerlinNoise(worldParams.perlin).render)
-    val (surfaceMap,  surfaceTime)  = time(new SurfaceMap(noise, worldParams.perlin))
+    val (surfaceMap,  surfaceTime)  = time(new SurfaceMap(noise, worldParams.perlin, surfaceRegions))
     val (windMap,     windTime)     = time(new StaticWindMap(surfaceMap.heightMap, 10000, 1, seed))
     val (moistureMap, moistureTime) = time(new MoistureMap(surfaceMap, latitudeMap.latitude, windMap.arrows, 0.5, cols/2, seed))
-    val (biomeMap,    biomeTime)    = time(new BiomeMap(moistureMap, surfaceMap, latitudeMap))
-    Biomes.resolver.printConflicts()
+    val (biomeMap,    biomeTime)    = time(new BiomeMap(moistureMap, surfaceMap, latitudeMap, altRegions, biomes))
+    biomes.resolver.printConflicts()
 
     val timeStrings = {
       val sum = (perlinTime + windTime + surfaceTime + biomeTime + moistureTime).toDouble
@@ -109,7 +127,7 @@ object Ecosphere {
         "moisture (%02d)" format m,
         "perlin   (%02d)" format p)
     }
-    buildEcosphere(worldParams, latitudeMap, noise, surfaceMap, windMap, moistureMap, biomeMap, timeStrings)
+    buildEcosphere(worldParams, latitudeMap, noise, surfaceMap, windMap, moistureMap, biomeMap, altRegions, timeStrings)
 
 
   }
@@ -118,8 +136,8 @@ object Ecosphere {
 trait Ecosphere {
   val cols:Int
   val rows:Int
-  def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Polar
-  def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = (Surface.Land, 0.m, Altitude.Abyss)
+  def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Void
+  def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = (SurfaceType.Void, 0.m, Altitude.Void)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
   def getBiome(i:Int, j:Int):Biome = Biomes.Void
   def getPressure(i:Int, j:Int):Pressure = 1.atm
