@@ -15,7 +15,7 @@ class LatitudeMap(val cols:Int, val rows:Int, latRegions:LatitudeRegionMap) {
     }
   }
 
-  val regions:Array2d[LatitudinalRegion] = latitude.transform{ case (i, j, l) =>
+  val regions:Array2d[LatitudinalRegion] = latitude.map{ case (i, j, l) =>
     latRegions.getLatitude(l)
   }
 }

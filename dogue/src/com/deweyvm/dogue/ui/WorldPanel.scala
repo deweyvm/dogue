@@ -1,19 +1,15 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.world._
+
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.data.{Array2dView, Pointer, Code}
-import com.deweyvm.dogue.common.procgen.{PerlinParams, VectorField}
+import com.deweyvm.dogue.common.procgen.VectorField
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.dogue.world.WorldParams
-import com.deweyvm.dogue.world.ArrayViewer
-import com.deweyvm.dogue.world.DateConstants
+import com.deweyvm.dogue.world.{World, WorldTile, WorldParams, ArrayViewer}
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
-import com.deweyvm.dogue.world.biomes.Biomes
-import sun.java2d.Surface
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -126,14 +122,11 @@ object WorldPanel {
              tooltipHeight:Int,
              minimapSize:Int,
              bgColor:Color,
-             size:Int):WorldPanel = {
+             size:Int,
+             world:World,
+             params:WorldParams):WorldPanel = {
 
-    val seed = System.nanoTime
-    println("Seed: " + seed + "L")
-    val date = DateConstants(framesPerDay = 60*60*24*60)
-    val perlin = PerlinParams(size/4, 8, size, seed)
-    val params = WorldParams(minimapSize, perlin, date)
-    val world = World.create(params)
+
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
     new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, ZoomState.getPointer, MapState.getPointer)

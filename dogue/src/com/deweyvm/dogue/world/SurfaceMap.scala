@@ -28,12 +28,12 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap)
   private val mountainSet = new TopoFeature(TopoFeature.mountain3, 50, noise)
 
   private val numDepressions = 10
-  private val lakeSet = TopoFeature.create(TopoFeature.lake, numDepressions, params.copy(period=64))
+  private val lakeSet = TopoFeature.create(TopoFeature.lake, numDepressions, params.copy(period=params.period/4))
 
 
   private val (lakes, basins) = lakeSet.extracted.splitAt(numDepressions/2)
 
-  private val lakeHeight:Array2d[Double] = noise.transform {case (i, j, d) =>
+  private val lakeHeight:Array2d[Double] = noise.map {case (i, j, d) =>
     if (lakes.exists(_.contains((i, j)))) {
       lakeSet.get(i, j)
     } else {
@@ -41,7 +41,7 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap)
     }
   }
 
-  private val basinHeight:Array2d[Double] = noise.transform {case (i, j, d) =>
+  private val basinHeight:Array2d[Double] = noise.map {case (i, j, d) =>
     if (basins.exists(_.contains((i, j)))) {
       lakeSet.get(i, j)
     } else {
@@ -53,7 +53,7 @@ class SurfaceMap(noise:Array2d[Double], params:PerlinParams, map:SurfaceTypeMap)
     (mountain > 0) select ((land + mountain)/2, land)
   }
 
-  val heightMap: Array2d[Meters] = noise.transform({ case (i, j, p) =>
+  val heightMap: Array2d[Meters] = noise.map({ case (i, j, p) =>
     val base = perlinToHeight(p)
     val m = applyMountain(base, mountainSet.get(i, j))
     val h = m - lakeHeight.get(i, j) - basinHeight.get(i, j)

@@ -30,7 +30,7 @@ class TopoFeature(f:Double => Double, count:Int, base:Array2d[Double]) {
   private val rows = base.rows
   private val cols = base.cols
 
-  private val noise = base.map { case (i, j, d) =>
+  private val noise = base.viewMap { case (i, j, d) =>
     f(d)
   }
 
@@ -48,7 +48,7 @@ class TopoFeature(f:Double => Double, count:Int, base:Array2d[Double]) {
     view.get(i, j)
   }
 
-  val view = noise.map {case (i, j, d) =>
+  val view = noise.viewMap {case (i, j, d) =>
     if (extracted.exists{_.contains((i, j))}) {
       d
     } else {
@@ -56,7 +56,7 @@ class TopoFeature(f:Double => Double, count:Int, base:Array2d[Double]) {
     }
   }
 
-  def getNoise(b:Boolean):Array2dView[Color] = noise.map {case (i, j, d) =>
+  def getNoise(b:Boolean):Array2dView[Color] = noise.viewMap {case (i, j, d) =>
     if (extracted.exists{_.contains((i, j))}) {
       val c = d.toFloat
       if (b) {

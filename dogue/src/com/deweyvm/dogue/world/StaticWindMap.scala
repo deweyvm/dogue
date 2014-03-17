@@ -7,7 +7,7 @@ import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.common.CommonImplicits._
 
 class StaticWindMap(noise:Array2d[Meters], heightMax:Double, windMax:Double, seed:Long) {
-  private val dNoise = noise.transform{case (i, j, m) => m.d }
+  private val dNoise = noise.map{case (i, j, m) => m.d }
   private val cols = noise.cols
   private val rows = noise.rows
   private val random = new Random(seed)

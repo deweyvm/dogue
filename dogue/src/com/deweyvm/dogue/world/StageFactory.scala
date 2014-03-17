@@ -4,6 +4,9 @@ import com.deweyvm.dogue.ui._
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.gleany.data.Recti
+import com.deweyvm.dogue.common.procgen.PerlinParams
+import com.deweyvm.dogue.world.Stage.Chat
+import com.deweyvm.dogue.common.threading.DogueFuture
 
 class StageFactory(cols:Int, rows:Int) {
   val serverText = Text.create(Color.Black, Color.White)
@@ -13,16 +16,15 @@ class StageFactory(cols:Int, rows:Int) {
   }
 
   def create(t:StageType):Stage = {
-    import Stage._
     t match {
-      case Blank =>
+      case Stage.Blank =>
         val blankRect = Recti(1, 1, cols - 2, rows - 2)
         makeStage(new Panel(blankRect, Color.Black))
-      case Title =>
+      case Stage.Title =>
         val titleRect = Recti(1, 1, cols - 2, rows - 2)
         val titlePanel = TitlePanel.create(titleRect, this, bgColor)
         makeStage(titlePanel)
-      case Chat =>
+      case Stage.Chat =>
         val inputHeight = 3
         val bgColor = Color.Black
         val fgColor = Color.White
@@ -32,7 +34,7 @@ class StageFactory(cols:Int, rows:Int) {
         val chatRect = Recti(1, 1, cols - 2, rows - 2)
         val chatPanel = new ChatPanel(chatRect, bgColor, fgColor, Client.instance, textInput, textOutput)
         makeStage(chatPanel)
-      case World =>
+      case Stage.World =>
         val worldSize = 256
         val controlsHeight = 8
         val minSideWidth = 24
@@ -45,10 +47,22 @@ class StageFactory(cols:Int, rows:Int) {
             (minSideWidth, cols - minSideWidth)
           }
         val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, rows - 2)
-        val worldPanel = WorldPanel.create(mapRect, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, worldSize)
+
+        val future = DogueFuture.runProgress(() => {
+          val seed = 0//System.nanoTime
+          println("Seed: " + seed + "L")
+          val date = DateConstants(framesPerDay = 60*60*24*60)
+          val perlin = PerlinParams(worldSize/4, 8, worldSize, seed)
+          val params = WorldParams(minimapSize, perlin, date)
+          val eco = EcosphereLoader.create(params)
+          val world = World.create(params, eco)
+
+          WorldPanel.create(mapRect, sideWidth, rows - controlsHeight - 1, minimapSize, bgColor, worldSize, world, params)
+        }, () => 0.0)
+        val progressPanel = new LoadingPanel(Recti(1, 1, cols - 2, rows - 2), bgColor, future)
         val controlRect = Recti(1, rows - controlsHeight + 1, sideWidth, controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)
-        makeStage(controlPanel, worldPanel)
+        makeStage(controlPanel, progressPanel)
 
     }
   }

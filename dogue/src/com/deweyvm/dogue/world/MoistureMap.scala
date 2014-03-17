@@ -31,14 +31,14 @@ class MoistureMap(surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2d
       v
     } else {
       val newDepth = if (h > mountainHeight) {
-        depthLeft - 20
+        depthLeft - 2
       } else {
         depthLeft - 1
       }
       traceWind(ni, nj, newDepth, v)
     }
   }
-  val mountainHeight = 5000 m
+  val mountainHeight = 2000 m
   /**
    * depth required for the tile to count as a moisture producing tile
    * fixme: use water body map issue #257
@@ -47,8 +47,9 @@ class MoistureMap(surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2d
 
   def get(i:Int, j:Int) = {
     val lat = latitude.get(i, j).clamp(0, 0.6)
+    val alt = 1 - math.abs(surface.heightMap.get(i, j).d)/10000
     val latm1 = 1 - lat
-    val max = (1 - lat)*10000
+    val max = latm1*10000*alt*alt
     val raw = map.get(i, j)
 
     (raw * (latm1*latm1)*max).`mm/yr`
@@ -61,7 +62,6 @@ class MoistureMap(surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2d
       0
     } else {
       val path: Vector[Meters] = traceWind(i, j, steps, Vector())
-      //path foreach {println(_)}
       val index = path.indexWhere( _ <= moistureSpawnDepth)
       if (index < 0) {
         0

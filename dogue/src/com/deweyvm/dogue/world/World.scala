@@ -6,8 +6,7 @@ import com.deweyvm.dogue.entities.Tile
 
 
 object World {
-  def create(params:WorldParams):World = {
-    val eco = EcosphereLoader.create(params)
+  def create(params:WorldParams, eco:Ecosphere):World = {
     val cycle = CelestialBodies(params.date.startTime, params.size/2, params.date)
     World(params.date.startTime, params, eco, cycle)
   }

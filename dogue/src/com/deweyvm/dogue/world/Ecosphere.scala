@@ -37,7 +37,7 @@ object Ecosphere {
     }
 
     private val atmosphereMap:Array2dView[Pressure] = {
-      surface.heightMap.map{case (i, j, h) =>
+      surface.heightMap.viewMap{case (i, j, h) =>
         val f = (h < 0.m) select (waterPressure _, airPressure _)
         f(h)
       }
