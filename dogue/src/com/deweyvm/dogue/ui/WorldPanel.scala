@@ -5,11 +5,14 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.data.{Array2dView, Pointer, Code}
-import com.deweyvm.dogue.common.procgen.VectorField
+import com.deweyvm.dogue.common.procgen.{PerlinParams, PerlinNoise, VectorField}
 import com.deweyvm.dogue.entities.Tile
-import com.deweyvm.dogue.world.{World, WorldTile, WorldParams, ArrayViewer}
+import com.deweyvm.dogue.world._
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import com.deweyvm.dogue.world.WorldParams
+import com.deweyvm.dogue.world.ArrayViewer
+import com.deweyvm.dogue.loading
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -114,9 +117,25 @@ object ZoomState {
   def getPointer:Pointer[ZoomState] = Pointer.create(All, 0)
 }
 object WorldPanel {
-  var t  = 0L
-
-
+  val controlsHeight = 8
+  val minSideWidth = 24
+  val minimapSize = 69
+  def computeMapWidth(screenCols:Int) = {
+    val maxMinimapPanelSize = minimapSize + 3
+    if (screenCols > minSideWidth + maxMinimapPanelSize) {
+      maxMinimapPanelSize
+    } else {
+      screenCols - minSideWidth
+    }
+  }
+  def computeSideWidth(screenCols:Int) = {
+    val maxMinimapPanelSize = minimapSize + 3
+    if (screenCols > minSideWidth + maxMinimapPanelSize) {
+      screenCols - maxMinimapPanelSize
+    } else {
+      minSideWidth
+    }
+  }
   def create(rect:Recti,
              tooltipWidth:Int,
              tooltipHeight:Int,
@@ -130,6 +149,66 @@ object WorldPanel {
     val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
     new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, ZoomState.getPointer, MapState.getPointer)
+  }
+
+  trait F[T]
+  case class ResultLoader[T](progress:Int, label:String, f:() => T) extends F[T] {
+    def apply() = f()
+  }
+
+  case class NextLoader[T](progress:Int, label:String, f:()=>F[T]) extends F[T] {
+    def apply() = f()
+  }
+  def getLoaders(screenCols:Int, screenRows:Int):F[WorldPanel] = {
+    val seed = 0//System.nanoTime
+    val worldSize = 256
+    val cols = worldSize
+    val rows = worldSize
+
+    val minimapSize = WorldPanel.minimapSize
+    val bgColor = Color.Blue
+    println("Seed: " + seed + "L")
+    val date = DateConstants(framesPerDay = 60*60*24*60)
+    val perlin = PerlinParams(worldSize/4, 8, worldSize, seed)
+    val worldParams = WorldParams(minimapSize, perlin, date)
+
+
+    import loading._
+    NextLoader(0, "Loading region data", () => {
+    val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.get
+    val latMap = new LatitudeMap(cols, rows, latRegions)
+    NextLoader(12, "Loading biome data", () => {
+    val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).get
+    NextLoader(25, "Generating noise", () => {
+    val noise = new PerlinNoise(worldParams.perlin).render
+    NextLoader(34, "Generating surface features", () => {
+    val surface = new SurfaceMap(noise, worldParams.perlin, surfaceRegions)
+    NextLoader(50, "Generating wind currents", () => {
+    val windMap = new StaticWindMap(surface.heightMap, 10000, 1, seed)
+    NextLoader(62, "Plotting average rainfall", () => {
+    val moistureMap = new MoistureMap(surface, latMap.latitude, windMap.arrows, 0.5, cols/2, seed)
+    NextLoader(75, "Choosing biomes", () => {
+    val biomeMap = new BiomeMap(moistureMap, surface, latMap, altRegions, biomes)
+    NextLoader(88, "Constructing ecosphere", () => {
+    ResultLoader(99,"Choosing Biomes", () => {
+    val eco = Ecosphere.buildEcosphere(worldParams, latMap, noise, surface, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, Vector())
+
+    val world = World.create(worldParams, eco)
+
+
+    val mapWidth = WorldPanel.computeMapWidth(screenCols)
+    val sideWidth = WorldPanel.computeSideWidth(screenCols)
+    val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, screenRows - 2)
+    WorldPanel.create(mapRect, sideWidth, screenRows - WorldPanel.controlsHeight - 1, minimapSize, bgColor, worldSize, world, worldParams)
+    })
+    })
+    })
+    })
+    })
+    })
+    })
+    })
+    })
   }
 }
 
