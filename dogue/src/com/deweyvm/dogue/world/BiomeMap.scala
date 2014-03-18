@@ -2,7 +2,7 @@ package com.deweyvm.dogue.world
 
 import com.deweyvm.dogue.common.data.Array2d
 import com.deweyvm.dogue.world.biomes.{Biome, Biomes}
-import com.deweyvm.dogue.loading.{AltitudeRegionMap, BiomeTypeManifest, Loader}
+import com.deweyvm.dogue.loading.{AltitudeRegionMap, BiomeTypeManifest, JsonLoader}
 import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
 class BiomeMap(moisture:MoistureMap, surface:SurfaceMap, latitude:LatitudeMap, altMap:AltitudeRegionMap, bs:Biomes) {

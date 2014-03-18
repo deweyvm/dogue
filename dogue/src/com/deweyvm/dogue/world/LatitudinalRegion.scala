@@ -4,7 +4,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.DogueRange
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
-import com.deweyvm.dogue.loading.Loader
+import com.deweyvm.dogue.loading.JsonLoader
 
 case class LatitudinalRegion(name:String, range:DogueRange[Double]) {
   override def toString = name

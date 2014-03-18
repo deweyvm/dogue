@@ -15,17 +15,17 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.logging.Log
 
 object Ecosphere {
-  private def buildEcosphere(worldParams:WorldParams,
-                             latitude:LatitudeMap,
-                             noise:Array2d[Double],
-                             surface:SurfaceMap,
-                             wind:StaticWindMap,
-                             moisture:MoistureMap,
-                             biomeMap:BiomeMap,
-                             surfaceRegions:SurfaceTypeMap,
-                             latRegions:LatitudeRegionMap,
-                             altRegions:AltitudeRegionMap,
-                             timeStrings:Vector[String]):Ecosphere = new Ecosphere {
+  def buildEcosphere(worldParams:WorldParams,
+                     latitude:LatitudeMap,
+                     noise:Array2d[Double],
+                     surface:SurfaceMap,
+                     wind:StaticWindMap,
+                     moisture:MoistureMap,
+                     biomeMap:BiomeMap,
+                     surfaceRegions:SurfaceTypeMap,
+                     latRegions:LatitudeRegionMap,
+                     altRegions:AltitudeRegionMap,
+                     timeStrings:Vector[String]):Ecosphere = new Ecosphere {
     outer =>
     biomeMap.biomes.resolver.printConflicts()
 
@@ -100,21 +100,19 @@ object Ecosphere {
       val altitude = altRegions.fromHeight(h)
       (t, h, altitude)
     }
-
   }
 
-  def create(worldParams:WorldParams):Ecosphere = {
+
+  /* create(worldParams:WorldParams):Ecosphere = {
     val seed = worldParams.seed
     val cols = worldParams.size
     val rows = cols
 
 
     val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.get
-
+    val latitudeMap = new LatitudeMap(cols, rows, latRegions)
     val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).get
 
-
-    val latitudeMap = new LatitudeMap(cols, rows, latRegions)
     def time[T](t: => T) = Timer.timer(() => t)
     val (noise,       perlinTime)   = time(new PerlinNoise(worldParams.perlin).render)
     val (surfaceMap,  surfaceTime)  = time(new SurfaceMap(noise, worldParams.perlin, surfaceRegions))
@@ -140,7 +138,7 @@ object Ecosphere {
     buildEcosphere(worldParams, latitudeMap, noise, surfaceMap, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
 
 
-  }
+  }*/
 }
 
 trait Ecosphere {

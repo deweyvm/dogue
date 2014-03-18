@@ -12,5 +12,6 @@ class LoadingPanel(rect:Recti, bgColor:Color, panel:ProgressFuture[WorldPanel]) 
   override def draw() {
     super.draw()
     Text.create(bgColor, Color.White).append("Progress " + (panel.getProgress * 100).toInt).draw(10,10)
+    Text.create(bgColor, Color.White).append(panel.getDescription).draw(10, 11)
   }
 }

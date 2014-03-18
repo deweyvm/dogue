@@ -176,9 +176,9 @@ package object loading {
   object Loads {
     def loadRegionMaps:LoadResult[(AltitudeRegionMap, LatitudeRegionMap, SurfaceTypeMap)] = {
       for {
-        altRegions <- loading.loadAltitudeManifest(Loader.fromFile[AltitudeManifest]("data/world/altitudes.manifest"))
-        latRegions <- loading.loadLatitudeManifest(Loader.fromFile[LatitudeManifest]("data/world/latitudes.manifest"))
-        surfaceRegions <- loading.loadSurfaceManifest(Loader.fromFile[SurfaceTypeManifest]("data/world/surfacetypes.manifest"))
+        altRegions <- loading.loadAltitudeManifest(JsonLoader.fromFile[AltitudeManifest]("data/world/altitudes.manifest"))
+        latRegions <- loading.loadLatitudeManifest(JsonLoader.fromFile[LatitudeManifest]("data/world/latitudes.manifest"))
+        surfaceRegions <- loading.loadSurfaceManifest(JsonLoader.fromFile[SurfaceTypeManifest]("data/world/surfacetypes.manifest"))
       } yield {
         (altRegions, latRegions, surfaceRegions)
       }
@@ -188,8 +188,8 @@ package object loading {
                    altRegions:AltitudeRegionMap,
                    surfaceRegions:SurfaceTypeMap):LoadResult[Biomes] = {
       for {
-        biomeTypes <- loading.loadBiomeTypeManifest(Loader.fromFile[BiomeTypeManifest]("data/biomes/biometypes.manifest"))
-        biomes <- loading.loadBiomes(Loader.fromFile[BiomeManifest]("data/biomes/biomes.manifest"), latRegions, altRegions, biomeTypes, surfaceRegions)
+        biomeTypes <- loading.loadBiomeTypeManifest(JsonLoader.fromFile[BiomeTypeManifest]("data/biomes/biometypes.manifest"))
+        biomes <- loading.loadBiomes(JsonLoader.fromFile[BiomeManifest]("data/biomes/biomes.manifest"), latRegions, altRegions, biomeTypes, surfaceRegions)
       } yield {
         biomes
       }
