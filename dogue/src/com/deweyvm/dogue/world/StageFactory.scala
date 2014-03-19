@@ -40,7 +40,7 @@ class StageFactory(cols:Int, rows:Int) {
         val controlPanel = new Panel(controlRect, bgColor)
         val future:DogueFuture[Coroutine[WorldPanel]] = DogueFuture createAndRun { () => WorldPanel.getLoaders(cols, rows) }
         def createStage(panel:Panel) = makeStage(panel, controlPanel)
-        val progressPanel = new LoadingPanel(0, Vector(), Recti(1, 1, cols - 2, rows - 2), bgColor, future, createStage)
+        val progressPanel = LoadingPanel.create(Recti(1, 1, cols - 2, rows - 2), bgColor, future, createStage)
         makeStage(progressPanel)
 
     }

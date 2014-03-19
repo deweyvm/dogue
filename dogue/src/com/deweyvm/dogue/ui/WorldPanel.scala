@@ -186,18 +186,14 @@ object WorldPanel {
     Yield(75, "Choosing biomes", () => {
     val biomeMap = new BiomeMap(moistureMap, surface, latMap, altRegions, biomes)
     Yield(88, "Constructing ecosphere", () => {
-    Yield(100, "Finished", () => {
     val eco = Ecosphere.buildEcosphere(worldParams, latMap, noise, surface, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, Vector())
     val world = World.create(worldParams, eco)
     val mapWidth = WorldPanel.computeMapWidth(screenCols)
     val sideWidth = WorldPanel.computeSideWidth(screenCols)
-
-    throw new Exception()
     val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, screenRows - 2)
     val worldPanel = WorldPanel.create(mapRect, sideWidth, screenRows - WorldPanel.controlsHeight - 1, minimapSize, bgColor, worldSize, world, worldParams)
     Return(() => {
       worldPanel
-    })
     })
     })
     })
