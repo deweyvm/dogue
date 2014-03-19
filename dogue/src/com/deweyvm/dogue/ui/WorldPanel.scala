@@ -2,7 +2,7 @@ package com.deweyvm.dogue.ui
 
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.gleany.data.Recti
+import com.deweyvm.gleany.data.{Timer, Recti}
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.data.{Array2dView, Pointer, Code}
 import com.deweyvm.dogue.common.procgen.{PerlinParams, PerlinNoise, VectorField}
@@ -13,6 +13,7 @@ import CommonImplicits._
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.loading
+import com.deweyvm.dogue.common.data.control.{Return, Yield, Coroutine}
 
 trait MapState {
   def draw(t:WorldTile, i:Int, j:Int):Unit
@@ -151,14 +152,6 @@ object WorldPanel {
     new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, ZoomState.getPointer, MapState.getPointer)
   }
 
-  trait Coroutine[T]
-  case class Return[T](progress:Int, label:String, f:() => T) extends Coroutine[T] {
-    def apply() = f()
-  }
-
-  case class Yield[T](progress:Int, label:String, f:()=>Coroutine[T]) extends Coroutine[T] {
-    def apply() = f()
-  }
 
   /**
    * An ad-hoc coroutine for loading everythin in stages
@@ -175,7 +168,6 @@ object WorldPanel {
     val date = DateConstants(framesPerDay = 60*60*24*60)
     val perlin = PerlinParams(worldSize/4, 8, worldSize, seed)
     val worldParams = WorldParams(minimapSize, perlin, date)
-
 
     import loading._
     Yield(0, "Loading region data", () => {
@@ -194,16 +186,18 @@ object WorldPanel {
     Yield(75, "Choosing biomes", () => {
     val biomeMap = new BiomeMap(moistureMap, surface, latMap, altRegions, biomes)
     Yield(88, "Constructing ecosphere", () => {
-    Return(99,"Choosing Biomes", () => {
+    Yield(100, "Finished", () => {
     val eco = Ecosphere.buildEcosphere(worldParams, latMap, noise, surface, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, Vector())
-
     val world = World.create(worldParams, eco)
-
-
     val mapWidth = WorldPanel.computeMapWidth(screenCols)
     val sideWidth = WorldPanel.computeSideWidth(screenCols)
+
+    throw new Exception()
     val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, screenRows - 2)
-    WorldPanel.create(mapRect, sideWidth, screenRows - WorldPanel.controlsHeight - 1, minimapSize, bgColor, worldSize, world, worldParams)
+    val worldPanel = WorldPanel.create(mapRect, sideWidth, screenRows - WorldPanel.controlsHeight - 1, minimapSize, bgColor, worldSize, world, worldParams)
+    Return(() => {
+      worldPanel
+    })
     })
     })
     })

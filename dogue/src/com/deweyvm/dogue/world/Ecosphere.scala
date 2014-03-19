@@ -45,7 +45,7 @@ object Ecosphere {
 
     override def update = {
       if (Controls.Insert.justPressed) {
-        val (r, t) = Timer.timer(() => {
+        val (t, r) = Timer.timer(() => {
           val b = for {
             biomes <- Loads.loadBiomes(latRegions, altRegions, surfaceRegions)
           } yield {
@@ -101,50 +101,12 @@ object Ecosphere {
       (t, h, altitude)
     }
   }
-
-
-  /* create(worldParams:WorldParams):Ecosphere = {
-    val seed = worldParams.seed
-    val cols = worldParams.size
-    val rows = cols
-
-
-    val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.get
-    val latitudeMap = new LatitudeMap(cols, rows, latRegions)
-    val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).get
-
-    def time[T](t: => T) = Timer.timer(() => t)
-    val (noise,       perlinTime)   = time(new PerlinNoise(worldParams.perlin).render)
-    val (surfaceMap,  surfaceTime)  = time(new SurfaceMap(noise, worldParams.perlin, surfaceRegions))
-    val (windMap,     windTime)     = time(new StaticWindMap(surfaceMap.heightMap, 10000, 1, seed))
-    val (moistureMap, moistureTime) = time(new MoistureMap(surfaceMap, latitudeMap.latitude, windMap.arrows, 0.5, cols/2, seed))
-    val (biomeMap,    biomeTime)    = time(new BiomeMap(moistureMap, surfaceMap, latitudeMap, altRegions, biomes))
-
-    val timeStrings = {
-      val sum = (perlinTime + windTime + surfaceTime + biomeTime + moistureTime).toDouble
-      def pc(d:Double):Int = ((d/sum)*100).toInt
-      val w = pc(windTime)
-      val h = pc(surfaceTime)
-      val b = pc(biomeTime)
-      val m = pc(moistureTime)
-      val p = pc(perlinTime)
-      Vector(
-        "wind     (%02d)" format w,
-        "height   (%02d)" format h,
-        "biome    (%02d)" format b,
-        "moisture (%02d)" format m,
-        "perlin   (%02d)" format p)
-    }
-    buildEcosphere(worldParams, latitudeMap, noise, surfaceMap, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, timeStrings)
-
-
-  }*/
 }
 
 trait Ecosphere {
   val cols:Int
   val rows:Int
-  def getLatitude(i:Int, j:Int):LatitudinalRegion = Latitude.Void
+  def getLatitude(i:Int, j:Int):LatitudinalRegion
   def getElevation(i:Int, j:Int):(SurfaceType, Meters, AltitudinalRegion) = (SurfaceType.Void, 0.m, Altitude.Void)
   def getWind(i:Int, j:Int):Arrow = Arrow(1.dup, 1)
   def getBiome(i:Int, j:Int):(Biome,Color) = (Biomes.Void,Color.Black)

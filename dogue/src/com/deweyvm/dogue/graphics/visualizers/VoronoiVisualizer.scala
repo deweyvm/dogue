@@ -15,7 +15,7 @@ class VoronoiVisualizer extends Visualizer {
   val scale = vorScale
 
   def time[T](s:String, f: () => T) = {
-    val (t, time) = Timer.timer(f)
+    val (time, t) = Timer.timer(f)
     println("%s: %dms" format (s, time/1000000))
     t
   }
