@@ -5,7 +5,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.dogue.common.threading.DogueFuture
-import com.deweyvm.dogue.ui.WorldPanel.F
+import com.deweyvm.dogue.ui.WorldPanel.Coroutine
 
 class StageFactory(cols:Int, rows:Int) {
   val serverText = Text.create(Color.Black, Color.White)
@@ -38,7 +38,7 @@ class StageFactory(cols:Int, rows:Int) {
         val sideWidth = WorldPanel.computeSideWidth(cols)
         val controlRect = Recti(1, rows - WorldPanel.controlsHeight + 1, sideWidth, WorldPanel.controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)
-        val future:DogueFuture[F[WorldPanel]] = DogueFuture createAndRun { () => WorldPanel.getLoaders(cols, rows) }
+        val future:DogueFuture[Coroutine[WorldPanel]] = DogueFuture createAndRun { () => WorldPanel.getLoaders(cols, rows) }
         def createStage(panel:Panel) = makeStage(panel, controlPanel)
         val progressPanel = new LoadingPanel(0, "Loading", Recti(1, 1, cols - 2, rows - 2), bgColor, future, createStage)
         makeStage(progressPanel)

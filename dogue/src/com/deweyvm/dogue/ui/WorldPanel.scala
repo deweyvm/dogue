@@ -151,15 +151,19 @@ object WorldPanel {
     new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, ZoomState.getPointer, MapState.getPointer)
   }
 
-  trait F[T]
-  case class ResultLoader[T](progress:Int, label:String, f:() => T) extends F[T] {
+  trait Coroutine[T]
+  case class Return[T](progress:Int, label:String, f:() => T) extends Coroutine[T] {
     def apply() = f()
   }
 
-  case class NextLoader[T](progress:Int, label:String, f:()=>F[T]) extends F[T] {
+  case class Yield[T](progress:Int, label:String, f:()=>Coroutine[T]) extends Coroutine[T] {
     def apply() = f()
   }
-  def getLoaders(screenCols:Int, screenRows:Int):F[WorldPanel] = {
+
+  /**
+   * An ad-hoc coroutine for loading everythin in stages
+   */
+  def getLoaders(screenCols:Int, screenRows:Int):Coroutine[WorldPanel] = {
     val seed = 0//System.nanoTime
     val worldSize = 256
     val cols = worldSize
@@ -174,23 +178,23 @@ object WorldPanel {
 
 
     import loading._
-    NextLoader(0, "Loading region data", () => {
+    Yield(0, "Loading region data", () => {
     val (altRegions, latRegions, surfaceRegions) = Loads.loadRegionMaps.get
     val latMap = new LatitudeMap(cols, rows, latRegions)
-    NextLoader(12, "Loading biome data", () => {
+    Yield(12, "Loading biome data", () => {
     val biomes = Loads.loadBiomes(latRegions, altRegions, surfaceRegions).get
-    NextLoader(25, "Generating noise", () => {
+    Yield(25, "Generating noise", () => {
     val noise = new PerlinNoise(worldParams.perlin).render
-    NextLoader(34, "Generating surface features", () => {
+    Yield(34, "Generating surface features", () => {
     val surface = new SurfaceMap(noise, worldParams.perlin, surfaceRegions)
-    NextLoader(50, "Generating wind currents", () => {
+    Yield(50, "Generating wind currents", () => {
     val windMap = new StaticWindMap(surface.heightMap, 10000, 1, seed)
-    NextLoader(62, "Plotting average rainfall", () => {
+    Yield(62, "Plotting average rainfall", () => {
     val moistureMap = new MoistureMap(surface, latMap.latitude, windMap.arrows, 0.5, cols/2, seed)
-    NextLoader(75, "Choosing biomes", () => {
+    Yield(75, "Choosing biomes", () => {
     val biomeMap = new BiomeMap(moistureMap, surface, latMap, altRegions, biomes)
-    NextLoader(88, "Constructing ecosphere", () => {
-    ResultLoader(99,"Choosing Biomes", () => {
+    Yield(88, "Constructing ecosphere", () => {
+    Return(99,"Choosing Biomes", () => {
     val eco = Ecosphere.buildEcosphere(worldParams, latMap, noise, surface, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, Vector())
 
     val world = World.create(worldParams, eco)
