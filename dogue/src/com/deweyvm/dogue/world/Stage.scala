@@ -6,12 +6,9 @@ import com.deweyvm.dogue.entities.Tile
 
 import com.deweyvm.dogue.net.Client
 import com.deweyvm.dogue.common.data.{Code, Array2d}
-import com.deweyvm.dogue.graphics.Renderer
-import com.deweyvm.gleany.data.{Timer, Point2d, Point2f, Recti}
+import com.deweyvm.gleany.data.{Point2d, Recti}
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
-import com.deweyvm.dogue.Dogue
-import com.badlogic.gdx.Gdx
 
 trait StageType
 
@@ -25,8 +22,6 @@ object Stage {
 case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
   val rect = Recti(0, 0, cols, rows)
 
-  val rightPartition = 32
-  val testText = Text.fromString("this is a test", Color.Blue, Color.White)
   val borders = calculateBorders
 
   def update:Stage = {

@@ -24,7 +24,7 @@ case class TitleMenu(f:() => Stage, buttons:Pointer[Button[Stage]]) extends Menu
   def update: Menu[Stage] = {
     val newButtons = buttons.updated(Controls.AxisY.justPressed)
 
-    copy(buttons = newButtons.mapOne {_.update})
+    copy(buttons = newButtons.getMap {_.update})
   }
 
   def getResult:Option[Stage] = {

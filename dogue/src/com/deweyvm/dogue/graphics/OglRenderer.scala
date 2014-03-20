@@ -2,14 +2,11 @@ package com.deweyvm.dogue.graphics
 
 import com.badlogic.gdx.graphics.Texture
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.gleany.AssetLoader
-import com.deweyvm.gleany.data.{Point2d, Recti}
+import com.deweyvm.gleany.data.Point2d
 import com.badlogic.gdx.graphics.g2d.{TextureRegion, SpriteBatch, Sprite}
 import com.deweyvm.dogue.common.data.Code
 import com.badlogic.gdx.Gdx
 import scala.collection.mutable.ArrayBuffer
-import com.deweyvm.dogue.common.CommonImplicits
-import CommonImplicits._
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.deweyvm.dogue.common.procgen._

@@ -10,7 +10,7 @@ class StageManager(stages:Pointer[Stage]) {
   def update:StageManager = {
     val inc = Controls.Tab.justPressed.select(1, 0)
 
-    new StageManager(stages.updated(inc).mapOne(_.update))
+    new StageManager(stages.updated(inc).getMap(_.update))
   }
 
   def draw() {

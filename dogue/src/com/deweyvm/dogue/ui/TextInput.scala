@@ -12,6 +12,7 @@ import scala.Some
 
 
 object TextInput {
+  var active:Option[String] = None
   val chat = "chat"
   private val parser = new CommandParser
   def getPrompt = Client.name + ": "
@@ -120,10 +121,6 @@ object TextInput {
 
 
   }
-
-
-  var active:Option[String] = None
-
 }
 
 case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Color, fgColor:Color, string:String) {

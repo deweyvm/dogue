@@ -29,12 +29,11 @@ class StageFactory(cols:Int, rows:Int) {
         val fgColor = Color.White
         val textInput = TextInput.create(TextInput.chat, cols - 2, inputHeight, bgColor, fgColor)
         val infoRect = Recti(1, 1, cols - 2, rows - 2 - inputHeight - 3)
-        val textOutput = InfoPanel.makeNew(infoRect, bgColor)//new TextOutput()
+        val textOutput = InfoPanel.makeNew(infoRect, bgColor)
         val chatRect = Recti(1, 1, cols - 2, rows - 2)
         val chatPanel = new ChatPanel(chatRect, bgColor, fgColor, Client.instance, textInput, textOutput)
         makeStage(chatPanel)
       case Stage.World =>
-        val mapWidth = WorldPanel.computeMapWidth(cols)
         val sideWidth = WorldPanel.computeSideWidth(cols)
         val controlRect = Recti(1, rows - WorldPanel.controlsHeight + 1, sideWidth, WorldPanel.controlsHeight - 1 - 1)
         val controlPanel = new Panel(controlRect, bgColor)

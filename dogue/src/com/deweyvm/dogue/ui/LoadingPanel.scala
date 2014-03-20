@@ -8,8 +8,6 @@ import com.deweyvm.dogue.common.{logging, CommonImplicits}
 import CommonImplicits._
 import com.deweyvm.dogue.common.data.control.{YieldResult, Return, Yield, Coroutine}
 import com.deweyvm.dogue.input.Controls
-import org.scalacheck.Prop.False
-import com.deweyvm.dogue.common.logging.Log
 
 object LoadingPanel {
   def create(rect:Recti,
