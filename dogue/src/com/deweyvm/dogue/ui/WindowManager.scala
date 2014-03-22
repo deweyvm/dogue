@@ -5,6 +5,8 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Client
+import com.deweyvm.dogue.graphics.WindowRenderer
+import scala.collection.immutable.IndexedSeq
 
 class WindowManager(screenCols:Int, screenRows:Int) {
 
@@ -18,29 +20,31 @@ class WindowManager(screenCols:Int, screenRows:Int) {
    updatedWindows ++ newWindows
   }
 
-  def draw(windows:Seq[Window]) {
-
-    windows foreach { window =>
-      window.draw()
-      drawBorder(window.rect)
+  def draw(windows:Seq[Window])(r:WindowRenderer) = {
+    val winDraws = windows.foldLeft(r) { (ren,window) =>
+      ren <+| window.draw <+| drawBorder(window.rect)
     }
     val string = Client.instance.getStatus
-    Text.create(Color.Black, Color.White).append(string).draw(screenCols - string.length, screenRows - 1)
+    winDraws <+| Text.create(Color.Black, Color.White).append(string).draw(screenCols - string.length, screenRows - 1)
   }
 
-  private def drawBorder(rect:Recti) {
+  private def drawBorder(rect:Recti)(r:WindowRenderer) = {
     def makeTile(code:Code) = Tile(code, Color.Black, Color.White)
-    (rect.x + 1 until rect.right) foreach { i =>
-      makeTile(Code.═).draw(i, rect.y)
-      makeTile(Code.═).draw(i, rect.bottom)
-    }
-    (rect.y + 1 until rect.bottom) foreach { j =>
-      makeTile(Code.║).draw(rect.x, j)
-      makeTile(Code.║).draw(rect.right, j)
-    }
-    makeTile(Code.╔).draw(rect.x, rect.y)
-    makeTile(Code.╗).draw(rect.right, rect.y)
-    makeTile(Code.╚).draw(rect.x, rect.bottom)
-    makeTile(Code.╝).draw(rect.right, rect.bottom)
+    val hTile = makeTile(Code.═)
+    val vTile = makeTile(Code.║)
+    val h = (rect.x + 1 until rect.right).map { i =>
+      List((i, rect.y, hTile),
+           (i, rect.bottom, hTile))
+    }.flatten
+    val v = (rect.y + 1 until rect.bottom).map { j =>
+      List((rect.x, j, vTile),
+           (rect.right, j, vTile))
+    }.flatten
+    r <++ h <++ v <+
+      (rect.x, rect.y, makeTile(Code.╔)) <+
+      (rect.right, rect.y, makeTile(Code.╗)) <+
+      (rect.x, rect.bottom, makeTile(Code.╚)) <+
+      (rect.right, rect.bottom, makeTile(Code.╝))
+
   }
 }

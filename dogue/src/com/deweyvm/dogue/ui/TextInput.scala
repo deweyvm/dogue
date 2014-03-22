@@ -9,6 +9,8 @@ import com.deweyvm.dogue.net.{Client, Transmitter}
 import com.deweyvm.dogue.common.logging.Log
 import com.deweyvm.dogue.common.parsing.CommandParser
 import scala.Some
+import com.deweyvm.dogue.graphics.WindowRenderer
+import scala.collection.immutable.IndexedSeq
 
 
 object TextInput {
@@ -141,14 +143,18 @@ case class TextInput(id:String, prompt:String, width:Int, height:Int, bgColor:Co
     (this.copy(prompt=TextInput.getPrompt, string = TextInput.take(id)), serverCommands)
   }
 
-  def draw(iRoot:Int, jRoot:Int) {
+  def drawCursor(iRoot:Int, jRoot:Int, end:Int)(r:WindowRenderer):WindowRenderer = {
+    (text.length >= 0 && text(0).width > 0).partial(
+      cursor(Game.getFrame/flashRate % 2).draw(iRoot+text(text.length - 1).width, jRoot + end - 1)(r)
+    ).getOrElse(r)
+  }
+
+  def draw(iRoot:Int, jRoot:Int)(r:WindowRenderer):WindowRenderer = {
     val iStart = math.max(0, text.length - height)
     val end = math.min(text.length, height)
-    for (i <- 0 until end) {
-      text(i + iStart).draw(iRoot, jRoot + i)
+    val lines = for (i <- 0 until end) yield {
+      text(i + iStart).draw(iRoot, jRoot + i) _
     }
-    if (text.length >= 0 && text(0).width > 0)  {
-      cursor(Game.getFrame/flashRate % 2).draw(iRoot+text(text.length - 1).width, jRoot + end - 1)
-    }
+    r <++| lines <+| drawCursor(iRoot, jRoot, end)
   }
 }

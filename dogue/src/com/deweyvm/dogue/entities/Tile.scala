@@ -8,8 +8,8 @@ object Tile {
   val Blank = Tile(Code.`?`, Color.White, Color.Pink)
 }
 case class Tile(code:Code, bgColor:Color, fgColor:Color) {
-  def draw(i:Int, j:Int) = {
+  /*def draw(i:Int, j:Int) = {
     Dogue.renderer.draw(this, i, j)
-  }
+  }*/
 
 }

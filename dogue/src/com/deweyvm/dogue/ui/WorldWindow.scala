@@ -16,13 +16,13 @@ import com.deweyvm.dogue.loading
 import com.deweyvm.dogue.common.data.control.{Return, Yield, Coroutine}
 
 trait MapState {
-  def draw(t:WorldTile, i:Int, j:Int):Unit
+  def renderTile(t:WorldTile):Tile
 }
 
 object MapState {
   var maxWind = 1.0
   case object Wind extends MapState {
-    def draw(t:WorldTile, i:Int, j:Int) {
+    def renderTile(t:WorldTile) = {
       val dir = t.wind.normalize
       val max = math.max(math.abs(dir.x), math.abs(dir.y))
       val code =
@@ -53,12 +53,12 @@ object MapState {
       if (magnitude > maxWind) {
         maxWind = magnitude
       }
-      Tile(code, /*t.tile.bgColor*/VectorField.magToColor(magnitude, maxWind), Color.White).draw(i, j)
+      Tile(code, /*t.tile.bgColor*/VectorField.magToColor(magnitude, maxWind), Color.White)
     }
   }
 
   case object Topography extends MapState {
-    def draw(t:WorldTile, i:Int, j:Int) {
+    def renderTile(t:WorldTile) = {
       val (color1,color2) = t.surface.isWater match {
         case false =>
           (Color.DarkGreen, Color.Grey)
@@ -71,38 +71,38 @@ object MapState {
       } else {
         color1.brighten(d)
       }
-      t.tile.copy(bgColor = color, fgColor = Color.White, code = t.biome.code).draw(i, j)
+      t.tile.copy(bgColor = color, fgColor = Color.White, code = t.biome.code)
 
     }
   }
 
   case object Latitude extends MapState {
-    def draw(t:WorldTile, i:Int, j:Int) {
-      t.tile.copy(bgColor = t.latitude.color).draw(i, j)
+    def renderTile(t:WorldTile) = {
+      t.tile.copy(bgColor = t.latitude.color)
     }
   }
 
   case object Biome extends MapState {
-    def draw(t:WorldTile, i:Int, j:Int) {
+    def renderTile(t:WorldTile) = {
       val color = t.biomeColor
-      t.tile.copy(bgColor = color, code = t.biome.code).draw(i, j)
+      t.tile.copy(bgColor = color, code = t.biome.code)
     }
   }
 
   case object Nychthemera extends MapState {
-    def draw(t:WorldTile, i:Int, j:Int) {
+    def renderTile(t:WorldTile) = {
       val light = Color.fromHsb(t.daylight.toFloat/2)
-      t.tile.copy(bgColor = light).draw(i, j)
+      t.tile.copy(bgColor = light)
     }
   }
 
   case object Moisture extends MapState {
-    def draw(t:WorldTile, i:Int, j:Int) {
+    def renderTile(t:WorldTile) = {
       if (t.biome.spec.surface.isWater) {
-        t.tile.copy(bgColor = Color.Black).draw(i, j)
+        t.tile.copy(bgColor = Color.Black)
       } else {
         val c = Color.fromHsb(t.moisture.d.toFloat/(10000*2) % 1)
-        t.tile.copy(bgColor = c).draw(i, j)
+        t.tile.copy(bgColor = c)
       }
     }
   }

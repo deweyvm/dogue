@@ -6,6 +6,8 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
+import com.deweyvm.dogue.graphics.WindowRenderer
+
 trait WindowId
 trait WindowMessage
 
@@ -14,7 +16,7 @@ trait WindowContents {
   def outgoing:Map[WindowId, Seq[WindowMessage]]
   def update(s:Seq[WindowMessage]):Option[WindowContents]
   def spawnWindow:Option[Window]
-  def draw():Unit
+  def draw(r:WindowRenderer):WindowRenderer
 
   /**
    *
@@ -40,21 +42,20 @@ case class Window(rect:Recti, bgColor:Color, contents:WindowContents, id:WindowI
   def getOutgoing:Map[WindowId, Seq[WindowMessage]] = contents.outgoing
   def spawnWindow:Option[Window] = contents.spawnWindow
 
-  private def drawBackground() {
+  private def drawBackground(r:WindowRenderer):WindowRenderer = {
     val xMin = rect.x
     val xMax = rect.x + rect.width
     val yMin = rect.y
     val yMax = rect.y + rect.height
-    for (i <- xMin until xMax;
-         j <- yMin until yMax) {
-      Tile(Code.` `, bgColor, bgColor).draw(i, j)
+    val draws = for (i <- xMin until xMax;
+         j <- yMin until yMax) yield {
+      (i, j, Tile(Code.` `, bgColor, bgColor))
     }
+    r <++ draws
   }
 
-  final def draw() {
-    println("draw windows")
-    drawBackground()
-    contents.draw()
+  final def draw(r:WindowRenderer):WindowRenderer = {
+    r <+| drawBackground <+| contents.draw
   }
 }
 

@@ -8,11 +8,12 @@ import com.deweyvm.dogue.common.threading.DogueFuture
 import com.deweyvm.dogue.common.data.control.Coroutine
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import com.deweyvm.dogue.graphics.WindowRenderer
 
-class StageFactory(screenCols:Int, screenRows:Int) {
+class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   val wholeScreen = Recti(0, 0, screenCols, screenRows)
   val bgColor = Color.Blue
-  private def makeStage(panels:Window*) = {
+  private def makeWorkspace(panels:Window*) = {
     Workspace.create(screenCols, screenRows, panels.toVector)
   }
 
@@ -21,26 +22,21 @@ class StageFactory(screenCols:Int, screenRows:Int) {
 
     override def outgoing: Map[WindowId, Seq[WindowMessage]] = Map()
 
-    override def draw(): Unit = ()
+    override def draw(r:WindowRenderer) = r
 
     override def update(s: Seq[WindowMessage]) = this.some
   }
 
-  def create(t:StageType):Workspace = {
-    t match {
-      case Stage.Blank =>
-        val blankRect = wholeScreen
-        makeStage(new Window(blankRect, Color.Black, BlankContents, new WindowId{}))
+  def create:Workspace = {
 
-      case Stage.Title =>
-        val titleRect = wholeScreen
-        def makePopup() = {
-          Window(Recti(20,20,screenCols-40, screenRows-40), bgColor, BlankContents, new WindowId{})
-        }
-        val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(bgColor,makePopup ))
-        val titlePanel = Window(titleRect, bgColor, screen, new WindowId{})
-        makeStage(titlePanel)
-      case _ => throw new RuntimeException
+      val titleRect = wholeScreen
+      def makePopup() = {
+        BlankContents.makeWindow(Recti(20,20,screenCols-40, screenRows-40), bgColor)
+      }
+      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(bgColor,makePopup ))
+      val titlePanel = screen.makeWindow(titleRect, bgColor)
+      makeWorkspace(titlePanel)
+
       /*case Stage.Chat =>
          val inputHeight = 3
          val bgColor = Color.Black
@@ -63,8 +59,8 @@ class StageFactory(screenCols:Int, screenRows:Int) {
          def createStage(panel:Window) = makeStage(panel, controlPanel, tooltip)
          val progressPanel = LoadingWindow.create(Recti(1, 1, screenCols - 2, screenRows - 2), bgColor, future, createStage)
          makeStage(progressPanel)
- */
-    }
+
+    } */
   }
 }
 

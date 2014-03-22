@@ -1,9 +1,10 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.world.Stage
+import com.deweyvm.dogue.world.Workspace
 import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.gleany.graphics.Color
+import com.deweyvm.dogue.graphics.WindowRenderer
 
 object TitleMenu {
   def create(bgColor:Color, f:() => Window) = {
@@ -30,7 +31,8 @@ case class TitleMenu(f:() => Window, buttons:Pointer[Button[Window]]) extends Me
     buttons.get.getResult
   }
 
-  def draw() {
-    buttons.foreach(_.drawBg(), _.draw())
+  def draw(r:WindowRenderer):WindowRenderer = {
+    val what:Seq[WindowRenderer => WindowRenderer] = buttons.selectMap(_.drawBg _, _.draw _)
+    r <++| what
   }
 }

@@ -3,7 +3,7 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.threading.DogueFuture
-import com.deweyvm.dogue.world.Stage
+import com.deweyvm.dogue.world.Workspace
 import com.deweyvm.dogue.common.{logging, CommonImplicits}
 import CommonImplicits._
 import com.deweyvm.dogue.common.data.control.{YieldResult, Return, Yield, Coroutine}

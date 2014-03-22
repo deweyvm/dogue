@@ -9,15 +9,7 @@ import com.deweyvm.dogue.common.data.{Code, Array2d}
 import com.deweyvm.gleany.data.{Point2d, Recti}
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
-
-trait StageType
-
-object Stage {
-  case object Blank extends StageType
-  case object Title extends StageType
-  case object Chat extends StageType
-  case object World extends StageType
-}
+import com.deweyvm.dogue.graphics.WindowRenderer
 
 object Workspace {
   def create(screenCols:Int, screenRows:Int, windows:Vector[Window]) = {
@@ -27,10 +19,11 @@ object Workspace {
 
 case class Workspace private(screenCols:Int, screenRows:Int, windows:Vector[Window], manager:WindowManager) {
   def update:Workspace = copy(windows = manager.updateWorkspace(windows))
-  def draw() {
-    manager.draw(windows)
+  def draw(r:WindowRenderer):WindowRenderer = {
+    manager.draw(windows)(r)
   }
 }
+
 /*case class Stage(cols:Int, rows:Int, serverStatus:Text) {
   val manager = new WindowManager
   val rect = Recti(0, 0, cols, rows)
