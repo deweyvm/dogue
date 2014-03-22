@@ -11,7 +11,7 @@ import CommonImplicits._
 import com.deweyvm.dogue.graphics.WindowRenderer
 
 class WorkspaceFactory(screenCols:Int, screenRows:Int) {
-  val wholeScreen = Recti(0, 0, screenCols, screenRows)
+  val wholeScreen = Recti(1, 1, screenCols-2, screenRows-2)
   val bgColor = Color.Blue
   private def makeWorkspace(panels:Window*) = {
     Workspace.create(screenCols, screenRows, panels.toVector)
@@ -31,7 +31,7 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
 
       val titleRect = wholeScreen
       def makePopup() = {
-        BlankContents.makeWindow(Recti(20,20,screenCols-40, screenRows-40), bgColor)
+        TestChat.create(NewTextInput.create("what", Color.Black, Color.Red)).makeWindow(Recti(20,20,screenCols-40, screenRows-40), Color.White)
       }
       val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(bgColor,makePopup ))
       val titlePanel = screen.makeWindow(titleRect, bgColor)

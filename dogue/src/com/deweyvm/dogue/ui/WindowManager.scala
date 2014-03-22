@@ -22,7 +22,7 @@ class WindowManager(screenCols:Int, screenRows:Int) {
 
   def draw(windows:Seq[Window])(r:WindowRenderer) = {
     val winDraws = windows.foldLeft(r) { (ren,window) =>
-      ren <+| window.draw <+| drawBorder(window.rect)
+      (ren.at(window.rect.x, window.rect.y).move(1, 1) <+| window.draw).move(-1, -1) <+| drawBorder(window.rect)
     }
     val string = Client.instance.getStatus
     winDraws <+| Text.create(Color.Black, Color.White).append(string).draw(screenCols - string.length, screenRows - 1)
@@ -32,19 +32,19 @@ class WindowManager(screenCols:Int, screenRows:Int) {
     def makeTile(code:Code) = Tile(code, Color.Black, Color.White)
     val hTile = makeTile(Code.═)
     val vTile = makeTile(Code.║)
-    val h = (rect.x + 1 until rect.right).map { i =>
-      List((i, rect.y, hTile),
-           (i, rect.bottom, hTile))
+    val h = (0 until rect.width).map { i =>
+      List((i, 0, hTile),
+           (i, rect.height - 1, hTile))
     }.flatten
-    val v = (rect.y + 1 until rect.bottom).map { j =>
-      List((rect.x, j, vTile),
-           (rect.right, j, vTile))
+    val v = (0 until rect.height).map { j =>
+      List((0, j, vTile),
+           (rect.width - 1, j, vTile))
     }.flatten
     r <++ h <++ v <+
-      (rect.x, rect.y, makeTile(Code.╔)) <+
-      (rect.right, rect.y, makeTile(Code.╗)) <+
-      (rect.x, rect.bottom, makeTile(Code.╚)) <+
-      (rect.right, rect.bottom, makeTile(Code.╝))
+      (0,              0,               makeTile(Code.╔)) <+
+      (rect.width - 1, 0,               makeTile(Code.╗)) <+
+      (0,              rect.height - 1, makeTile(Code.╚)) <+
+      (rect.width - 1, rect.height - 1, makeTile(Code.╝))
 
   }
 }

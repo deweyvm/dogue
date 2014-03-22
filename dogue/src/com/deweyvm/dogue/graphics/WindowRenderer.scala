@@ -7,6 +7,8 @@ object WindowRenderer {
 }
 
 case class WindowRenderer(draws:Map[(Int,Int), Tile], originX:Int, originY:Int) {
+  def at(i:Int, j:Int) = copy(originX = i, originY = j)
+  def move(i:Int, j:Int) = copy(originX = originX + i, originY = originY + j)
   def <+(i:Int, j:Int, tile:Tile) = {
     val updated = draws.updated((i + originX, j + originY), tile)
     copy(draws = updated)
@@ -24,6 +26,10 @@ case class WindowRenderer(draws:Map[(Int,Int), Tile], originX:Int, originY:Int) 
   def <+|(f:WindowRenderer => WindowRenderer) = {
     val drawn = f(WindowRenderer(Map(), originX, originY))
     WindowRenderer(draws ++ drawn.draws, drawn.originX, drawn.originY)
+  }
+
+  def <+|?(f:Option[WindowRenderer => WindowRenderer]) = {
+    f.map {this <+| _}.getOrElse(this)
   }
 
   def <++|(fs:Seq[WindowRenderer => WindowRenderer]) = {

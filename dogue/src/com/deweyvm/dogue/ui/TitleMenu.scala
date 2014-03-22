@@ -32,7 +32,6 @@ case class TitleMenu(f:() => Window, buttons:Pointer[Button[Window]]) extends Me
   }
 
   def draw(r:WindowRenderer):WindowRenderer = {
-    val what:Seq[WindowRenderer => WindowRenderer] = buttons.selectMap(_.drawBg _, _.draw _)
-    r <++| what
+    r <++| buttons.selectMap(_.drawBg _, _.draw _)
   }
 }

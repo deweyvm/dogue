@@ -8,28 +8,6 @@ import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
 import com.deweyvm.dogue.graphics.WindowRenderer
 
-trait WindowId
-trait WindowMessage
-
-trait WindowContents {
-  self =>
-  def outgoing:Map[WindowId, Seq[WindowMessage]]
-  def update(s:Seq[WindowMessage]):Option[WindowContents]
-  def spawnWindow:Option[Window]
-  def draw(r:WindowRenderer):WindowRenderer
-
-  /**
-   *
-   * @param rect the rect of the contents. the rect of the window will be larger by 2x2
-   * @param bgColor the background color of the window
-   * @return The created window and its associated ID
-   */
-  def makeWindow(rect:Recti, bgColor:Color):Window = {
-    val id = new WindowId{}
-    Window(rect, bgColor, this, id)
-  }
-}
-
 case class Window(rect:Recti, bgColor:Color, contents:WindowContents, id:WindowId) {
 
   def contains(i:Int, j:Int):Boolean = rect.contains(Point2d(i,j))
@@ -43,13 +21,10 @@ case class Window(rect:Recti, bgColor:Color, contents:WindowContents, id:WindowI
   def spawnWindow:Option[Window] = contents.spawnWindow
 
   private def drawBackground(r:WindowRenderer):WindowRenderer = {
-    val xMin = rect.x
-    val xMax = rect.x + rect.width
-    val yMin = rect.y
-    val yMax = rect.y + rect.height
-    val draws = for (i <- xMin until xMax;
-         j <- yMin until yMax) yield {
-      (i, j, Tile(Code.` `, bgColor, bgColor))
+    val t = Tile(Code.` `, bgColor, bgColor)
+    val draws = for (i <- 0 until rect.width - 2;
+                     j <- 0 until rect.height - 2) yield {
+      (i, j, t)
     }
     r <++ draws
   }
