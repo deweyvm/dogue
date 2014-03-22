@@ -1,28 +1,23 @@
 package com.deweyvm.dogue.ui
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.net.{Client, Transmitter}
-import com.deweyvm.dogue.common.logging.Log
-import com.deweyvm.gleany.data.Recti
-import com.deweyvm.dogue.Game
-import com.deweyvm.dogue.common.protocol.{DogueOps, Command, DogueMessage}
+import com.deweyvm.dogue.net.Transmitter
+import com.deweyvm.dogue.common.protocol.DogueMessage
 import com.deweyvm.dogue.common.parsing.CommandParser
 
-case class ChatPanel(override val rect:Recti,
-                     bgColor:Color,
-                     fgColor:Color,
-                     transmitter:Transmitter[DogueMessage],
+
+/*case class ChatInput(transmitter:Transmitter[DogueMessage],
+                     textColor:Color,
                      input:TextInput,
-                     output:InfoPanel)
-  extends Panel(rect, bgColor) {
+                     outputId:WindowId) extends WindowContents {
   val inputHeight = input.height
   val parser = new CommandParser
-  override def getRects:Vector[Recti] =
-    Vector(Recti(x, y, width, height - inputHeight - 1),
-           Recti(x, y + (height - inputHeight), width, inputHeight))
-
-  override def update = {
-    val (newInput, commands) = input.update(transmitter)
+  /*def outgoing:Map[WindowId, Seq[WindowMessage]]
+  def update(s:Seq[WindowMessage]):self.type
+  def draw():Unit*/
+  def outgoing:Map[WindowId, Seq[WindowMessage]] = ???
+  override def update(msgs:Seq[WindowMessage]) = {
+    /*val (newInput, commands) = input.update(transmitter)
     val (serverCommands, localCommands) = commands.partition {
       case cmd@Command(op, _,_,_) =>
         op match {
@@ -33,14 +28,14 @@ case class ChatPanel(override val rect:Recti,
     }
     serverCommands foreach transmitter.enqueue
 
-    val newPosted = transmitter.dequeue ++ localCommands
-    val newOutput = newPosted.foldLeft(output) { case (panel:InfoPanel, next:DogueMessage) =>
+    val newPosted = transmitter.dequeue ++ localCommands*/
+    /*val newOutput = newPosted.foldLeft(output) { case (panel:InfoPanel, next:DogueMessage) =>
 
       next match {
         case cmd@Command(op, src, dst, args) =>
           op match {
             case DogueOps.Say =>
-              panel.addText("<%s> %s" format (args(0), args(1)), bgColor, fgColor)
+              panel.addText("<%s> %s" format (args(0), args(1)), bgColor, textColor)
             case DogueOps.Greet =>
               panel.addText(args(0), bgColor, Color.Pink)
             case DogueOps.LocalMessage =>
@@ -58,17 +53,17 @@ case class ChatPanel(override val rect:Recti,
               Log.warn("Don't know how to process command \"%s\"" format cmd)
               panel
           }
-          //
+        //
         case _ => panel
       }
-    }
-    this.copy(input = newInput, output = newOutput.update)
+    }*/
+    //this.copy(output = newOutput.update)
+    this
   }
 
-  override def draw() {
-    super.draw()
-    output.draw()
-    input.draw(x, y + height - inputHeight)
+  def draw() {
+    //output.drawBackground()
+    //input.draw(x, y + height - inputHeight)
   }
 
-}
+}*/

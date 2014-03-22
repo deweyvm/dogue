@@ -6,10 +6,11 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 
 class Scene(cols:Int, rows:Int) {
+  val max = cols*rows
   val array = Array.tabulate[Option[Tile]](cols*rows) {_ => None}
   def set(i:Int, j:Int, t:Tile) {
     val k = Array2d.coordsToIndex(i, j, cols)
-    array(k) = t.some
+    array((k + max) % max) = t.some
   }
 
   def foreach(f:(Int, Int, Tile) => Unit) {

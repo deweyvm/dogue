@@ -6,7 +6,7 @@ import com.deweyvm.dogue.input.Controls
 import com.deweyvm.gleany.graphics.Color
 
 object TitleMenu {
-  def create(bgColor:Color, f:() => Stage) = {
+  def create(bgColor:Color, f:() => Window) = {
     val control = () => Controls.Space.justPressed
     val buttons = ButtonFactory.create(control, 10, 5)(
       "World Viewer", f
@@ -20,14 +20,13 @@ object TitleMenu {
 }
 
 
-case class TitleMenu(f:() => Stage, buttons:Pointer[Button[Stage]]) extends Menu[Stage] {
-  def update: Menu[Stage] = {
+case class TitleMenu(f:() => Window, buttons:Pointer[Button[Window]]) extends Menu[Window] {
+  def update: Menu[Window] = {
     val newButtons = buttons.updated(Controls.AxisY.justPressed)
-
     copy(buttons = newButtons.getMap {_.update})
   }
 
-  def getResult:Option[Stage] = {
+  def getResult:Option[Window] = {
     buttons.get.getResult
   }
 

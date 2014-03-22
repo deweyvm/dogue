@@ -5,7 +5,7 @@ import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 
-class StageManager(stages:Pointer[Stage]) {
+class StageManager(stages:Pointer[Workspace]) {
 
   def update:StageManager = {
     val inc = Controls.Tab.justPressed.select(1, 0)

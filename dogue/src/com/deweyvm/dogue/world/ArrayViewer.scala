@@ -9,7 +9,7 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 
 case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, xControl:Control[Int], yControl:Control[Int]) {
-  private val crosshair = new Tile(Code.+, Color.Red, Color.Pink)
+  private val crosshair = Tile(Code.+, Color.Red, Color.Pink)
 
   def update[T](a:Array2dView[T], scale:Int):ArrayViewer = {
     val width = a.cols

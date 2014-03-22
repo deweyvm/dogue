@@ -19,8 +19,9 @@ class Engine {
 
   def makeStage = {
     val pointer = Dogue.renderer match {
-      case ogl:OglRenderer if ogl.vis.isDefined =>
+      case ogl:OglRenderer if true || ogl.vis.isDefined =>
         Pointer.create(
+          factory.create(Stage.Title),
           factory.create(Stage.Blank)
         )
       case _ =>

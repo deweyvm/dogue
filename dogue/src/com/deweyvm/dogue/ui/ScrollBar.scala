@@ -14,7 +14,7 @@ import com.deweyvm.dogue.common.data.Code
  */
 class ScrollBar {
   private def makeTile(code:Code):Tile =
-    new Tile(code, Color.Black, Color.White)
+    Tile(code, Color.Black, Color.White)
 
 
   def drawTile(t:Tile)(i:Int, j:Int) {

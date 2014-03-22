@@ -9,27 +9,27 @@ import CommonImplicits._
 import com.deweyvm.dogue.common.data.control.{YieldResult, Return, Yield, Coroutine}
 import com.deweyvm.dogue.input.Controls
 
-object LoadingPanel {
+/*object LoadingWindow {
   def create(rect:Recti,
              bgColor:Color,
-             panel:DogueFuture[Coroutine[WorldPanel]],
-             makeStage:Panel => Stage):LoadingPanel = {
-    LoadingPanel(0, 0, Vector(), rect, bgColor, panel, makeStage, None, false, false)
+             panel:DogueFuture[Coroutine[WorldWindow]],
+             makeStage:Window => Stage):LoadingWindow = {
+    LoadingWindow(0, 0, Vector(), rect, bgColor, panel, makeStage, None, false, false)
   }
 }
 
-case class LoadingPanel(progress:Int,
-                        totalTime:Long,
-                        strings:Vector[String],
-                        override val rect:Recti,
-                        bgColor:Color,
-                        panel:DogueFuture[Coroutine[WorldPanel]],
-                        makeStage:Panel => Stage,
-                        newStage:Option[Stage],
-                        failed:Boolean,
-                        finished:Boolean) extends Panel(rect, bgColor) {
+case class LoadingWindow(progress:Int,
+                         totalTime:Long,
+                         strings:Vector[String],
+                         override val rect:Recti,
+                         bgColor:Color,
+                         panel:DogueFuture[Coroutine[WorldWindow]],
+                         makeStage:Window => Stage,
+                         newStage:Option[Stage],
+                         failed:Boolean,
+                         finished:Boolean) extends Window(rect, bgColor) {
 
-  override def update:Panel = {
+  override def update:Window = {
     panel.getFailure match {
       case Some(exc) if !failed =>
         val error = logging.Log.formatStackTrace(exc)
@@ -77,8 +77,8 @@ case class LoadingPanel(progress:Int,
 
   override def requestStage:Option[Stage] = newStage
 
-  override def draw() {
-    super.draw()
+  override def drawBackground() {
+    super.drawBackground()
     Text.create(bgColor, Color.White).append("Progress " + progress).draw(10,10)
     strings.zipWithIndex.foreach{case (s, i) =>
       Text.create(bgColor, Color.White).append(s).draw(10, 11 + i)
@@ -86,3 +86,4 @@ case class LoadingPanel(progress:Int,
 
   }
 }
+*/

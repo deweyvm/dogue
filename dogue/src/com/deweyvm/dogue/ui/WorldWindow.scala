@@ -53,7 +53,7 @@ object MapState {
       if (magnitude > maxWind) {
         maxWind = magnitude
       }
-      new Tile(code, /*t.tile.bgColor*/VectorField.magToColor(magnitude, maxWind), Color.White).draw(i, j)
+      Tile(code, /*t.tile.bgColor*/VectorField.magToColor(magnitude, maxWind), Color.White).draw(i, j)
     }
   }
 
@@ -117,7 +117,7 @@ object ZoomState {
   val All = Vector(Mini, Full)
   def getPointer:Pointer[ZoomState] = Pointer.create(All, 0)
 }
-object WorldPanel {
+object WorldWindow {
   val controlsHeight = 8
   val minSideWidth = 24
   val minimapSize = 69
@@ -137,32 +137,30 @@ object WorldPanel {
       minSideWidth
     }
   }
-  def create(rect:Recti,
-             tooltipWidth:Int,
-             tooltipHeight:Int,
+  /*def create(rect:Recti,
              minimapSize:Int,
              bgColor:Color,
              size:Int,
              world:World,
-             params:WorldParams):WorldPanel = {
+             params:WorldParams):WorldWindow = {
 
 
-    val tooltip = InfoPanel.makeNew(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
+
     val worldViewer = ArrayViewer(rect.width, rect.height, size/2, size/2, Controls.AxisX, Controls.AxisY)
-    new WorldPanel(rect, bgColor, world, worldViewer, tooltip, params.minimapSize, ZoomState.getPointer, MapState.getPointer)
+    new WorldWindow(rect, bgColor, world, worldViewer, params.minimapSize, ZoomState.getPointer, MapState.getPointer)
   }
 
 
   /**
    * An ad-hoc coroutine for loading everythin in stages
    */
-  def getLoaders(screenCols:Int, screenRows:Int):Coroutine[WorldPanel] = {
+  def getLoaders(screenCols:Int, screenRows:Int):Coroutine[WorldWindow] = {
     val seed = 0//System.nanoTime
     val worldSize = 256
     val cols = worldSize
     val rows = worldSize
 
-    val minimapSize = WorldPanel.minimapSize
+    val minimapSize = WorldWindow.minimapSize
     val bgColor = Color.Blue
     println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
@@ -188,10 +186,11 @@ object WorldPanel {
     Yield(88, "Constructing ecosphere", () => {
     val eco = Ecosphere.buildEcosphere(worldParams, latMap, noise, surface, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, Vector())
     val world = World.create(worldParams, eco)
-    val mapWidth = WorldPanel.computeMapWidth(screenCols)
-    val sideWidth = WorldPanel.computeSideWidth(screenCols)
+    val mapWidth = WorldWindow.computeMapWidth(screenCols)
+    val sideWidth = WorldWindow.computeSideWidth(screenCols)
     val mapRect = Recti(sideWidth + 2, 1, mapWidth - 3, screenRows - 2)
-    val worldPanel = WorldPanel.create(mapRect, sideWidth, screenRows - WorldPanel.controlsHeight - 1, minimapSize, bgColor, worldSize, world, worldParams)
+
+    val worldPanel = WorldWindow.create(mapRect, minimapSize, bgColor, worldSize, world, worldParams)
     Return(() => {
       worldPanel
     })
@@ -203,26 +202,22 @@ object WorldPanel {
     })
     })
     })
-  }
+  }*/
 }
 
-case class WorldPanel(override val rect:Recti,
+/*case class WorldWindow(override val rect:Recti,
                       bgColor:Color,
                       world:World,
                       view:ArrayViewer,
-                      tooltip:InfoPanel,
                       minimapSize:Int,
                       zoomState:Pointer[ZoomState],
                       mapState:Pointer[MapState])
-  extends Panel(rect, bgColor) {
+  extends Window(rect, bgColor) {
   val (iSpawn, jSpawn) = (0,0)
-  override def getRects:Vector[Recti] = {
-    super.getRects ++ tooltip.getRects
-  }
+
   val regionSize = 16
   val miniDiv = world.cols/minimapSize
-  override def update:WorldPanel = {
-    val newTooltip = getTooltip
+  override def update:WorldWindow = {
     val newWorld = world.update
     val incr = if (Controls.RShift.justPressed) {
       1
@@ -245,7 +240,7 @@ case class WorldPanel(override val rect:Recti,
 
     this.copy(world = newWorld,
               view = newView,
-              tooltip = newTooltip.update,
+              //tooltip = newTooltip.update,
               zoomState = newZoomState,
               mapState = newMapState)
 
@@ -262,18 +257,18 @@ case class WorldPanel(override val rect:Recti,
   }
 
 
-  private def getTooltip:InfoPanel =  {
+  /*private def getTooltip:InfoWindow =  {
     def getTooltip(t:WorldTile):Tooltip = zoomState.get match {
       case ZoomState.Full => t.regionTooltip
       case ZoomState.Mini => t.fullTooltip
     }
-    val fresh = InfoPanel.makeNew(Recti(1, 1, tooltip.width, tooltip.height), bgColor)
+    val fresh = InfoWindow.makeNew(Recti(1, 1, tooltip.width, tooltip.height), bgColor)
     val (i, j) = (view.xCursor, view.yCursor)
     val tip = getTooltip(getTiles.get(i, j)).some
     tip.foldLeft(fresh){ case (acc, tt) =>
       acc.addLines(tt.lines, bgColor, tt.color)
     }
-  }
+  }*/
 
 
 
@@ -290,10 +285,10 @@ case class WorldPanel(override val rect:Recti,
   }
 
 
-  override def draw() {
-    super.draw()
+  override def drawBackground() {
+    super.drawBackground()
     drawTiles()
-    tooltip.draw()
+    //tooltip.draw()
     drawName()
     drawDebug()
     drawDate()
@@ -319,4 +314,4 @@ case class WorldPanel(override val rect:Recti,
     val xName = x + (width - time.length)/2
     Text.fromString(time, Color.Black, Color.White).draw(xName, height)
   }
-}
+}*/

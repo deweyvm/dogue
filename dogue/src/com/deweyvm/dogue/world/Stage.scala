@@ -19,60 +19,42 @@ object Stage {
   case object World extends StageType
 }
 
-case class Stage(cols:Int, rows:Int, panels:Vector[Panel], serverStatus:Text) {
+object Workspace {
+  def create(screenCols:Int, screenRows:Int, windows:Vector[Window]) = {
+    new Workspace(screenCols, screenRows, windows, new WindowManager(screenCols, screenRows))
+  }
+}
+
+case class Workspace private(screenCols:Int, screenRows:Int, windows:Vector[Window], manager:WindowManager) {
+  def update:Workspace = copy(windows = manager.updateWorkspace(windows))
+  def draw() {
+    manager.draw(windows)
+  }
+}
+/*case class Stage(cols:Int, rows:Int, serverStatus:Text) {
+  val manager = new WindowManager
   val rect = Recti(0, 0, cols, rows)
 
-  val borders = calculateBorders
 
   def update:Stage = {
-    val updated = this.copy(panels = panels map (_.update),
-                            serverStatus = serverStatus.setString(Client.instance.getStatus))
-    //fixme #238 -- arbitrary stage is chosen
-    val newStages = panels.map {_.requestStage}.flatten
-    newStages.headOption.getOrElse(updated)
+    //update all windows, get output of all windows, give output to all windows as input and process
+
+    this.copy(windows = win,
+              serverStatus = serverStatus.setString(Client.instance.getStatus))
   }
 
   def draw() {
-    borders foreach { case (i, j, tile) =>
-      tile foreach { _.draw(i, j) }
-    }
-    panels foreach { _.draw() }
+    windows foreach { _.draw() }
+    manager.draw(windows)
     serverStatus.draw(cols - serverStatus.width, rows - 1)
   }
 
-  def calculateBorders:Array2d[Option[Tile]] = {
-    Array2d.tabulate(cols, rows) { case (i,j) =>
-      if (isSolid(i, j)) {
-        None
-      } else {
-        val up = isSolid(i, j-1)
-        val down = isSolid(i, j+1)
-        val right = isSolid(i + 1, j)
-        val left = isSolid(i - 1, j)
-        val code = (up, down, left, right) match {
-          case (true,  true,  _,     _)     => Code.═
-          case (_,     _,     true,  true)  => Code.║
-          case (true,  false, false, false) => Code.╦
-          case (false, true,  false, false) => Code.╩
-          case (false, false, true,  false) => Code.╠
-          case (false, false, false, true)  => Code.╣
-          case (false, true,  false, true)  => Code.╝
-          case (true,  false, true,  false) => Code.╔
-          case (true,  false, false, true)  => Code.╗
-          case (false, true,  true,  false) => Code.╚
-          case _                            => Code.?
-        }
-        Tile(code, Color.Black, Color.White).some
-      }
-    }
-  }
-
   def isSolid(i:Int, j:Int): Boolean = {
-    !rect.contains(Point2d(i,j)) || (panels exists { p =>
+    !rect.contains(Point2d(i,j)) || (windows exists { p =>
       p.contains(i, j)
     })
   }
 
-}
+}*/
 
 
