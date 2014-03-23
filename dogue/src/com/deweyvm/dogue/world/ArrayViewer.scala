@@ -21,7 +21,7 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
 
   def scaled(div:Int) = this.copy(xCursor = xCursor/div, yCursor = yCursor/div)
 
-  def draw(a:Array2dView[Tile], iRoot:Int, jRoot:Int, draw:(Tile,Int,Int) => Unit)(r:WindowRenderer):WindowRenderer =  {
+  def draw(a:Array2dView[WorldTile], iRoot:Int, jRoot:Int, draw:WorldTile => Tile)(r:WindowRenderer):WindowRenderer =  {
     val width = a.cols
     val height = a.rows
     val iView = (xCursor - viewHeight/2).clamp(0, width - viewWidth)
@@ -29,7 +29,7 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
     val s = a.slice(iView, jView, viewWidth, viewHeight).viewMap { case (i, j, tile) =>
       val x = iRoot + i
       val y = jRoot + j
-      (x, y, tile)
+      (x, y, draw(tile))
     }.foldLeft(r) { _ <+~ _ }
 
     s <+? (Game.getFrame % 120 < 100).partial {

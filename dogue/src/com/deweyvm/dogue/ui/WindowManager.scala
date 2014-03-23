@@ -11,13 +11,13 @@ import scala.collection.immutable.IndexedSeq
 class WindowManager(screenCols:Int, screenRows:Int) {
 
   def updateWorkspace(windows:Vector[Window]):Vector[Window] = {
+    println(windows.length)
     val messages: Map[WindowId, Seq[WindowMessage]] = windows.map {_.getOutgoing}.foldLeft(Map[WindowId, Seq[WindowMessage]]()) { _ ++ _ }
-    val updatedWindows: Vector[Window] = windows.map { w =>
-      val myMessages: Option[Seq[WindowMessage]] = messages.get(w.id)
-      myMessages map w.update getOrElse w.update(Seq())
+    windows.map { w =>
+      val myMessages: Seq[WindowMessage] = messages.get(w.id).getOrElse(Seq())
+      val (self, newWindows) =  w.update(myMessages)
+      newWindows ++ self.map{Seq(_)}.getOrElse(Seq[Window]())
     }.flatten
-    val newWindows: Vector[Window] = windows.map {_.spawnWindow}.flatten
-   updatedWindows ++ newWindows
   }
 
   def draw(windows:Seq[Window])(r:WindowRenderer) = {

@@ -14,11 +14,10 @@ case class Window(rect:Recti, bgColor:Color, contents:WindowContents, id:WindowI
 
   def getRect:Recti = rect
   def update(s:Seq[WindowMessage]) = {
-    val updated = contents.update(s)
-    updated map { c => copy(contents = c) }
+    val (updated, newWindows) = contents.update(s)
+    (updated map { c => copy(contents = c) }, newWindows)
   }
   def getOutgoing:Map[WindowId, Seq[WindowMessage]] = contents.outgoing
-  def spawnWindow:Option[Window] = contents.spawnWindow
 
   private def drawBackground(r:WindowRenderer):WindowRenderer = {
     val t = Tile(Code.` `, bgColor, bgColor)

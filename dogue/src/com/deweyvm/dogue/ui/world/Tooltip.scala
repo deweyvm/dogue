@@ -1,4 +1,4 @@
-package com.deweyvm.dogue.ui
+package com.deweyvm.dogue.ui.world
 
 import com.deweyvm.gleany.graphics.Color
 

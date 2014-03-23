@@ -9,6 +9,7 @@ import com.deweyvm.dogue.common.data.control.Coroutine
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.ui.world.WorldPanel
 
 class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   val wholeScreen = Recti(1, 1, screenCols-2, screenRows-2)
@@ -18,22 +19,31 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   }
 
   val BlankContents = new WindowContents {
-    override def spawnWindow: Option[Window] = None
-
     override def outgoing: Map[WindowId, Seq[WindowMessage]] = Map()
 
     override def draw(r:WindowRenderer) = r
 
-    override def update(s: Seq[WindowMessage]) = this.some
+    override def update(s: Seq[WindowMessage]) = (this.some, Seq())
   }
 
   def create:Workspace = {
 
       val titleRect = wholeScreen
       def makePopup() = {
-        TestChat.create(NewTextInput.create("what", Color.Black, Color.Red)).makeWindow(Recti(20,20,screenCols-40, screenRows-40), Color.White)
+        val output = TextPanel.create(Color.White, Color.Black).makeWindow(Recti(1, 1, screenCols-40, screenRows-40), Color.Red)
+        val chat = TestChat.create(NewTextInput.create("what", Color.Black, Color.Red)).addLink(output.id)
+        val chatWindow = chat.makeWindow(Recti(20,40,screenCols-40, screenRows-40), Color.White)
+        List(output, chatWindow)
       }
-      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(bgColor,makePopup ))
+      def makePopup2() = {
+        val output = TextPanel.create(Color.Blue, Color.White).makeWindow(Recti(1, 1, 20, screenRows - 2), Color.White)
+        def makeWindows(c:WindowContents) = {
+          Seq(c.makeWindow(wholeScreen, Color.Blue),
+              output)
+        }
+        List(LoadingPanel.create(wholeScreen, Color.Blue, makeWindows, DogueFuture.createAndRun(() => WorldPanel.getLoaders(screenCols, screenRows, output.id))).makeWindow(wholeScreen, Color.Blue))
+      }
+      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(bgColor, makePopup2))
       val titlePanel = screen.makeWindow(titleRect, bgColor)
       makeWorkspace(titlePanel)
 

@@ -14,24 +14,25 @@ import com.deweyvm.dogue.common.data.Code
 
 trait TextInputId
 
+
 object TestChat {
   def create(input:NewTextInput) = TestChat(input, Seq())
 }
 
 case class TestChat(input:NewTextInput, links:Seq[WindowId]) extends WindowContents {
   def addLink(id:WindowId) = copy(links = links :+ id)
-  def outgoing: Map[WindowId,Seq[WindowMessage]] = {
+  override def outgoing: Map[WindowId,Seq[WindowMessage]] = {
     input.getOutput.map { s =>
       links.map { l => l -> Vector(TextMessage(s))}.toMap
     }.getOrElse(Map())
 
   }
-  def spawnWindow: Option[Window] = None
-  def update(s: Seq[WindowMessage]): Option[WindowContents] = {
-    copy(input = input.update).some
+
+  override def update(s: Seq[WindowMessage]): (Option[TestChat], Seq[Window]) = {
+    (copy(input = input.update).some, Seq())
   }
 
-  def draw(r:WindowRenderer):WindowRenderer = {
+  override def draw(r:WindowRenderer):WindowRenderer = {
     input.draw(0, 0, 30, 2)(r)
   }
 }

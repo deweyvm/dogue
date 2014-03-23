@@ -6,13 +6,12 @@ import com.deweyvm.gleany.graphics.Color
 
 trait WindowContents {
   self =>
-  def outgoing:Map[WindowId, Seq[WindowMessage]]
-  def update(s:Seq[WindowMessage]):Option[WindowContents]
-  def spawnWindow:Option[Window]
+  def outgoing:Map[WindowId, Seq[WindowMessage]] = Map()
+  def update(s:Seq[WindowMessage]):(Option[WindowContents], Seq[Window])
   def draw(r:WindowRenderer):WindowRenderer
 
   /**
-   *
+   * Creates a window from this
    * @param rect the rect of the contents. the rect of the window will be larger by 2x2
    * @param bgColor the background color of the window
    * @return The created window and its associated ID

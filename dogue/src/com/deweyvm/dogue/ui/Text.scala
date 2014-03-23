@@ -45,16 +45,12 @@ class Text(letters:IndexedSeq[Tile], bgColor:Color, fgColor:Color) {
   }
 
   def draw(i:Int, j:Int)(r:WindowRenderer):WindowRenderer = {
-    filterDraw(i, j, {case (_:Int,_:Int) => true})(r)
+    r <+| filterDraw(i, j, {case (_:Int,_:Int) => true})
   }
 
   def filterDraw(i:Int, j:Int, f:(Int, Int) => Boolean)(r:WindowRenderer):WindowRenderer =  {
     val d = letters.zipWithIndex.map { case (tile, k) =>
-      if (f(i + k, j)) {
-        (i + k, j, tile).some
-      } else {
-        None
-      }
+      f(i + k, j).partial((i + k, j, tile))
     }.flatten
     r <++ d
   }
