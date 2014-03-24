@@ -11,7 +11,6 @@ import scala.collection.immutable.IndexedSeq
 class WindowManager(screenCols:Int, screenRows:Int) {
 
   def updateWorkspace(windows:Vector[Window]):Vector[Window] = {
-    println(windows.length)
     val messages: Map[WindowId, Seq[WindowMessage]] = windows.map {_.getOutgoing}.foldLeft(Map[WindowId, Seq[WindowMessage]]()) { _ ++ _ }
     windows.map { w =>
       val myMessages: Seq[WindowMessage] = messages.get(w.id).getOrElse(Seq())

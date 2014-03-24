@@ -6,16 +6,16 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 
 object TextPanel {
-  def create(bgColor:Color, fgColor:Color) = new TextPanel(bgColor, fgColor, Vector())
+  def create(width:Int, bgColor:Color, fgColor:Color) = new TextPanel(width, bgColor, fgColor, Vector())
 }
 
-case class TextPanel(bgColor:Color, fgColor:Color, text:Vector[Text]) extends WindowContents {
+case class TextPanel(width:Int, bgColor:Color, fgColor:Color, text:Vector[Text]) extends WindowContents {
   override def update(s: Seq[WindowMessage]): (Option[TextPanel], Seq[Window]) = {
     val doClear = s.contains(Clear)
     val strings = s.map {
-      case TextMessage(str) => Text.fromString(str, bgColor, fgColor).some
+      case TextMessage(str) => str.toLines(width).map{ s => Text.fromString(s, bgColor, fgColor)}.some
       case _ => None
-    }.flatten.toVector
+    }.flatten.flatten.toVector
     val newText = if (doClear) {
       strings
     } else {

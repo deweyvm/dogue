@@ -29,16 +29,12 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   def create:Workspace = {
 
       val titleRect = wholeScreen
-      def makePopup() = {
-        val output = TextPanel.create(Color.White, Color.Black).makeWindow(Recti(1, 1, screenCols-40, screenRows-40), Color.Red)
-        val chat = TestChat.create(NewTextInput.create("what", Color.Black, Color.Red)).addLink(output.id)
-        val chatWindow = chat.makeWindow(Recti(20,40,screenCols-40, screenRows-40), Color.White)
-        List(output, chatWindow)
-      }
       def makePopup2() = {
-        val output = TextPanel.create(Color.Blue, Color.White).makeWindow(Recti(1, 1, 20, screenRows - 2), Color.White)
+        val width = 40
+        val worldWidth = screenCols - width - 4
+        val output = TextPanel.create(width, Color.Blue, Color.White).makeWindow(Recti(1, 1, width, screenRows - 2), Color.White)
         def makeWindows(c:WindowContents) = {
-          Seq(c.makeWindow(wholeScreen, Color.Blue),
+          Seq(c.makeWindow(Recti(width + 3, 1, worldWidth, screenRows - 2), Color.Blue),
               output)
         }
         List(LoadingPanel.create(wholeScreen, Color.Blue, makeWindows, DogueFuture.createAndRun(() => WorldPanel.getLoaders(screenCols, screenRows, output.id))).makeWindow(wholeScreen, Color.Blue))
