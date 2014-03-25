@@ -44,14 +44,16 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   }
 
   private def createChat = {
-    val input = NewTextInput.create("test", bgColor, Color.White).id
+    val input = NewTextInput.create("test", bgColor, Color.White)
+    val chatInput = ChatInput.create(input)
+    chatInput.toWindow(wholeScreen)
   }
 
   def create:Vector[Workspace] = {
 
       val titleRect = wholeScreen
 
-      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(createWorld))
+      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(createWorld _))
       val titlePanel = screen.toWindow(titleRect)
       Vector(makeWorkspace(titlePanel), makeWorkspace(createChat))
 
