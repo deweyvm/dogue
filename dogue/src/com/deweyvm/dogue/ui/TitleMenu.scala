@@ -7,7 +7,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.WindowRenderer
 
 object TitleMenu {
-  def create(bgColor:Color, f:() => Seq[Window]) = {
+  def create(f:() => Seq[Window]) = {
     val control = () => Controls.Space.justPressed
     val buttons = ButtonFactory.create(control, 10, 5)(
       "World Viewer", f

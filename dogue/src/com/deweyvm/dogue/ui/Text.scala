@@ -10,10 +10,10 @@ import CommonImplicits._
 
 object Text {
   def create(bgColor:Color, fgColor:Color):Text = {
-    fromString("", bgColor, fgColor)
+    fromString(bgColor, fgColor)("")
   }
 
-  def fromString(s:String, bgColor:Color, fgColor:Color):Text = {
+  def fromString(bgColor:Color, fgColor:Color)(s:String):Text = {
     val letters = stringToLetters(s, bgColor, fgColor)
 
     new Text(letters, bgColor, fgColor)
@@ -41,7 +41,7 @@ class Text(letters:IndexedSeq[Tile], bgColor:Color, fgColor:Color) {
   }
 
   def setString(s:String):Text = {
-    Text.fromString(s, bgColor, fgColor)
+    Text.fromString(bgColor, fgColor)(s)
   }
 
   def draw(i:Int, j:Int)(r:WindowRenderer):WindowRenderer = {

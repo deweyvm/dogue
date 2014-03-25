@@ -6,7 +6,7 @@ import CommonImplicits._
 import com.deweyvm.dogue.graphics.WindowRenderer
 
 case class TitleScreen(width:Int, height:Int, menu:Menu[Seq[Window]]) extends WindowContents {
-  val title = Text.fromString("Dogue", Color.Black, Color.White)
+  val title = Text.fromString(Color.Black, Color.White)("Dogue")
   override def outgoing:Map[WindowId,Seq[WindowMessage]] = Map()
   override def update(s:Seq[WindowMessage]): (Option[TitleScreen], Seq[Window]) = {
     val newWindows = menu.getResult.getOrElse(Seq())

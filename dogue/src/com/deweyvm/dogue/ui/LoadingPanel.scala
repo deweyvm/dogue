@@ -88,9 +88,9 @@ case class LoadingPanel(progress:Int,
 
   override def draw(r:WindowRenderer):WindowRenderer = {
     r <+|
-      Text.create(bgColor, Color.White).append("Progress " + progress).draw(10,10) <++|
+      Text.fromString(bgColor, Color.White)("Progress " + progress).draw(10,10) <++|
       strings.zipWithIndex.map{case (s, i) =>
-        Text.create(bgColor, Color.White).append(s).draw(10, 11 + i) _
+        Text.fromString(bgColor, Color.White)(s).draw(10, 11 + i) _
       }
 
   }

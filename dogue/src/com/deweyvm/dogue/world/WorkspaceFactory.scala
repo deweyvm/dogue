@@ -26,22 +26,34 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
     override def update(s: Seq[WindowMessage]) = (this.some, Seq())
   }
 
-  def create:Workspace = {
+  implicit class myWindow(c:WindowContents) {
+    def toWindow(r:Recti) = c.makeWindow(r, bgColor)
+  }
+
+  private def createWorld = {
+    val width = 40
+    val worldWidth = screenCols - width - 4
+    val output = TextPanel.create(width, Color.Blue, Color.White).toWindow(Recti(1, 1, width, screenRows - 2))
+    def makeWindows(c:WindowContents) = {
+      Seq(c.toWindow(Recti(width + 3, 1, worldWidth, screenRows - 2)),
+        output)
+    }
+    val future =  DogueFuture.createAndRun(() => WorldPanel.getLoaders(screenCols, screenRows, output.id))
+    val loadPanel = LoadingPanel.create(wholeScreen, Color.Blue, makeWindows, future)
+    List(loadPanel.toWindow(wholeScreen))
+  }
+
+  private def createChat = {
+    val input = NewTextInput.create("test", bgColor, Color.White).id
+  }
+
+  def create:Vector[Workspace] = {
 
       val titleRect = wholeScreen
-      def makePopup2() = {
-        val width = 40
-        val worldWidth = screenCols - width - 4
-        val output = TextPanel.create(width, Color.Blue, Color.White).makeWindow(Recti(1, 1, width, screenRows - 2), Color.White)
-        def makeWindows(c:WindowContents) = {
-          Seq(c.makeWindow(Recti(width + 3, 1, worldWidth, screenRows - 2), Color.Blue),
-              output)
-        }
-        List(LoadingPanel.create(wholeScreen, Color.Blue, makeWindows, DogueFuture.createAndRun(() => WorldPanel.getLoaders(screenCols, screenRows, output.id))).makeWindow(wholeScreen, Color.Blue))
-      }
-      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(bgColor, makePopup2))
-      val titlePanel = screen.makeWindow(titleRect, bgColor)
-      makeWorkspace(titlePanel)
+
+      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(createWorld))
+      val titlePanel = screen.toWindow(titleRect)
+      Vector(makeWorkspace(titlePanel), makeWorkspace(createChat))
 
       /*case Stage.Chat =>
          val inputHeight = 3

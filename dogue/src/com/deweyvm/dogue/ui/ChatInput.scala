@@ -15,20 +15,20 @@ import com.deweyvm.dogue.common.data.Code
 trait TextInputId
 
 
-object TestChat {
-  def create(input:NewTextInput) = TestChat(input, Seq())
+object ChatInput {
+  def create(input:NewTextInput) = ChatInput(input, Seq())
 }
 
-case class TestChat(input:NewTextInput, links:Seq[WindowId]) extends WindowContents {
+case class ChatInput(input:NewTextInput, links:Seq[WindowId]) extends WindowContents {
   def addLink(id:WindowId) = copy(links = links :+ id)
   override def outgoing: Map[WindowId,Seq[WindowMessage]] = {
     input.getOutput.map { s =>
-      links.map { l => l -> Vector(TextMessage(s))}.toMap
+      links.map { l => l -> Vector(WindowMessage.TextMessage(s))}.toMap
     }.getOrElse(Map())
 
   }
 
-  override def update(s: Seq[WindowMessage]): (Option[TestChat], Seq[Window]) = {
+  override def update(s: Seq[WindowMessage]): (Option[ChatInput], Seq[Window]) = {
     (copy(input = input.update).some, Seq())
   }
 
@@ -94,7 +94,7 @@ case class NewTextInput(prompt:String, string:String, bgColor:Color, fgColor:Col
   NewTextInput.inputs(id) = this
 
   private def makeText(s:String) = {
-    Text.fromString(s, bgColor, fgColor)
+    Text.fromString(bgColor, fgColor)(s)
   }
 
 

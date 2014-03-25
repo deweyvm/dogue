@@ -23,11 +23,11 @@ class Engine {
     val pointer = Dogue.renderer match {
       case ogl:OglRenderer if true || ogl.vis.isDefined =>
         Pointer.create(
-          factory.create
+          factory.create, 0
         )
       case _ =>
         Pointer.create(
-          factory.create
+          factory.create, 0
         )
         /*Pointer.create(
           factory.create(Stage.World),

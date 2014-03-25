@@ -1,6 +1,11 @@
 package com.deweyvm.dogue.ui
 
-trait WindowMessage
+import com.deweyvm.dogue.common
 
-case class TextMessage(s:String) extends WindowMessage
-case object Clear extends WindowMessage
+trait WindowMessage
+object WindowMessage {
+  case class TextMessage(s:String) extends WindowMessage
+  case class DogueMessage(m:common.protocol.DogueMessage) extends WindowMessage
+  case object Clear extends WindowMessage
+}
+

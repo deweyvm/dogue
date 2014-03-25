@@ -14,11 +14,11 @@ import com.deweyvm.dogue.common.data.control.{Yield, Coroutine}
 import com.deweyvm.dogue.graphics.WindowRenderer
 import com.deweyvm.dogue.ui._
 import com.deweyvm.dogue.common.procgen.PerlinParams
-import com.deweyvm.dogue.ui.TextMessage
 import com.deweyvm.dogue.world.WorldParams
 import com.deweyvm.dogue.world.ArrayViewer
 import com.deweyvm.dogue.common.data.control.Return
 import com.deweyvm.dogue.world.DateConstants
+import com.deweyvm.dogue.ui.WindowMessage.Clear
 
 
 object WorldPanel {
@@ -110,10 +110,10 @@ object WorldPanel {
 }
 
 case class WorldPanel(width:Int, height:Int, world:World, view:ArrayViewer, minimapSize:Int, zoomState:Pointer[ZoomState], mapState:Pointer[MapState], tooltipId:WindowId) extends WindowContents {
-  val (iSpawn, jSpawn) = (0,0)
-  val regionSize = 16
-  val miniDiv = world.cols/minimapSize
-
+  private val (iSpawn, jSpawn) = (0,0)
+  private val regionSize = 16
+  private val miniDiv = world.cols/minimapSize
+  private def mkDebug:String => Text = Text.fromString(Color.Black, Color.White)
   override def outgoing:Map[WindowId, Seq[WindowMessage]] = {
     def getTooltip(t:WorldTile):Tooltip = zoomState.get match {
       case ZoomState.Full => t.regionTooltip
@@ -121,7 +121,7 @@ case class WorldPanel(width:Int, height:Int, world:World, view:ArrayViewer, mini
     }
     val (i, j) = (view.xCursor, view.yCursor)
     val tip = getTooltip(getTiles.get(i, j))
-    val msgs = Clear +: tip.lines.map {s => TextMessage(s)}
+    val msgs = WindowMessage.Clear +: tip.lines.map {s => WindowMessage.TextMessage(s)}
     Map(tooltipId -> msgs)
   }
 
@@ -185,19 +185,19 @@ case class WorldPanel(width:Int, height:Int, world:World, view:ArrayViewer, mini
   private def drawDebug(r:WindowRenderer):WindowRenderer = {
     val strs = world.eco.getTimeStrings
     r <++| strs.zipWithIndex.map { case (s, i) =>
-      Text.fromString(s, Color.Black, Color.White).draw(0, height + 1 - i) _
+      mkDebug(s).draw(0, height + 1 - i) _
     }
   }
 
   private def drawName(r:WindowRenderer):WindowRenderer = {
     val name = world.worldParams.name
     val xName = (width - name.length)/2
-    r <+| Text.fromString(name, Color.Black, Color.White).draw(xName,0)
+    r <+| mkDebug(name).draw(xName,0)
   }
 
   private def drawDate(r:WindowRenderer):WindowRenderer = {
     val time = world.cycle.date.getString
     val xName = (width - time.length)/2
-    r <+| Text.fromString(time, Color.Black, Color.White).draw(xName, height)
+    r <+| mkDebug(time).draw(xName, height)
   }
 }

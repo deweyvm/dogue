@@ -4,6 +4,7 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.graphics.WindowRenderer
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import com.deweyvm.dogue.ui.WindowMessage.TextMessage
 
 object TextPanel {
   def create(width:Int, bgColor:Color, fgColor:Color) = new TextPanel(width, bgColor, fgColor, Vector())
@@ -11,9 +12,9 @@ object TextPanel {
 
 case class TextPanel(width:Int, bgColor:Color, fgColor:Color, text:Vector[Text]) extends WindowContents {
   override def update(s: Seq[WindowMessage]): (Option[TextPanel], Seq[Window]) = {
-    val doClear = s.contains(Clear)
+    val doClear = s.contains(WindowMessage.Clear)
     val strings = s.map {
-      case TextMessage(str) => str.toLines(width).map{ s => Text.fromString(s, bgColor, fgColor)}.some
+      case WindowMessage.TextMessage(str) => str.toLines(width).map{Text.fromString(bgColor, fgColor)}.some
       case _ => None
     }.flatten.flatten.toVector
     val newText = if (doClear) {

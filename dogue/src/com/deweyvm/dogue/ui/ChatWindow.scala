@@ -4,7 +4,16 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.net.Transmitter
 import com.deweyvm.dogue.common.protocol.DogueMessage
 import com.deweyvm.dogue.common.parsing.CommandParser
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
+import com.deweyvm.dogue.graphics.WindowRenderer
 
+case class ChatPanel(transmitter:Transmitter[DogueMessage]) extends WindowContents {
+  def update(s:Seq[WindowMessage]):(Option[ChatPanel], Seq[Window]) = {
+    (this.some, Seq())
+  }
+  def draw(r:WindowRenderer):WindowRenderer = r
+}
 
 /*case class ChatInput(transmitter:Transmitter[DogueMessage],
                      textColor:Color,
