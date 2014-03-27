@@ -30,6 +30,7 @@ case class ChatPanel(transmitter:Transmitter[DogueMessage], text:Vector[Text], m
     says foreach transmitter.enqueue
     val received = transmitter.dequeue.map {
       case Command(DogueOps.Say, _, _, args) => ("<%s> %s" format (args(0), args(1))).some
+      case Command(DogueOps.Greet, _, _, args) => args(0).some
       case x =>  println(x) ; None
     }.flatten.map(makeText)
     (copy(text = text ++ received).some, Seq())
