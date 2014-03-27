@@ -7,9 +7,10 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.Game
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import com.deweyvm.dogue.graphics.WindowRenderer
 
 case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, xControl:Control[Int], yControl:Control[Int]) {
-  private val crosshair = new Tile(Code.+, Color.Red, Color.Pink)
+  private val crosshair = Tile(Code.+, Color.Red, Color.Pink)
 
   def update[T](a:Array2dView[T], scale:Int):ArrayViewer = {
     val width = a.cols
@@ -20,21 +21,22 @@ case class ArrayViewer(viewWidth:Int, viewHeight:Int, xCursor:Int, yCursor:Int, 
 
   def scaled(div:Int) = this.copy(xCursor = xCursor/div, yCursor = yCursor/div)
 
-  def draw[T](a:Array2dView[T], iRoot:Int, jRoot:Int, draw:(T,Int,Int) => Unit) {
+  def draw(a:Array2dView[WorldTile], iRoot:Int, jRoot:Int, draw:WorldTile => Tile)(r:WindowRenderer):WindowRenderer =  {
     val width = a.cols
     val height = a.rows
     val iView = (xCursor - viewHeight/2).clamp(0, width - viewWidth)
     val jView = (yCursor - viewHeight/2).clamp(0, height - viewHeight)
-    a.slice(iView, jView, viewWidth, viewHeight) foreach { case (i, j, tile) =>
+    val s = a.slice(iView, jView, viewWidth, viewHeight).viewMap { case (i, j, tile) =>
       val x = iRoot + i
       val y = jRoot + j
-      draw(tile, x, y)
-    }
-    if (Game.getFrame % 120 < 100) {
+      (x, y, draw(tile))
+    }.foldLeft(r) { _ <+~ _ }
+
+    s <+? (Game.getFrame % 120 < 100).partial {
       //prevents scrolling off the edge for non-evenly dividing scales
       val xCrosshair = (iRoot + xCursor - iView).clamp(iRoot, iRoot + viewWidth - 1)
       val yCrosshair = (jRoot + yCursor - jView).clamp(jRoot, jRoot + viewHeight - 1)
-      crosshair.draw(xCrosshair, yCrosshair)
+      (xCrosshair, yCrosshair, crosshair)
     }
   }
 }

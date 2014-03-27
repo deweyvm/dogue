@@ -4,13 +4,16 @@ import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import scala.collection.immutable.IndexedSeq
+import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 
 object Text {
   def create(bgColor:Color, fgColor:Color):Text = {
-    fromString("", bgColor, fgColor)
+    fromString(bgColor, fgColor)("")
   }
 
-  def fromString(s:String, bgColor:Color, fgColor:Color):Text = {
+  def fromString(bgColor:Color, fgColor:Color)(s:String):Text = {
     val letters = stringToLetters(s, bgColor, fgColor)
 
     new Text(letters, bgColor, fgColor)
@@ -38,19 +41,18 @@ class Text(letters:IndexedSeq[Tile], bgColor:Color, fgColor:Color) {
   }
 
   def setString(s:String):Text = {
-    Text.fromString(s, bgColor, fgColor)
+    Text.fromString(bgColor, fgColor)(s)
   }
 
-  def draw(i:Int, j:Int) {
-    filterDraw(i, j, {case (_:Int,_:Int) => true})
+  def draw(i:Int, j:Int)(r:WindowRenderer):WindowRenderer = {
+    r <+| filterDraw(i, j, {case (_:Int,_:Int) => true})
   }
 
-  def filterDraw(i:Int, j:Int, f:(Int, Int) => Boolean) {
-    letters.zipWithIndex foreach { case (tile, k) =>
-      if (f(i + k, j)) {
-        tile.draw(i + k, j)
-      }
-    }
+  def filterDraw(i:Int, j:Int, f:(Int, Int) => Boolean)(r:WindowRenderer):WindowRenderer =  {
+    val d = letters.zipWithIndex.map { case (tile, k) =>
+      f(i + k, j).partial((i + k, j, tile))
+    }.flatten
+    r <++ d
   }
 }
 

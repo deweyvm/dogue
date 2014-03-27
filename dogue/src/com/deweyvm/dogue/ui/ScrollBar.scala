@@ -3,7 +3,9 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.data.Code
-
+import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.common.CommonImplicits
+import CommonImplicits._
 /*
  * have continuous scrollbar
  * iterate over each discrete half square.
@@ -14,33 +16,34 @@ import com.deweyvm.dogue.common.data.Code
  */
 class ScrollBar {
   private def makeTile(code:Code):Tile =
-    new Tile(code, Color.Black, Color.White)
+    Tile(code, Color.Black, Color.White)
 
 
-  def drawTile(t:Tile)(i:Int, j:Int) {
-    t.draw(i, j)
-  }
+  private val upArrow = makeTile(Code.▲)
+  private val downArrow = makeTile(Code.▼)
+  private val lineTile = makeTile(Code.─)
 
-  val upArrow = makeTile(Code.▲)
-  val downArrow = makeTile(Code.▼)
-  val lineTile = makeTile(Code.─)
-
-  def draw(numLines:Int, j:Int, width:Int, height:Int, iRoot:Int, jRoot:Int) {
+  def draw(numLines:Int, j:Int, width:Int, height:Int, iRoot:Int, jRoot:Int)(r:WindowRenderer):WindowRenderer = {
     import scala.math._
-    if (numLines > height) {
-      drawTile(upArrow)(iRoot + width - 1, jRoot)
-      drawTile(downArrow)(iRoot + width - 1, jRoot + height - 1)
+    def drawLine = {
       val percentProgress = j.toFloat/(numLines - height - 2)
       val atStart = j == 0
       val atEnd = j == numLines - height
       if (atStart) {
-        drawTile(lineTile)(iRoot + width - 1, jRoot + 1)
+        (iRoot + width - 1, jRoot + 1, lineTile)
       } else if (atEnd) {
-        drawTile(lineTile)(iRoot + width - 1, jRoot + height - 2)
+        (iRoot + width - 1, jRoot + height - 2, lineTile)
       } else {
         val jDraw = min(height - 3, max(2, (percentProgress*(height - 4)).toInt))
-        drawTile(lineTile)(iRoot + width - 1, jRoot + jDraw)
+        (iRoot + width - 1, jRoot + jDraw, lineTile)
       }
     }
+    val draw = (numLines > height).partial(
+      r <+
+        (iRoot + width - 1, jRoot, upArrow) <+
+        (iRoot + width - 1, jRoot + height - 1, downArrow) <+~
+        drawLine
+    )
+    draw.getOrElse(r)
   }
 }

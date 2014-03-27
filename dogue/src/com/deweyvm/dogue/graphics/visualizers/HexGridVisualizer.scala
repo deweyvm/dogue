@@ -36,7 +36,7 @@ class HexGridVisualizer extends Visualizer {
 
       val c = getColor(node.getNeighbors.length)
       val code = Code.unicodeToCode((node.getNeighbors.length + 48).toChar)
-      val tile = new Tile(code, Color.Blank, c)
+      val tile = Tile(code, Color.Blank, c)
       r.drawTileRaw(tile, centroid.x + dx - 8, centroid.y + dy - 8)
     }
   }

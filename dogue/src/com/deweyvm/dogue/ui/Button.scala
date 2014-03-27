@@ -3,6 +3,7 @@ package com.deweyvm.dogue.ui
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
+import com.deweyvm.dogue.graphics.WindowRenderer
 
 class Button[T](t:Text, result:() => T, shouldActivate:() => Boolean, i:Int, j:Int) extends Menu[T] {
   lazy val lazyResult = result()
@@ -13,12 +14,12 @@ class Button[T](t:Text, result:() => T, shouldActivate:() => Boolean, i:Int, j:I
     shouldActivate().select(lazyResult.some, None)
   }
 
-  def draw() {
-    t.draw(i, j)
+  def draw(r:WindowRenderer):WindowRenderer = {
+    t.draw(i, j)(r)
   }
 
-  def drawBg() {
-    t.setBg(Color.Black).draw(i, j)
+  def drawBg(r:WindowRenderer):WindowRenderer = {
+    t.setBg(Color.Black).draw(i, j)(r)
   }
 
 }

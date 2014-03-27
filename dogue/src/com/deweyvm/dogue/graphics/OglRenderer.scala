@@ -56,7 +56,6 @@ class OglRenderer(tileset:Tileset) extends Renderer {
 
   val batch = new SpriteBatch
   val shape = new ShapeRenderer
-  val scene = new Scene(Game.Width/width, Game.Height/height)
   val camera = new Camera(Game.RenderWidth, Game.RenderHeight)
 
   private val draws = ArrayBuffer[() => Unit]()
@@ -116,10 +115,6 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     camera.translate(x, y)
   }
 
-  override def draw(t:Tile, i:Int, j:Int) {
-    scene.set(i, j, t)
-  }
-
   def drawTileRaw(t:Tile, x:Double, y:Double) {
     val (fg, bg) = oglTile.getSprites(t.code, t.fgColor, t.bgColor)
     drawOglSprite(bg, x.toInt, y.toInt)
@@ -143,17 +138,18 @@ class OglRenderer(tileset:Tileset) extends Renderer {
     }
 
   }
-  override def render() {
+  override def render(r:WindowRenderer):WindowRenderer = {
     Gdx.gl.glClearColor(0,0,0,1)
     batch.begin()
     batch.setProjectionMatrix(camera.getProjection)
-    scene.foreach {case(i, j, t) =>
+    r.draws.foreach {case((i, j), t) =>
       drawTileRaw(t, i*width, j*height)
     }
     draws foreach {_()}
     draws.clear()
     batch.end()
     drawVisualization()
+    r
   }
 
 }
