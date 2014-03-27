@@ -59,13 +59,12 @@ object WorldPanel {
    * An ad-hoc coroutine for loading everythin in stages
    */
   def getLoaders(screenCols:Int, screenRows:Int, tooltipId:WindowId):Coroutine[WorldPanel] = {
-    val seed = 0//System.nanoTime
+    val seed = System.nanoTime
     val worldSize = 256
     val cols = worldSize
     val rows = worldSize
 
     val minimapSize = WorldPanel.minimapSize
-    val bgColor = Color.Blue
     println("Seed: " + seed + "L")
     val date = DateConstants(framesPerDay = 60*60*24*60)
     val perlin = PerlinParams(worldSize/4, 8, worldSize, seed)
@@ -87,7 +86,7 @@ object WorldPanel {
     val moistureMap = new MoistureMap(surface, latMap.latitude, windMap.arrows, 0.5, cols/2, seed)
     Yield(75, "Choosing biomes", () => {
     val biomeMap = new BiomeMap(moistureMap, surface, latMap, altRegions, biomes)
-    Yield(88, "Constructing ecosphere", () => {
+    Yield(100, "Constructing ecosphere", () => {
     val eco = Ecosphere.buildEcosphere(worldParams, latMap, noise, surface, windMap, moistureMap, biomeMap, surfaceRegions, latRegions, altRegions, Vector())
     val world = World.create(worldParams, eco)
     val mapWidth = WorldPanel.computeMapWidth(screenCols)
