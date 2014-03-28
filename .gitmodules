@@ -7,3 +7,6 @@
 [submodule "raven"]
 	path = raven
 	url = https://github.com/deweyvm/raven.git
+[submodule "starfire"]
+	path = starfire
+	url = https://github.com/deweyvm/starfire.git
