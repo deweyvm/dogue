@@ -3,11 +3,9 @@ package com.deweyvm.dogue.world
 import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.gleany.graphics.Color
 import com.deweyvm.gleany.data.Point2d
-import com.deweyvm.dogue.common.CommonImplicits
-import CommonImplicits._
 import com.deweyvm.dogue.world.biomes.{Biomes, Biome}
-import sun.java2d.Surface
 import com.deweyvm.dogue.ui.world.Tooltip
+import com.deweyvm.dogue.DogueImplicits._
 
 object WorldTile {
   val Blank = WorldTile(0 m, Altitude.Void, SurfaceType.Void, 1 atm, 0, Biomes.Void, Color.Black, Latitude.Void, Point2d.UnitX, 0, 0,  Summer, Tile.Blank)

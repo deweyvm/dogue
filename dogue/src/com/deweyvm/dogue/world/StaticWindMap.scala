@@ -5,6 +5,7 @@ import com.deweyvm.dogue.common.data.{Angles, Array2d}
 import scala.util.Random
 import com.deweyvm.gleany.data.Point2d
 import com.deweyvm.dogue.common.CommonImplicits._
+import com.deweyvm.dogue.DogueImplicits._
 
 class StaticWindMap(noise:Array2d[Meters], heightMax:Double, windMax:Double, seed:Long) {
   private val dNoise = noise.map{case (i, j, m) => m.d }

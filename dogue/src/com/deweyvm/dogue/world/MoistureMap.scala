@@ -7,7 +7,7 @@ import CommonImplicits._
 import com.deweyvm.gleany.data.Point2d
 import scala.annotation.tailrec
 import java.util.Random
-
+import com.deweyvm.dogue.DogueImplicits._
 class MoistureMap(surface:SurfaceMap, latitude:Array2dView[Double], wind:Array2dView[Arrow], speed:Double, steps:Int, seed:Long) {
   val cols = latitude.cols
   val rows = latitude.rows

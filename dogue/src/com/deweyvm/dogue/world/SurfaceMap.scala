@@ -6,7 +6,8 @@ import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.common.procgen.PerlinParams
 import com.deweyvm.dogue.loading.SurfaceTypeMap
-
+import com.deweyvm.dogue.DogueImplicits
+import DogueImplicits._
 object SurfaceType {
   val Void = SurfaceType("void", true)
 }
