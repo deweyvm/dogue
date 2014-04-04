@@ -504,8 +504,11 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../dogue-common" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../gleany" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../gleany/gleany/libs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../raven" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../starfire" vcs="Git" />
   </component>
   <component name="libraryTable">
     <library name="libs">
