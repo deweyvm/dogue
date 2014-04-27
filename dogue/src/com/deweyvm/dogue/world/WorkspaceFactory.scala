@@ -31,7 +31,7 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
     def toWindow(r:Recti) = c.makeWindow(r, bgColor)
   }
 
-  private def createWorld = {
+  private def createWorld: List[Window] = {
     val width = 40
     val worldWidth = screenCols - width - 4
     val output = TextPanel.create(width, Color.Blue, Color.White).toWindow(Recti(1, 1, width, screenRows - 2))
@@ -44,7 +44,7 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
     List(loadPanel.toWindow(wholeScreen))
   }
 
-  private def createChat = {
+  private def createChat: List[Window] = {
     val inputHeight = 4
     val output = ChatPanel.create(Client.instance)(Text.fromString(bgColor, Color.White)).toWindow(Recti(1, 1, screenCols - 2, screenRows - inputHeight - 4))
     val input = NewTextInput.create(Client.instance.sourceName + "> ", bgColor, Color.White)
@@ -52,11 +52,16 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
     List(output, chatInput.toWindow(Recti(1, screenRows - inputHeight - 1, screenCols - 2, inputHeight)))
   }
 
-  def create:Vector[Workspace] = {
+  private def createDungeon: List[Window] = {
+    List()
+  }
 
+
+  def create:Vector[Workspace] = {
+      val titleMenu = TitleMenu.create(createWorld _, createDungeon _)
       val titleRect = wholeScreen
 
-      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, TitleMenu.create(createWorld _))
+      val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, titleMenu)
       val titlePanel = screen.toWindow(titleRect)
       Vector(makeWorkspace(titlePanel), makeWorkspace(createChat:_*))
 
