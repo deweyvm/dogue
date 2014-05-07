@@ -2,12 +2,13 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.gleany.graphics.Color
+import com.deweyvm.dogue.graphics.ColorScheme
 
 
 object ButtonFactory {
-  def create[T](activator:() => Boolean, iStart:Int, jStart:Int)(s:String, f:()=>T):ButtonFactory[T] = {
+  def create[T](scheme:ColorScheme, activator:() => Boolean, iStart:Int, jStart:Int)(s:String, f:()=>T):ButtonFactory[T] = {
     def makeButton(s:String, f:()=>T, ct:Int) = {
-      new Button(Text.fromString(Color.Blue, Color.White)(s), f, activator, iStart, jStart + ct)
+      new Button(scheme.makeSelectedText(s), scheme.makeText(s), f, activator, iStart, jStart + ct)
     }
     val firstButton = makeButton(s, f, 0)
     ButtonFactory[T](activator, iStart, jStart, 1, firstButton, Vector(), makeButton)

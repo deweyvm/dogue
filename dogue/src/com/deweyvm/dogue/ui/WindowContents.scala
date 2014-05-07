@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 import com.deweyvm.gleany.data.Recti
 import com.deweyvm.gleany.graphics.Color
 
@@ -13,11 +13,11 @@ trait WindowContents {
   /**
    * Creates a window from this
    * @param rect the rect of the contents. the rect of the window will be larger by 2x2
-   * @param bgColor the background color of the window
+   * @param scheme the colorscheme to use for coloring text
    * @return The created window and its associated ID
    */
-  def makeWindow(rect:Recti, bgColor:Color):Window = {
+  def makeWindow(rect:Recti, scheme:ColorScheme):Window = {
     val id = new WindowId{}
-    Window(rect.expand(1, 1), bgColor, this, id)
+    Window(rect.expand(1, 1), scheme, this, id)
   }
 }

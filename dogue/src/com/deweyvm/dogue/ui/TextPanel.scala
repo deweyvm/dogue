@@ -1,20 +1,20 @@
 package com.deweyvm.dogue.ui
 
 import com.deweyvm.gleany.graphics.Color
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
 import com.deweyvm.dogue.ui.WindowMessage.TextMessage
 
 object TextPanel {
-  def create(width:Int, bgColor:Color, fgColor:Color) = new TextPanel(width, bgColor, fgColor, Vector())
+  def create(width:Int, scheme:ColorScheme) = new TextPanel(width, scheme, Vector())
 }
 
-case class TextPanel(width:Int, bgColor:Color, fgColor:Color, text:Vector[Text]) extends WindowContents {
+case class TextPanel(width:Int, scheme:ColorScheme, text:Vector[Text]) extends WindowContents {
   override def update(s: Seq[WindowMessage]): (Option[TextPanel], Seq[Window]) = {
     val doClear = s.contains(WindowMessage.Clear)
     val strings = s.map {
-      case WindowMessage.TextMessage(str) => str.toLines(width).map{Text.fromString(bgColor, fgColor)}.some
+      case WindowMessage.TextMessage(str) => str.toLines(width).map{scheme.makeText}.some
       case _ => None
     }.flatten.flatten.toVector
     val newText = if (doClear) {

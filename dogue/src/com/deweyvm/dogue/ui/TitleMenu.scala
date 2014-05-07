@@ -2,12 +2,12 @@ package com.deweyvm.dogue.ui
 
 import com.deweyvm.dogue.common.data.Pointer
 import com.deweyvm.dogue.input.Controls
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 
 object TitleMenu {
-  def create(toWorld:() => Seq[Window], toDungeon:() => Seq[Window]) = {
+  def create(scheme:ColorScheme, toWorld:() => Seq[Window], toDungeon:() => Seq[Window]) = {
     val control = () => Controls.Space.justPressed
-    val buttons = ButtonFactory.create(control, 10, 5)(
+    val buttons = ButtonFactory.create(scheme, control, 10, 5)(
       "World Viewer", toWorld
     )(
       "Dungeon Viewer", toDungeon

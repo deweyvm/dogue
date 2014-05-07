@@ -8,13 +8,13 @@ import com.deweyvm.dogue.common.threading.DogueFuture
 import com.deweyvm.dogue.common.data.control.Coroutine
 import com.deweyvm.dogue.common.CommonImplicits
 import CommonImplicits._
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 import com.deweyvm.dogue.ui.world.WorldPanel
 import com.deweyvm.dogue.Dogue
 
 class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   val wholeScreen = Recti(1, 1, screenCols-2, screenRows-2)
-  val bgColor = Color.Blue
+  val colors = new ColorScheme(Color.Purple, Color.DarkGrey, Color.White, Color.Black, Color.Red)
   private def makeWorkspace(panels:Window*) = {
     Workspace.create(screenCols, screenRows, panels.toVector)
   }
@@ -28,26 +28,26 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
   }
 
   implicit class myWindow(c:WindowContents) {
-    def toWindow(r:Recti) = c.makeWindow(r, bgColor)
+    def toWindow(r:Recti) = c.makeWindow(r, colors)
   }
 
   private def createWorld: List[Window] = {
     val width = 40
     val worldWidth = screenCols - width - 4
-    val output = TextPanel.create(width, Color.Blue, Color.White).toWindow(Recti(1, 1, width, screenRows - 2))
+    val output = TextPanel.create(width, colors).toWindow(Recti(1, 1, width, screenRows - 2))
     def makeWindows(c:WindowContents) = {
       Seq(c.toWindow(Recti(width + 3, 1, worldWidth, screenRows - 2)),
           output)
     }
     val future =  DogueFuture.createAndRun(() => WorldPanel.getLoaders(screenCols, screenRows, output.id))
-    val loadPanel = LoadingPanel.create(wholeScreen, Color.Blue, makeWindows, future)
+    val loadPanel = LoadingPanel.create(wholeScreen, colors, makeWindows, future)
     List(loadPanel.toWindow(wholeScreen))
   }
 
   private def createChat: List[Window] = {
     val inputHeight = 4
-    val output = ChatPanel.create(Client.instance)(Text.fromString(bgColor, Color.White)).toWindow(Recti(1, 1, screenCols - 2, screenRows - inputHeight - 4))
-    val input = NewTextInput.create(Client.instance.sourceName + "> ", bgColor, Color.White)
+    val output = ChatPanel.create(Client.instance)(colors.makeText).toWindow(Recti(1, 1, screenCols - 2, screenRows - inputHeight - 4))
+    val input = NewTextInput.create(Client.instance.sourceName + "> ", colors)
     val chatInput = ChatInput.create(input).addLink(output.id)
     List(output, chatInput.toWindow(Recti(1, screenRows - inputHeight - 1, screenCols - 2, inputHeight)))
   }
@@ -58,37 +58,14 @@ class WorkspaceFactory(screenCols:Int, screenRows:Int) {
 
 
   def create:Vector[Workspace] = {
-      val titleMenu = TitleMenu.create(createWorld _, createDungeon _)
+      val titleMenu = TitleMenu.create(colors, createWorld _, createDungeon _)
       val titleRect = wholeScreen
 
       val screen:TitleScreen = TitleScreen(titleRect.width, titleRect.height, titleMenu)
       val titlePanel = screen.toWindow(titleRect)
       Vector(makeWorkspace(titlePanel), makeWorkspace(createChat:_*))
 
-      /*case Stage.Chat =>
-         val inputHeight = 3
-         val bgColor = Color.Black
-         val fgColor = Color.White
-         val textInput = TextInput.create(TextInput.chat, screenCols - 2, inputHeight, bgColor, fgColor)
-         val infoRect = Recti(1, 1, screenCols - 2, screenRows - 2 - inputHeight - 3)
-         val infoPanel = InfoPanel.create()
-         val textOutput = Window(infoRect, bgColor, infoPanel)
-         val chatRect = Recti(1, 1, screenCols - 2, screenRows - 2)
-         val chatPanel = new ChatWindow(chatRect, bgColor, fgColor, Client.instance, textInput, textOutput)
-         makeStage(chatPanel)
-       case Stage.World =>
-         val sideWidth = WorldWindow.computeSideWidth(screenCols)
-         val controlRect = Recti(1, screenRows - WorldWindow.controlsHeight + 1, sideWidth, WorldWindow.controlsHeight - 1 - 1)
-         val controlPanel = new Window(controlRect, bgColor)
-         val tooltipWidth = sideWidth
-         val tooltipHeight = screenRows - WorldWindow.controlsHeight - 1
-         val tooltip = InfoWindow.create(Recti(1, 1, tooltipWidth, tooltipHeight), bgColor)
-         val future:DogueFuture[Coroutine[WorldWindow]] = DogueFuture createAndRun { () => WorldWindow.getLoaders(screenCols, screenRows) }
-         def createStage(panel:Window) = makeStage(panel, controlPanel, tooltip)
-         val progressPanel = LoadingWindow.create(Recti(1, 1, screenCols - 2, screenRows - 2), bgColor, future, createStage)
-         makeStage(progressPanel)
 
-    } */
   }
 }
 

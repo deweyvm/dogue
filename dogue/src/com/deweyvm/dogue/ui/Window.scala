@@ -6,10 +6,10 @@ import com.deweyvm.dogue.entities.Tile
 import com.deweyvm.dogue.common.data.Code
 import com.deweyvm.dogue.DogueImplicits
 import DogueImplicits._
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 
-case class Window(rect:Recti, bgColor:Color, contents:WindowContents, id:WindowId) {
-
+case class Window(rect:Recti, colors:ColorScheme, contents:WindowContents, id:WindowId) {
+  val t = Tile(Code.` `, colors.bg, colors.bg)
   def contains(i:Int, j:Int):Boolean = rect.contains(Point2d(i,j))
 
   def getRect:Recti = rect
@@ -20,7 +20,7 @@ case class Window(rect:Recti, bgColor:Color, contents:WindowContents, id:WindowI
   def getOutgoing:Map[WindowId, Seq[WindowMessage]] = contents.outgoing
 
   private def drawBackground(r:WindowRenderer):WindowRenderer = {
-    val t = Tile(Code.` `, bgColor, bgColor)
+
     val draws = for (i <- 0 until rect.width - 2;
                      j <- 0 until rect.height - 2) yield {
       (i, j, t)

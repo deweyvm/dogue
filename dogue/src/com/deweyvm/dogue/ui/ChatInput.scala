@@ -1,6 +1,6 @@
 package com.deweyvm.dogue.ui
 
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 import com.deweyvm.dogue.{Dogue, Game}
 import com.deweyvm.dogue.common.CommonImplicits._
 import com.deweyvm.gleany.graphics.Color
@@ -45,8 +45,8 @@ object NewTextInput {
   addListener()
   private var active:Option[TextInputId] = None
 
-  def create(name:String, bgColor:Color, fgColor:Color):NewTextInput = {
-    val result = new NewTextInput(name, "", bgColor, fgColor, new TextInputId{})
+  def create(name:String, scheme:ColorScheme):NewTextInput = {
+    val result = new NewTextInput(name, "", scheme, new TextInputId{})
     result
   }
 
@@ -90,11 +90,11 @@ object NewTextInput {
 
 }
 
-case class NewTextInput(prompt:String, string:String, bgColor:Color, fgColor:Color, id:TextInputId) {
+case class NewTextInput(prompt:String, string:String, scheme:ColorScheme, id:TextInputId) {
   NewTextInput.inputs(id) = this
 
   private def makeText(s:String) = {
-    Text.fromString(bgColor, fgColor)(s)
+    scheme.makeText(s)
   }
 
 

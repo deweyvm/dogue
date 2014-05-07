@@ -9,21 +9,21 @@ import CommonImplicits._
 import com.deweyvm.dogue.common.data.control.{YieldResult, Return, Yield, Coroutine}
 import com.deweyvm.dogue.input.Controls
 import com.deweyvm.dogue.ui.world.WorldPanel
-import com.deweyvm.dogue.graphics.WindowRenderer
+import com.deweyvm.dogue.graphics.{ColorScheme, WindowRenderer}
 
 object LoadingPanel {
   def create(rect:Recti,
-             bgColor:Color,
+             scheme:ColorScheme,
              makeWindow:WindowContents => Seq[Window],
              panel:DogueFuture[Coroutine[WorldPanel]]):LoadingPanel = {
-    LoadingPanel(0, 0L, Vector(), bgColor, panel, makeWindow, failed=false, finished=false)
+    LoadingPanel(0, 0L, Vector(), scheme, panel, makeWindow, failed=false, finished=false)
   }
 }
 
 case class LoadingPanel(progress:Int,
                         totalTime:Long,
                         strings:Vector[String],
-                        bgColor:Color,
+                        scheme:ColorScheme,
                         panel:DogueFuture[Coroutine[WorldPanel]],
                         makeWindow:WindowContents => Seq[Window],
                         failed:Boolean,
@@ -88,9 +88,9 @@ case class LoadingPanel(progress:Int,
 
   override def draw(r:WindowRenderer):WindowRenderer = {
     r <+|
-      Text.fromString(bgColor, Color.White)("Progress " + progress).draw(10,10) <++|
+      scheme.makeText("Progress " + progress).draw(10,10) <++|
       strings.zipWithIndex.map{case (s, i) =>
-        Text.fromString(bgColor, Color.White)(s).draw(10, 11 + i) _
+        scheme.makeText(s).draw(10, 11 + i) _
       }
 
   }
